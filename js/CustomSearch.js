@@ -17,6 +17,13 @@ CustomSearch = Class.create( {
 		this.id=id;
 		me = this;
 		this.namesFor = CustomSearch.sharedOptions;
+		if(id!='%i%') this.createFlexboxes();
+	},
+	createFlexboxes: function(){
+		if(this.getForm().length<1){
+			setTimeout("CustomSearch["+this.id+"].createFlexboxes()",100);
+			return;
+		}
 		this.getForm().find('.form-field-title-div').each(function(k,el){
 			el = jQuery(el);
 			var index = el.attr('id').replace(/.*-/,'')
