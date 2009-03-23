@@ -126,19 +126,29 @@
 			$pref = $pref."[$id]";
 			$htmlId = $pref."[exists]";
 			$output = "<input type='hidden' name='$htmlId' value='1'/>";
-			$titles="<th>DB Field</th><th>Label</th>";
-			$inputs="<td><input type='text' name='$pref"."[name]' value='$values[name]' class='form-field-title'/></td>";
-			$inputs.="<td><input type='text' name='$pref"."[label]' value='$values[label]' class='form-field-title'/></td>";
+			$titles="<th>Label</th>";
+			$inputs="<td><input type='text' name='$pref"."[label]' value='$values[label]' class='form-field-title'/></td>";
 			$output.="<table class='form-field-table'><tr>$titles</tr><tr>$inputs</tr></table>";
 			$inputs='';$titles='';
+			$titles="<th>DB Field</th>";
+			$inputs="<td><div id='form-field-dbname-$prefId-$id'><input type='text' name='$pref"."[name]' value='$values[name]' class='form-field-title'/></div></td>";
+			$count=1;
 			foreach(array('joiner'=>'Table','comparison'=>'Compare','input'=>'Widget') as $k=>$v){
 				$dd = new AdminDropDown($pref."[$k]",$values[$k],$this->getClasses($k),array('onChange'=>'CustomSearch['.$prefId.'].updateOptions('.$id.')'));
-				$titles.="<th>".$v."</th>";
-				$inputs.="<td>".$dd->getInput()."</td>";
+				$titles="<th>".$v."</th>".$titles;
+				$inputs="<td>".$dd->getInput()."</td>".$inputs;
+				if(++$count==2){
+					$output.="<table class='form-field-table form-class-$k'><tr>$titles</tr><tr>$inputs</tr></table>";
+					$count=0;
+					$inputs = $titles='';
+				}
 			}
-			$output.="<table class='form-field-table'><tr>$titles</tr><tr>$inputs</tr></table>";
-			$titles="<th>Numeric</th><th>Widget Config</th>";
-			$inputs="<td><input type='checkbox' ".($values['numeric']?"checked='true'":"")." name='$pref"."[numeric]'/></td>";
+			if($titles){
+				$output.="<table class='form-field-table'><tr>$titles</tr><tr>$inputs</tr></table>";
+				$inputs = $titles='';
+			}
+			$titles.="<th>Numeric</th><th>Widget Config</th>";
+			$inputs.="<td><input type='checkbox' ".($values['numeric']?"checked='true'":"")." name='$pref"."[numeric]'/></td>";
 
 			if(class_exists($widgetClass = $values['input'])){
 				$widget = new $widgetClass();
@@ -159,10 +169,11 @@
 		function print_admin_scripts($params){
 			$jsRoot = $this->getRootURL().'js/';
 			$cssRoot = $this->getRootURL().'css/';
-			foreach(array('Class.js','CustomSearch.js') as $file){
+			foreach(array('Class.js','CustomSearch.js','flexbox/jquery.flexbox.js') as $file){
 				echo "<script src='$jsRoot/$file' ></script>";
 			}
 			echo "<link rel='stylesheet' href='$cssRoot/admin.css' >";
+			echo "<link rel='stylesheet' href='$jsRoot/flexbox/jquery.flexbox.css' >";
 		}
 
 		function getJoiners(){
