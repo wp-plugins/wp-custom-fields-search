@@ -109,11 +109,14 @@ class DB_WP_Widget extends ParameterisedObject {
 	function defaultWidgetConfig(){
 		return array('exists'=>'1');
 	}
-	function getConfig($id=null){
+	function getConfig($id=null,$key=null){
 		$options = get_option($this->id);
 		if(is_null($id)) return $options;
 		$id = preg_replace('/^.*-(\d+)$/','\\1',$id);
-		return $options[$id];
+		if(is_null($key))
+			return $options[$id];
+		else 
+			return $options[$id][$key];
 	}
 	function configForm($args,$force=false){
 		static $first;

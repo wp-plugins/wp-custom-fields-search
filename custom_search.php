@@ -299,29 +299,22 @@
 					$options[$preset]['name'] = $n;
 				elseif($preset=='preset-default')
 					$options[$preset]['name'] = 'Default';
-				else
-					$options[$preset]['name'] = 'New Preset';
-				update_option($this->id,$options);
-				$presets[] = "$preset";
-			}
-
-			if($deleteAllPresets=false){
-				$options = $this->getConfig();
-				foreach($options as $key=>$v){
-					if(strpos($key,'preset-')===0) unset($options[$key]);
+				else{
+					list($junk,$id) = explode("-",$preset);
+					$options[$preset]['name'] = 'New Preset '.$id;
 				}
 				update_option($this->id,$options);
+				$presets[$preset] = $options[$preset]['name'];
 			}
 
 			$index = 1;
-			while($presets["preset-p$index"]) $index++;
-			$presets["preset-p$index"] = 'New Preset';
+			while($presets["preset-$index"]) $index++;
+			$presets["preset-$index"] = 'New Preset';
 
 			$linkBase = $_SERVER['REQUEST_URI'];
 			$linkBase = preg_replace("/&?selected-preset=[^&]*(&|$)/",'',$linkBase);
 			foreach($presets as $key=>$name){
-				if($n = $_POST[$this->id][$preset]['name'])
-				$config = $this->getConfig($name);
+				$config = $this->getConfig($key);
 				if($config && $config['name']) $name=$config['name'];
 				if($n = $_POST[$this->id][$key]['name'])
 					$name = $n;
