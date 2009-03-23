@@ -74,12 +74,31 @@
 			return $post;
 		}
 		function form_outputForm($values,$pref){
+			$defaults=array('name'=>'Site Search', 
+				1=>array(
+					'label'=>'Key Words',
+					'input'=>'TextField',
+					'comparison'=>'WordsLikeComparison',
+					'joiner'=>'PostDataJoiner',
+					'name'=>'all'
+				),
+				2=>array(
+					'label'=>'Category',
+					'input'=>'DropDown',
+					'comparison'=>'EqualsComparison',
+					'joiner'=>'CategoryJoiner'
+				),
+			);
 			$prefId = preg_replace('/^.*\[(\d+|%i%)\].*/','\\1',$pref);
 			$this->form_existsInput($pref);
 			$rand = rand();
 ?>
 	<div id='config-template-<?php echo $prefId?>' style='display: none;'>
-		<?php echo  $this->singleFieldHTML($pref,'###TEMPLATE_ID###',null);?>
+	<?php 
+		$templateDefaults = $defaults[1];
+		$templateDefaults['name'] = 'New Field';
+		echo  $this->singleFieldHTML($pref,'###TEMPLATE_ID###',$templateDefaults);
+	?>
 	</div>
 
 <?php
@@ -99,15 +118,11 @@
 			}
  ?>
 	<div id='config-form-<?php echo $prefId?>'>
+<?php
+			if(!$values) $values = $defaults;
+?>
 		<label for='<?php echo $prefId?>[name]'>Search Title</label><input type='text' class='form-title-input' id='<?php echo $prefId?>[name]' name='<?php echo $pref?>[name]' value='<?php echo $values['name']?>'/>
 <?php
-			$defaults=array(
-				'label'=>'KeyWords',
-				'input'=>'TextField',
-				'comparison'=>'WordsLikeComparison',
-				'joiner'=>'PostDataJoiner',
-			);
-			if(!$values) $values = array(1=>$defaults);
 			$nonFields = $this->getNonInputFields();
 			foreach($values as $id => $val){
 				if(in_array($id,$nonFields)) continue;
@@ -149,8 +164,9 @@
 			$htmlId = $pref."[exists]";
 			$output = "<input type='hidden' name='$htmlId' value='1'/>";
 			$titles="<th>Label</th>";
-			$inputs="<td><input type='text' name='$pref"."[label]' value='$values[label]' class='form-field-title'/></td>";
+			$inputs="<td><input type='text' name='$pref"."[label]' value='$values[label]' class='form-field-title'/></td><td><a href='#' onClick='return CustomSearch.get(\"$prefId\").toggleOptions(\"$id\");'>Show/Hide Config</a></td>";
 			$output.="<table class='form-field-table'><tr>$titles</tr><tr>$inputs</tr></table>";
+			$output.="<div id='form-field-advancedoptions-$prefId-$id' style='display: none'>";
 			$inputs='';$titles='';
 			$titles="<th>Data Field</th>";
 			$inputs="<td><div id='form-field-dbname-$prefId-$id' class='form-field-title-div'><input type='text' name='$pref"."[name]' value='$values[name]' class='form-field-title'/></div></td>";
@@ -181,6 +197,7 @@
 
 			$inputs.="<td><div id='$this->id"."-$prefId"."-$id"."-widget-config'>$widgetConfig</div></td>";
 			$output.="<table class='form-field-table'><tr>$titles</tr><tr>$inputs</tr></table>";
+			$output.="</div>";
 			$output.="<a href='#' onClick=\"return CustomSearch.get('$prefId').remove('$id');\">Remove Field</a>";
 			return "<div class='field-wrapper'>$output</div>";
 		}
