@@ -1,3 +1,5 @@
+23/03/2009	Release 0.3
+	Added presets functionality
 20/03/2009
 	Works when run via a rewritten URL (in some cases anyway)
 	Compatible with WP 2.7 and jQuery 1.2.3
