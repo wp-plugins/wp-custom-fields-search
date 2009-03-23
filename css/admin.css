@@ -79,3 +79,6 @@
 	text-align: center;
 	float: left;
 }
+.searchform-preset-wrapper select{
+	width: 100%;
+}

@@ -295,7 +295,7 @@
 			return $CustomSearchFieldStatic['Types'][$type];
 		}
 		function plugin_menu(){
-			add_options_page('Form Presets','Custom Fields Search',8,__FILE__,array(&$this,'presets_form'));
+			add_options_page('Form Presets','WP Custom Fields Search',8,__FILE__,array(&$this,'presets_form'));
 		}
 		function getPresets(){
 			$presets = array();
