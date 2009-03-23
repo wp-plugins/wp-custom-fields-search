@@ -78,8 +78,8 @@
 			$this->form_existsInput($pref);
 			$rand = rand();
 ?>
-	<div id='config-template-<?php=$prefId?>' style='display: none;'>
-		<?php= $this->singleFieldHTML($pref,'###TEMPLATE_ID###',null);?>
+	<div id='config-template-<?php echo $prefId?>' style='display: none;'>
+		<?php echo  $this->singleFieldHTML($pref,'###TEMPLATE_ID###',null);?>
 	</div>
 
 <?php
@@ -90,16 +90,16 @@
 				if(method_exists($form,'getConfigForm')){
 					if($form = $form->getConfigForm($pref.'[###TEMPLATE_ID###]',array('name'=>'###TEMPLATE_NAME###'))){
 ?>
-	<div id='config-input-templates-<?php=$class?>-<?php=$prefId?>' style='display: none;'>
-		<?php=$form?>
+	<div id='config-input-templates-<?php echo $class?>-<?php echo $prefId?>' style='display: none;'>
+		<?php echo $form?>
 	</div>
 		
 <?php					}
 				}
 			}
  ?>
-	<div id='config-form-<?php=$prefId?>'>
-		<label for='<?php=$prefId?>[name]'>Search Title</label><input type='text' class='form-title-input' id='<?php=$prefId?>[name]' name='<?php=$pref?>[name]' value='<?php=$values['name']?>'/>
+	<div id='config-form-<?php echo $prefId?>'>
+		<label for='<?php echo $prefId?>[name]'>Search Title</label><input type='text' class='form-title-input' id='<?php echo $prefId?>[name]' name='<?php echo $pref?>[name]' value='<?php echo $values['name']?>'/>
 <?php
 			$defaults=array();
 			if(!$values) $values = array(1=>$defaults);
@@ -111,9 +111,9 @@
 ?>
 	</div>
 
-	<br/><a href='#' onClick="return CustomSearch.get('<?php=$prefId?>').add();">Add Field</a>
+	<br/><a href='#' onClick="return CustomSearch.get('<?php echo $prefId?>').add();">Add Field</a>
 	<script type='text/javascript'>
-		CustomSearch.create('<?php=$prefId?>');
+		CustomSearch.create('<?php echo $prefId?>');
 <?php
 	foreach($this->getClasses('joiner') as $joinerClass=>$desc){
 		if(method_exists($joinerClass,'getSuggestedFields')){
