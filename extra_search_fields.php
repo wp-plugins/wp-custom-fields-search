@@ -310,7 +310,7 @@ class RadioButtonField extends Field {
 	}
 }
 class RadioButtonFromValues extends RadioButtonField {
-	function DropDownFromValues($fieldName){
+	function RadioButtonFromValues($fieldName){
 		$this->__construct($fieldName);
 	}
 
