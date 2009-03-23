@@ -32,24 +32,42 @@
 		}
 
 		function form_processPost($post,$old){
-			return array('exists'=>1);
+			unset($post['###TEMPLATE_ID###']);
+			if(!$post) $post=array('exists'=>1);
+			return $post;
 		}
-		function form_outputForm($old,$pref){
-			$pref = preg_replace('/^.*\[(\d+)\].*/','\\1',$pref);
+		function form_outputForm($values,$pref){
+			$prefId = preg_replace('/^.*\[(\d+|%i%)\].*/','\\1',$pref);
+			$this->form_existsInput($pref);
+			$rand = rand();
 ?>
-	<div id='config-template-<?=$pref?>' style='display: none;'>
-		<h1>Field ###TEMPLATE_ID###</h1>
-		<a href='#' onClick="CustomSearch[<?=$pref?>].remove('###TEMPLATE_ID###');">Remove Field</a>
-		<script type='text/javascript'>
-			CustomSearch.create('<?=$pref?>');
-		</script>
+	<div id='config-template-<?=$prefId?>' style='display: none;'>
+		<?= $this->singleFieldHTML($pref,'###TEMPLATE_ID###');?>
 	</div>
-	<div id='config-form-<?=$pref?>'>
+	<script type='text/javascript'>
+		CustomSearch.create('<?=$prefId?>');
+	</script>
+	<div id='config-form-<?=$prefId?>'>
 		<h1>Form</h1>
+<?
+			$defaults=array();
+			unset($values['exists']);
+			if(!$values) $values = array(1=>$defaults);
+			foreach($values as $id => $val){
+				echo "<div id='config-form-$prefId-$id'>".$this->singleFieldHTML($pref,$id,$val)."</div>";
+			}
+?>
 	</div>
 
-	<br/><a href='#' onClick="CustomSearch[<?=$pref?>].add();">Add Field</a>
+	<br/><a href='#' onClick="return CustomSearch['<?=$prefId?>'].add();">Add Field</a>
 <?
+		}
+		function singleFieldHTML($pref,$id){
+			$prefId = preg_replace('/^.*\[(\d+|%i%)\].*/','\\1',$pref);
+			$htmlId = $pref."[$id][exists]";
+return "		<h1>Field $id</h1>
+		<a href='#' onClick=\"return CustomSearch['$prefId'].remove('$id');\">Remove Field</a>
+			<input type='hidden' name='$htmlId' value='1'/>";
 		}
 
 		function getRootURL(){

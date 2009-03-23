@@ -16,26 +16,29 @@ class DB_WP_Widget {
 		$this->name = $name;
 		$this->setParams($params);
 		$this->id = strtolower(get_class($this));
+		$options = get_option($this->id);
 
 
 //		register_sidebar_widget($this->name,array(&$this,'renderWidget'));
 		$doesOwnConfig = $this->params['doesOwnConfig'];
-		if ( !$options = get_option($this->id) )
-			$options = array( -1=>array('exists'=>1));
 		$widget_ops = array('classname' => $this->id, 'description' => __($desc));
 		$control_ops = array('width' => 400, 'height' => 350, 'id_base' => $this->id);
 		$name = $this->name;
 		$desc = $this->getParam('description',$this->name);
 	
 		$id = false;
-		foreach ( array_keys($options) as $o ) {
-			// Old widgets can have null values for some reason
-			if ( !isset($options[$o]['exists']) )
-				continue;
-			$id = "$this->id-".abs($o); // Never never never translate an id
-			wp_register_sidebar_widget($id, $name, array(&$this,'renderWidget'), $widget_ops, array( 'number' => $o ));
-			wp_register_widget_control($id, $name, array(&$this,'configForm'), $control_ops, array( 'number' => $o ));
-		}
+		do {
+			if($options)
+			foreach ( array_keys($options) as $o ) {
+				// Old widgets can have null values for some reason
+				if ( !isset($options[$o]['exists']) )
+					continue;
+				$id = "$this->id-".abs($o); // Never never never translate an id
+				wp_register_sidebar_widget($id, $name, array(&$this,'renderWidget'), $widget_ops, array( 'number' => $o ));
+				wp_register_widget_control($id, $name, array(&$this,'configForm'), $control_ops, array( 'number' => $o ));
+			}
+			$options = array( -1=>array('exists'=>1));
+		} while(!$id);
 	}
 
 	function setParams($params){
@@ -72,18 +75,19 @@ class DB_WP_Widget {
 		return $options[$id];
 	}
 	function configForm($args){
+		static $first;
 		global $wp_registered_widgets;
 
 		if ( is_numeric($args) )
 			$args = array( 'number' => $args );
 
 		$args = wp_parse_args($args,array('number'=>-1));
-		static $updated = false;
+		static $updated = array();
 
+		$options = get_option($this->id);
 
-		if(!$updated && $_POST['sidebar']){
-			$updated=true;
-			$options = get_option($this->id);
+		if(!$updated[$this->id] && $_POST['sidebar']){
+			$updated[$this->id]=true;
 			$sidebar = (string) $_POST['sidebar'];
 			$default_options=$this->defaultWidgetConfig();
 
@@ -110,6 +114,7 @@ class DB_WP_Widget {
 			}
 			update_option($this->id,$options);
 		}
+		global $mycount;
 		if(-1==$args['number']){
 			$args['number']='%i%';
 			$values = $default_options;
@@ -117,12 +122,14 @@ class DB_WP_Widget {
 			$values = $options[$args['number']];
 		}
 		$this->form_outputForm($values,$this->id.'['.$args['number'].']');
-
 	}
 	function form_processPost($post,$old){
 		return array('exists'=>1);
 	}
 	function form_outputForm($old,$pref){
+		$this->form_existsInput($pref);
+	}
+	function form_existsInput($pref){
 		echo "<input type='hidden' name='".$pref."[exists]' value='1'/>";
 	}
 
