@@ -274,7 +274,9 @@ class DropDownFromValues extends DropDownField {
 	}
 
 	function getOptions($joiner,$name){
-		$options =  array_merge($joiner->getAllOptions($name),array(''=>'ANY'));
+		$options = array(''=>'ANY');
+		$options +=$joiner->getAllOptions($name);
+
 		return $options;
 	}
 }
@@ -424,7 +426,7 @@ class CustomSearchField extends SearchFieldBase {
 	}
 	function join_meta($join){
 		global $wpdb;
-		if($this->getValue()){
+		if($value = $this->getValue()){
 			$join.=$this->joiner->sql_join($this->name,$this->index,$value,$this->comparison);
 		}
 		return $join;
