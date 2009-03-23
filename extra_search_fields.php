@@ -25,6 +25,11 @@
 
 $debugMode =false;
 
+if ( !defined('WP_CONTENT_URL') )
+	define( 'WP_CONTENT_URL', get_option('siteurl') . '/wp-content');
+if ( !defined('WP_CONTENT_DIR') )
+	define( 'WP_CONTENT_DIR', ABSPATH . 'wp-content' );
+
 class ParameterisedObject {
 	var $params=array();
 	function ParameterisedObject($params=array()){
