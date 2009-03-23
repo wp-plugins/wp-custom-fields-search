@@ -448,14 +448,19 @@ class CustomSearchField extends SearchFieldBase {
 		$this->name = $params['name'];
 		$this->params = $params;
 
-		$input = $this->param('input','TextField');
-		$comparison = $this->param('comparison','LikeComparison');
-		$joiner = $this->param('joiner','CustomFieldJoiner');
+		if(!$input){
+			$input = $this->param('input','TextField');
+			$this->input = new $input(array(),$params);
+		}
+		if(!$comparison){
+			$comparison = $this->param('comparison','LikeComparison');
+			$this->comparison = new $comparison();
+		}
+		if(!$joiner){
+			$joiner = $this->param('joiner','CustomFieldJoiner');
+			$this->joiner = new $joiner($this->param('name'));
+		}
 
-		if(!$input) $input = new TextField();
-		$this->input = new $input(array(),$params);
-		$this->comparison = new $comparison();
-		$this->joiner = new $joiner($this->param('name'));
 
 	}
 	function param($key,$default=null){
