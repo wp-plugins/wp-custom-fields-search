@@ -196,7 +196,8 @@ class DB_Search_Widget extends DB_WP_Widget {
 		$this->inputs[] = $input;
 	}
 	function outputStylesheets(){
-		echo "\n".'<style type="text/css" media="screen">@import "'. WP_CONTENT_URL .'/plugins/custom-search/css/searchforms.css";</style>'."\n";
+		$dir = WP_CONTENT_URL .'/plugins/' .  dirname(plugin_basename(__FILE__) ) . '/';
+		echo "\n".'<style type="text/css" media="screen">@import "'. $dir .'css/searchforms.css";</style>'."\n";
 	}
 
 	function getInputs($params){
