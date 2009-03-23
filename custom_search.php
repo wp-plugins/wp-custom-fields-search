@@ -319,23 +319,16 @@
 
 			$linkBase = $_SERVER['REQUEST_URI'];
 			$linkBase = preg_replace("/&?selected-preset=[^&]*(&|$)/",'',$linkBase);
-			echo "<div class='presets-selector'><ul>";
 			foreach($presets as $key=>$name){
 				if($n = $_POST[$this->id][$preset]['name'])
 				$config = $this->getConfig($name);
 				if($config && $config['name']) $name=$config['name'];
 				if($n = $_POST[$this->id][$key]['name'])
 					$name = $n;
-				echo "<li><a href='$linkBase&selected-preset=$key'>$name</a></li>";
+				$presets[$key]=$name;
 			}
-			echo "</ul></div>";
-			echo "<div class='presets-example-code'> To use this preset in your templates use this code:<br/>
-				<code>".htmlspecialchars("<?php wp_custom_fields_search('$preset'); ?>")."</code></div>";
-
-			echo "\n<form method='post'><div class='searchforms-config-form'><input type='hidden' name='selected-preset' value='$preset'>\n";
-			$this->configForm($preset,$_POST['selected-preset']);
-			echo "<input type='submit'/>";
-			echo "</div></form>";
+			$plugin=$this;
+			include(dirname(__FILE__).'/templates/options.php');
 		}
 	}
 	global $CustomSearchFieldStatic;

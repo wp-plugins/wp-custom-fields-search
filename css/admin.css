@@ -59,7 +59,7 @@
 	padding: 20px;
 }
 
-.presets-selector ul {
+/*.presets-selector ul {
 	list-style: none;
 }
 .presets-selector li {
@@ -67,7 +67,7 @@
 	float: left;
 	width: 50%;
 	text-align: center;
-}
+}*/
 .searchforms-config-form {
 	clear: left;
 }
