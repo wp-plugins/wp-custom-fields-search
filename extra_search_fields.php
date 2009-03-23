@@ -198,7 +198,7 @@ class DB_Search_Widget extends DB_WP_Widget {
 	}
 	function outputStylesheets(){
 		$dir = WP_CONTENT_URL .'/plugins/' .  dirname(plugin_basename(__FILE__) ) . '/';
-		echo "\n".'<style type="text/css" media="screen">@import "'. $dir .'css/searchforms.css";</style>'."\n";
+		echo "\n".'<style type="text/css" media="screen">@import "'. $dir .'templates/searchforms.css";</style>'."\n";
 	}
 
 	function getInputs($params){
