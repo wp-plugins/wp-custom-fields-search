@@ -23,6 +23,8 @@
  * Author URI: http://don-benjamin.co.uk
  * */
 
+$debugMode = false;
+
 class DB_WP_Widget {
 	function DB_WP_Widget($name,$params=array()){
 		DB_WP_Widget::__construct($name,$params);
@@ -582,15 +584,15 @@ class CustomSearchField extends SearchFieldBase {
 		$this->comparison = $comparison;
 		$this->input = $input;
 
-		if(!$this->input){
+		if(!is_object($this->input)){
 			$input = $this->param('input','TextField');
 			$this->input = new $input(array(),$params);
 		}
-		if(!$this->comparison){
+		if(!is_object($this->comparison)){
 			$comparison = $this->param('comparison','LikeComparison');
 			$this->comparison = new $comparison();
 		}
-		if(!$this->joiner){
+		if(!is_object($this->joiner)){
 			$joiner = $this->param('joiner','CustomFieldJoiner');
 			$this->joiner = new $joiner($this->param('name'),$this->params);
 		}
@@ -648,6 +650,13 @@ $dir = opendir($path = dirname(__FILE__).'/bridges');
 while($file = readdir($dir)){
 	if(is_file("$path/$file") && preg_match("/^[^.].*\.php$/",$file)){
 		require_once("$path/$file");
+	}
+}
+
+if($debugMode){
+	add_filter('posts_request','debug_dump_query');
+	function debug_dump_query($query){
+		echo "<h1>$query</h1>";
 	}
 }
 ?>
