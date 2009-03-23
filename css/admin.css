@@ -53,7 +53,10 @@
 }
 .presets-selector, .presets-example-code {
 	float: left;
-	width: 50%;
+	width: 45%;
+}
+.presets-example-code {
+	padding: 20px;
 }
 
 .presets-selector ul {
@@ -63,6 +66,7 @@
 	display: block;
 	float: left;
 	width: 50%;
+	text-align: center;
 }
 .searchforms-config-form {
 	clear: left;

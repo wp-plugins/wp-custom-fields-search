@@ -323,10 +323,10 @@
 			foreach($presets as $key=>$name){
 				if($n = $_POST[$this->id][$preset]['name'])
 				$config = $this->getConfig($name);
-				if($config) $name=$config['name'];
+				if($config && $config['name']) $name=$config['name'];
 				if($n = $_POST[$this->id][$key]['name'])
 					$name = $n;
-				echo "<li><a href='$linkBase&selected-preset=$key'>Preset $name</a></li>";
+				echo "<li><a href='$linkBase&selected-preset=$key'>$name</a></li>";
 			}
 			echo "</ul></div>";
 			echo "<div class='presets-example-code'> To use this preset in your templates use this code:<br/>
