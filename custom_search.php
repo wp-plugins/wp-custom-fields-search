@@ -151,7 +151,7 @@
 			$inputs="<td><div id='form-field-dbname-$prefId-$id' class='form-field-title-div'><input type='text' name='$pref"."[name]' value='$values[name]' class='form-field-title'/></div></td>";
 			$count=1;
 			foreach(array('joiner'=>'Data Type','comparison'=>'Compare','input'=>'Widget') as $k=>$v){
-				$dd = new AdminDropDown($pref."[$k]",$values[$k],$this->getClasses($k),array('onChange'=>'CustomSearch.get('.$prefId.').updateOptions('.$id.',"'.$k.'")'));
+				$dd = new AdminDropDown($pref."[$k]",$values[$k],$this->getClasses($k),array('onChange'=>'CustomSearch.get("'.$prefId.'").updateOptions("'.$id.'","'.$k.'")'));
 				$titles="<th>".$v."</th>".$titles;
 				$inputs="<td>".$dd->getInput()."</td>".$inputs;
 				if(++$count==2){
