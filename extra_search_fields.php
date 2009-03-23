@@ -200,7 +200,7 @@ class DB_Search_Widget extends DB_WP_Widget {
 		echo "<input type='hidden' name='search-class' value='".$this->getPostIdentifier()."'/>";
 		echo "<input type='hidden' name='widget_number' value='".$p2['number']."'/>";
 		echo "</div>";
-		echo "<div class='searchform-spoiler'><a href='http://www.don-benjamin.co.uk/wordpress/projects/foss/wp-plugins/wordpress-configurable-search-plugin-01-beta/'>Wordpress Configurable Search</a></div>";
+		echo "<div class='searchform-spoiler'><a href='http://www.don-benjamin.co.uk/wordpress-plugins/custom-search/'>Wordpress Configurable Search</a></div>";
 		echo "</form>";
 	}
 
