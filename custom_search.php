@@ -306,6 +306,14 @@
 				update_option($this->id,$options);
 				$presets[$preset] = $options[$preset]['name'];
 			}
+			if($_POST['delete']){
+				$options = $this->getConfig();
+				unset($options[$preset]);
+				unset($presets[$preset]);
+				echo "<h1>DELETING $preset</h1>";
+				update_option($this->id,$options);
+				list($preset,$name) = each($presets);
+			}
 
 			$index = 1;
 			while($presets["preset-$index"]) $index++;
@@ -320,7 +328,7 @@
 					$name = $n;
 				$presets[$key]=$name;
 			}
-			$plugin=$this;
+			$plugin=&$this;
 			include(dirname(__FILE__).'/templates/options.php');
 		}
 	}

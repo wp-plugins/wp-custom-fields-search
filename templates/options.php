@@ -6,16 +6,25 @@
 </ul></div>
 <div class='presets-example-code'> 
 	<h4>Template Code</h4>
-To use this preset in your templates use this code:<br/>
+To use this preset in your templates copy this code to the appropriate place in your template file:<br/>
 	<?php if($preset=='preset-default') { ?> 
-		<code><?php echo htmlspecialchars("<?php wp_custom_fields_search(); ?>")?></code>
+		<pre><code><?php echo htmlspecialchars("<?php if(function_exists('wp_custom_fields_search')) 
+	wp_custom_fields_search(); ?>")?></code></pre>
 	<?php } else { ?>
-		<code><?php echo htmlspecialchars("<?php wp_custom_fields_search('$preset'); ?>")?></code>
+		<pre><code><?php echo htmlspecialchars("<?php if(function_exists('wp_custom_fields_search')) 
+	wp_custom_fields_search('$preset'); ?>")?></code></pre>
 	<? } ?>
 </div>
 
-	<form method='post'><div class='searchforms-config-form'><input type='hidden' name='selected-preset' value='$preset'>
+<form method='post'><div class='searchforms-config-form'><input type='hidden' name='selected-preset' value='<?php echo $preset?>'>
 		<h4>Edit Preset "<?php echo $plugin->getConfig($preset,'name')?>"</h4>
-		<?php $plugin->configForm($preset,$_POST['selected-preset']) ?>
-	<input type='submit'/>
+		<?php $plugin->configForm($preset,$_POST['selected-preset']&& !$_POST['delete']) ?>
+		<div class='options-controls'>
+			<div class='options-button'>
+				<input type='submit' value='Save Changes'/>
+			</div>
+			<div class='options-button'>
+				<input type='submit' name='delete' value='Delete' onClick='return confirm("Are you sure you want to delete this preset?")'/>
+			</div>
+		</div>
 </div></form>

@@ -71,3 +71,11 @@
 .searchforms-config-form {
 	clear: left;
 }
+.options-controls {
+	width: 100%;
+}
+.options-button {
+	width: 50%;
+	text-align: center;
+	float: left;
+}
