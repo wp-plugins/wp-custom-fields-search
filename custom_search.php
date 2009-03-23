@@ -126,11 +126,13 @@
 	<div id='config-form-<?php echo $prefId?>'>
 <?php
 			if(!$values) $values = $defaults;
+			$maxId=0;
 ?>
 		<label for='<?php echo $prefId?>[name]'>Search Title</label><input type='text' class='form-title-input' id='<?php echo $prefId?>[name]' name='<?php echo $pref?>[name]' value='<?php echo $values['name']?>'/>
 <?php
 			$nonFields = $this->getNonInputFields();
 			foreach($values as $id => $val){
+				$maxId = max($id,$maxId);
 				if(in_array($id,$nonFields)) continue;
 				echo "<div id='config-form-$prefId-$id'>".$this->singleFieldHTML($pref,$id,$val)."</div>";
 			}
@@ -139,7 +141,7 @@
 
 	<br/><a href='#' onClick="return CustomSearch.get('<?php echo $prefId?>').add();">Add Field</a>
 	<script type='text/javascript'>
-		CustomSearch.create('<?php echo $prefId?>');
+			CustomSearch.create('<?php echo $prefId?>','<?php echo $maxId?>');
 <?php
 	foreach($this->getClasses('joiner') as $joinerClass=>$desc){
 		if(compat_method_exists($joinerClass,'getSuggestedFields')){
@@ -327,6 +329,7 @@
 		}
 		function __construct($name,$value,$options,$params=array()){
 			$params['options'] = $options;
+			$params['id'] = $params['name'];
 			parent::__construct($params);
 			$this->name = $name;
 			$this->value = $value;

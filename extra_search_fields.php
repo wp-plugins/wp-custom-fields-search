@@ -361,6 +361,7 @@ class DropDownField extends Field {
 		}
 		$atts = '';
 		if($this->params['onChange']) $atts = ' onChange="'.htmlspecialchars($this->params['onChange']).'"';
+		if($this->params['id']) $atts = ' id="'.htmlspecialchars($this->params['id']).'"';
 		return "<select name='$id'$atts>$options</select>";
 	}
 	function getConfigForm($id,$values){
@@ -568,7 +569,7 @@ class CustomFieldJoiner extends BaseJoiner{
 	}
 	function getSuggestedFields(){
 		global $wpdb;
-		$q = mysql_query($sql = "SELECT DISTINCT meta_key FROM $wpdb->postmeta WHERE meta_key NOT LIKE '_%'");
+		$q = mysql_query($sql = "SELECT DISTINCT meta_key FROM $wpdb->postmeta WHERE meta_key NOT LIKE '\\_%'");
 		$options = array();
 		while($r = mysql_fetch_row($q))
 			$options[$r[0]] = $r[0];

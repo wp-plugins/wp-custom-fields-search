@@ -13,8 +13,9 @@
  * limitations under the License.
  */
 CustomSearch = Class.create( {
-	init : function (id) {
+	init : function (id,maxInput) {
 		this.id=id;
+		this.maxInput = maxInput;
 		me = this;
 		this.namesFor = CustomSearch.sharedOptions;
 		if(id!='%i%') this.createFlexboxes();
@@ -30,19 +31,23 @@ CustomSearch = Class.create( {
 			me.createFlexbox(index);
 		});
 	},
+	fieldExists: function(id){
+		newId = 'config-form-'+this.id+'-'+id;
+		return jQuery("#"+newId).attr('id');
+	},
 	add: function (){
 		var html = jQuery('#config-template-'+this.id).html();
 		var oldHtml = false;
 		var count=0;
 		do {
 			newId = 'config-form-'+this.id+'-'+(++count);
-		} while(jQuery("#"+newId).attr('id'));
+		} while(this.fieldExists(count));
 
 		html = this.replaceAll(html,'###TEMPLATE_ID###',count);
 		html=html.replace('config-template-'+this.id,newId);
 		jQuery('<div id="'+newId+'">'+html+"</div>").appendTo('#config-form-'+this.id);
 		this.createFlexbox(count);
-
+		if(count>this.maxInput) this.maxInput=count;
 		
 		return false;
 	},
@@ -64,6 +69,17 @@ CustomSearch = Class.create( {
 		return false;
 	},
 
+	updateAllOptionsFor: function(joiner){
+		var i=0;
+		for(;i<this.maxInput;i++){
+			if(this.fieldExists(i) && (this.getJoinerFor(i)==joiner)){
+				this.updateOptions(i,'joiner');
+			}
+		}
+	},
+	getJoinerFor: function(id){
+		return this.getForm(id).find('[@name="db_customsearch_widget['+this.id+']['+id+'][joiner]"]').val();
+	},
 	updateOptions: function(id,changed) {
 		switch(changed){
 		case 'input':
@@ -79,7 +95,7 @@ CustomSearch = Class.create( {
 		div.html(html);
 		break;
 			case 'joiner':
-				type = this.getForm(id).find('[@name="db_customsearch_widget['+this.id+']['+id+'][joiner]"]').val();
+				type=this.getJoinerFor(id);		
 				if(this.namesFor[type]){
 					this.flexboxData[id].results = this.namesFor[type];
 					jQuery('#form-field-dbname-'+this.id+'-'+id).show();
@@ -109,9 +125,14 @@ CustomSearch = Class.create( {
 if(!CustomSearch.sharedOptions) CustomSearch.sharedOptions={};
 CustomSearch.setOptionsFor = function(joiner,options){
 	CustomSearch.sharedOptions[joiner] = options;
+	var i;
+	for(i=0;i<CustomSearch.list.length;i++)
+		CustomSearch[CustomSearch.list[i]].updateAllOptionsFor(joiner);
 };
-CustomSearch.create = function(id){
-	CustomSearch[id] = new CustomSearch(id);
+CustomSearch.list = [];
+CustomSearch.create = function(id,maxInput){
+	CustomSearch.list[CustomSearch.list.length]=id;
+	CustomSearch[id] = new CustomSearch(id,maxInput);
 };
 CustomSearch.get = function(id){
 	if(!CustomSearch[id]) CustomSearch.create(id);
