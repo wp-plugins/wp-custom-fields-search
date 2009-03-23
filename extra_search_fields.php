@@ -261,6 +261,11 @@ class Field {
 	function __construct(){
 	}
 
+	function param($key,$default=null){
+		if(array_key_exists($key,$this->params)) return $this->params[$key];
+		return $default;
+	}
+
 	function getValue($name){
 		return $_REQUEST[$this->getHTMLName($name)];
 	}
@@ -297,8 +302,14 @@ class DropDownField extends Field {
 		$this->params = $params;
 	}
 
-	function getOptions(){
-		return $this->options;
+	function getOptions($joiner,$name){
+		if($this->param('fromDb',!$this->options)){
+			$options = array(''=>'ANY');
+			$options +=$joiner->getAllOptions($name);
+			return $options;
+		} else {
+			return $this->options;
+		}
 	}
 	function getInput($name,$joiner){
 		$v = $this->getValue($name);
@@ -328,16 +339,11 @@ class DropDownFromValues extends DropDownField {
 		DropDownFromValues::__construct();
 	}
 
-	function __construct(){
-		parent::__construct($options);
+	function __construct($params=array()){
+		$params['fromDb'] = true;
+		parent::__construct(array(),$params);
 	}
 
-	function getOptions($joiner,$name){
-		$options = array(''=>'ANY');
-		$options +=$joiner->getAllOptions($name);
-
-		return $options;
-	}
 	function getConfigForm($id,$values){
 		return "";
 	}
@@ -359,8 +365,12 @@ class RadioButtonField extends Field {
 		$this->options = $options;
 		$this->params = $params;
 	}
-	function getOptions(){
-		return $this->options;
+	function getOptions($joiner,$name){
+		if($this->param('fromDb',!$this->options)){
+			return $joiner->getAllOptions($name);
+		} else {
+			return $this->options;
+		}
 	}
 	function getInput($name,$joiner){
 		$v = $this->getValue($name);
@@ -387,11 +397,9 @@ class RadioButtonFromValues extends RadioButtonField {
 		RadioButtonFromValues::__construct($fieldName);
 	}
 
-	function __construct($fieldName=null){
-		parent::__construct($options);
-	}
-	function getOptions($joiner,$name){
-		return $joiner->getAllOptions($name);
+	function __construct($fieldName=null,$params){
+		$params['fromDb'] = true;
+		parent::__construct($options,$params);
 	}
 	function getConfigForm($id,$values){
 		return "";
