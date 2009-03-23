@@ -624,6 +624,8 @@ class CustomSearchField extends SearchFieldBase {
 		if($value = $this->getValue()){
 			$join.=$this->joiner->sql_join($this->name,$this->index,$value,$this->comparison);
 		}
+		if(method_exists($this->joiner,'process_join'))
+			$join = $this->joiner->process_join($join);
 		return $join;
 	}
 

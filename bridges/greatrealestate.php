@@ -59,6 +59,11 @@ class GreatRealEstateJoiner extends BaseJoiner {
 		$cleared = preg_replace("/$wpdb->posts.ID = '\d+'/","1",$cleared);
 		return $cleared;
 	}
+	function process_join($join){
+		global $wpdb;
+		if(!strpos($join,$wpdb->gre_listings)) $join.=" JOIN $wpdb->gre_listings ON $wpdb->gre_listings.pageid=$wpdb->posts.id";
+		return $join;
+	}
 	function getSuggestedFields(){
 		return array('listPrice'=>'List Price','city','county');
 	}
