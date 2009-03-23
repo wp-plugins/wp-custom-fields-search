@@ -491,7 +491,7 @@ class CustomFieldJoiner extends BaseJoiner{
 	}
 	function getAllOptions($fieldName){
 		global $wpdb;
-		$q = mysql_query($sql = "SELECT DISTINCT meta_value FROM $wpdb->postmeta WHERE meta_key='$fieldName'");
+		$q = mysql_query($sql = "SELECT DISTINCT meta_value FROM $wpdb->postmeta m JOIN $wpdb->posts p ON m.post_id=p.id AND p.post_status='publish' WHERE meta_key='$fieldName'");
 		$options = array();
 		while($r = mysql_fetch_row($q))
 			$options[$r[0]] = $r[0];

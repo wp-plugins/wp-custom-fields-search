@@ -45,7 +45,7 @@ class GreatRealEstateJoiner extends BaseJoiner {
 	function getAllOptions($fieldName){
 		if($this->name) $fieldName=$this->name;
 		global $wpdb;
-		$q = mysql_query($sql = "SELECT DISTINCT $fieldName FROM $wpdb->gre_listings");
+		$q = mysql_query($sql = "SELECT DISTINCT l.$fieldName FROM $wpdb->gre_listings l JOIN $wpdb->posts p ON l.pageid=p.id AND p.post_status='publish'");
 		if($e = mysql_error()){
 			die("<h1>$sql</h1>".$e);
 		}
