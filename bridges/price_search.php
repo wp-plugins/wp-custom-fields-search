@@ -59,10 +59,6 @@ class GreatRealEstateJoiner {
 
 
 
-add_filter('dollar_price','nigerianise_price');
-function nigerianise_price($price){
-	return str_replace("$","&#x20A6;",$price);
-}
 add_filter('custom_search_get_classes','add_real_estate_search_fields');
 function add_real_estate_search_fields($classes){
 	if(function_exists('greatrealestate_init'))
