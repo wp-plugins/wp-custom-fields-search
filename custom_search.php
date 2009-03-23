@@ -28,6 +28,7 @@
 			$id = $params['widget_id'];
 
 			$config = $this->getConfig($id);
+			var_dump($config);
 			return parent::getInputs($params);
 		}
 
@@ -42,13 +43,12 @@
 			$rand = rand();
 ?>
 	<div id='config-template-<?=$prefId?>' style='display: none;'>
-		<?= $this->singleFieldHTML($pref,'###TEMPLATE_ID###');?>
+		<?= $this->singleFieldHTML($pref,'###TEMPLATE_ID###',null);?>
 	</div>
 	<script type='text/javascript'>
 		CustomSearch.create('<?=$prefId?>');
 	</script>
 	<div id='config-form-<?=$prefId?>'>
-		<h1>Form</h1>
 <?
 			$defaults=array();
 			unset($values['exists']);
@@ -62,12 +62,21 @@
 	<br/><a href='#' onClick="return CustomSearch['<?=$prefId?>'].add();">Add Field</a>
 <?
 		}
-		function singleFieldHTML($pref,$id){
+		function singleFieldHTML($pref,$id,$values){
 			$prefId = preg_replace('/^.*\[(\d+|%i%)\].*/','\\1',$pref);
-			$htmlId = $pref."[$id][exists]";
-return "		<h1>Field $id</h1>
-		<a href='#' onClick=\"return CustomSearch['$prefId'].remove('$id');\">Remove Field</a>
-			<input type='hidden' name='$htmlId' value='1'/>";
+			$pref = $pref."[$id]";
+			$htmlId = $pref."[exists]";
+			$output = "<input type='hidden' name='$htmlId' value='1'/>";
+			$titles="<th>Field</th>";
+			$inputs="<td><input type='text' name='$pref"."[name]' value='$values[name]'/></td>";
+			foreach(array('joiner'=>'Table','comparison'=>'Compare','input'=>'Widget') as $k=>$v){
+				$dd = new AdminDropDown($pref."[$k]",$values[$k],$this->getClasses($k));
+				$titles.="<th>".$v."</th>";
+				$inputs.="<td>".$dd->getInput()."</td>";
+			}
+			$output.="<table><tr>$titles</tr><tr>$inputs</tr></table>";
+			$output.="<a href='#' onClick=\"return CustomSearch['$prefId'].remove('$id');\">Remove Field</a>";
+			return $output;
 		}
 
 		function getRootURL(){
@@ -78,6 +87,63 @@ return "		<h1>Field $id</h1>
 			foreach(array('CustomSearch.js') as $file){
 				echo "<script src='$jsRoot/$file' ></script>";
 			}
+		}
+
+		function getJoiners(){
+			return $this->getClasses('joiner');
+		}
+		function getComparisons(){
+			return $this->getClasses('comparison');
+		}
+		function getInputTypes(){
+			return $this->getClasses('input');
+		}
+		function getClasses($type){
+			global $CustomSearchFieldTypes;
+			if(!$CustomSearchFieldTypes){
+				$CustomSearchFieldTypes = array(
+					"joiner"=>array(
+						"CustomFieldJoiner" => "Custom Field",
+						"CategoryJoiner" => "Category" 
+					),
+					"input"=>array(
+						"TextInput" => "Text Input",
+						"DropDownField" => "Drop Down",
+						"DropDownFromValues" => "Drop Down (DB Values)",
+						"RadioButtonInput" => "Radio Button",
+						"RadioButtonFromValues" => "Radio Button (DB Values)",
+					),
+					"comparison"=>array(
+						"EqualComparison" => "Equals",
+						"RangeComparison" => "Range",
+						"LikeComparison" => "In" 
+					)
+				);
+				$CustomSearchFieldTypes = apply_filters('custom_search_get_classes',$CustomSearchFieldTypes);
+			}
+			return $CustomSearchFieldTypes[$type];
+		}
+	}
+	global $CustomSearchFieldTypes;
+	$CustomSearchFieldTypes = array();
+
+	class AdminDropDown extends DropDownField {
+		function DropDown($name,$value,$options){
+			$this->__construct($name,$value,$options);
+		}
+		function __construct($name,$value,$options){
+			parent::__construct($options);
+			$this->name = $name;
+			$this->value = $value;
+		}
+		function getHTMLName(){
+			return $this->name;
+		}
+		function getValue(){
+			return $this->value;
+		}
+		function getInput(){
+			return parent::getInput($this->name,null);
 		}
 	}
 
