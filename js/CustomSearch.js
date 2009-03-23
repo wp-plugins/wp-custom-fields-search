@@ -44,8 +44,6 @@ CustomSearch = function(id,count) {
 		name='';
 		html = this.replaceAll(html,'###TEMPLATE_NAME###',name);
 		div.html(html);
-
-
 	};
 };
 

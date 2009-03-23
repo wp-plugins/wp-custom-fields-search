@@ -71,16 +71,16 @@
 	<div id='config-template-<?=$prefId?>' style='display: none;'>
 		<?= $this->singleFieldHTML($pref,'###TEMPLATE_ID###',null);?>
 	</div>
-	<div id='config-input-templates-<?=$prefId?>' style='display: hidden;'>
+
 <?
 			foreach($this->getClasses('input') as $class=>$desc) {
 				if(class_exists($class))
 					$form = new $class();
 				else $form = false;
 				if(method_exists($form,'getConfigForm')){
-					if($form = $form->getConfigForm('###TEMPLATE_ID###',array('name'=>'###TEMPLATE_NAME###'))){
+					if($form = $form->getConfigForm($pref.'[###TEMPLATE_ID###]',array('name'=>'###TEMPLATE_NAME###'))){
 ?>
-	<div id='config-input-templates-<?=$class?>-<?=$prefId?>'>
+	<div id='config-input-templates-<?=$class?>-<?=$prefId?>' style='display: none;'>
 		<?=$form?>
 	</div>
 		
@@ -88,12 +88,11 @@
 				}
 			}
  ?>
-	</div>
 	<script type='text/javascript'>
 		CustomSearch.create('<?=$prefId?>');
 	</script>
 	<div id='config-form-<?=$prefId?>'>
-		<label for='<?=$prefId?>[name]'>Search Title</label><input type='text' id='<?=$prefId?>[name]' name='<?=$pref?>[name]' value='<?=$values['name']?>'/>
+		<label for='<?=$prefId?>[name]'>Search Title</label><input type='text' class='form-title-input' id='<?=$prefId?>[name]' name='<?=$pref?>[name]' value='<?=$values['name']?>'/>
 <?
 			$defaults=array();
 			if(!$values) $values = array(1=>$defaults);
@@ -118,15 +117,15 @@
 			$htmlId = $pref."[exists]";
 			$output = "<input type='hidden' name='$htmlId' value='1'/>";
 			$titles="<th>Field</th>";
-			$inputs="<td><input type='text' name='$pref"."[name]' value='$values[name]'/></td>";
-			$output.="<table style='width: 100%'><tr>$titles</tr><tr>$inputs</tr></table>";
+			$inputs="<td><input type='text' name='$pref"."[name]' value='$values[name]' class='form-field-title'/></td>";
+			$output.="<table class='form-field-table'><tr>$titles</tr><tr>$inputs</tr></table>";
 			$inputs='';$titles='';
 			foreach(array('joiner'=>'Table','comparison'=>'Compare','input'=>'Widget') as $k=>$v){
 				$dd = new AdminDropDown($pref."[$k]",$values[$k],$this->getClasses($k),array('onChange'=>'CustomSearch['.$prefId.'].updateOptions('.$id.')'));
 				$titles.="<th>".$v."</th>";
 				$inputs.="<td>".$dd->getInput()."</td>";
 			}
-			$output.="<table style='width: 100%'><tr>$titles</tr><tr>$inputs</tr></table>";
+			$output.="<table class='form-field-table'><tr>$titles</tr><tr>$inputs</tr></table>";
 			$titles="<th>Numeric</th><th>Widget Config</th>";
 			$inputs="<td><input type='checkbox' ".($values['numeric']?"checked='true'":"")." name='$pref"."[numeric]'/></td>";
 
@@ -138,7 +137,7 @@
 
 
 			$inputs.="<td><div id='$this->id"."-$prefId"."-$id"."-widget-config'>$widgetConfig</div></td>";
-			$output.="<table style='width: 100%'><tr>$titles</tr><tr>$inputs</tr></table>";
+			$output.="<table class='form-field-table'><tr>$titles</tr><tr>$inputs</tr></table>";
 			$output.="<a href='#' onClick=\"return CustomSearch['$prefId'].remove('$id');\">Remove Field</a>";
 			return $output;
 		}
@@ -148,9 +147,11 @@
 		}
 		function print_admin_scripts($params){
 			$jsRoot = $this->getRootURL().'js/';
+			$cssRoot = $this->getRootURL().'css/';
 			foreach(array('CustomSearch.js') as $file){
 				echo "<script src='$jsRoot/$file' ></script>";
 			}
+			echo "<link rel='stylesheet' href='$cssRoot/admin.css' >";
 		}
 
 		function getJoiners(){
