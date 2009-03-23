@@ -498,7 +498,7 @@ class RangeComparison extends Comparison{
 		if(strlen($max)>0) $where.=" AND $field <= $max";
 		return $where;
 	}
-	function describeSearch($field,$value){
+	function describeSearch($value){
 		list($min,$max) = explode("-",$value);
 		if(strlen($min)==0) return " less than $max";
 		if(strlen($max)==0) return " more than $min";
