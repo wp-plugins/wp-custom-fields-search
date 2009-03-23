@@ -347,7 +347,7 @@ class DropDownField extends Field {
 		}
 		$atts = '';
 		if($this->params['onChange']) $atts = ' onChange="'.htmlspecialchars($this->params['onChange']).'"';
-		return "<select name='$id'$atts>$options</select>".htmlspecialchars($v);
+		return "<select name='$id'$atts>$options</select>";
 	}
 	function getConfigForm($id,$values){
 		return "<label for='$id-dropdown-options'>Drop Down Options</label><input id='$id-dropdown-options' name='$id"."[dropdownoptions]' value='$values[dropdownoptions]'/>";
