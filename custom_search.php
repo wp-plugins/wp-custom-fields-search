@@ -231,7 +231,8 @@
 					"joiner"=>array(
 						"PostDataJoiner" => "Post Field",
 						"CustomFieldJoiner" => "Custom Field",
-						"CategoryJoiner" => "Category"
+						"CategoryJoiner" => "Category",
+						"TagJoiner" => "Tag",
 					),
 					"input"=>array(
 						"TextField" => "Text Input",

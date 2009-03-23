@@ -25,20 +25,41 @@
 
 $debugMode =false;
 
-class DB_WP_Widget {
+class ParameterisedObject {
+	var $params=array();
+	function ParameterisedObject($params=array()){
+		$this->__construct($params);
+	}
+	function __construct($params=array()){
+		$this->setParams($params);
+	}
+
+	function setParams($params){
+		$this->params=$params;
+	}
+
+	function param($key,$default=null){
+		if(!is_array($this->params)){
+			die("<h1>".get_class($this)."</h1>");
+		}
+		if(!array_key_exists($key,$this->params)) return $default;
+		return $this->params[$key];
+	}
+}
+class DB_WP_Widget extends ParameterisedObject {
 	function DB_WP_Widget($name,$params=array()){
 		DB_WP_Widget::__construct($name,$params);
 	}
 	function __construct($name,$params=array()){
+		parent::__construct($params);
 		$this->name = $name;
-		$this->setParams($params);
 		$this->id = strtolower(get_class($this));
 		$options = get_option($this->id);
 
 
 //		register_sidebar_widget($this->name,array(&$this,'renderWidget'));
-		$doesOwnConfig = $this->params['doesOwnConfig'];
-		$desc = $this->getParam('description',$this->name);
+		$doesOwnConfig = $this->param('doesOwnConfig',false);
+		$desc = $this->param('description',$this->name);
 		$widget_ops = array('classname' => $this->id, 'description' => __($desc));
 		$control_ops = array('width' => 400, 'height' => 350, 'id_base' => $this->id);
 		$name = $this->name;
@@ -59,15 +80,7 @@ class DB_WP_Widget {
 	}
 
 	function setParams($params){
-		$this->params = $this->overrideParams($params);
-	}
-
-	function getParam($key,$default=null){
-		if(array_key_exists($key,$this->params)){
-			return $this->params[$key];
-		} else {
-			return $default;
-		}
+		parent::setParams($this->overrideParams($params));
 	}
 
 	function getDefaults(){
@@ -182,7 +195,7 @@ class DB_Search_Widget extends DB_WP_Widget {
 	}
 
 	function getTitle(){
-		return $this->getParam('description',$this->name);
+		return $this->param('description',$this->name);
 	}
 
 	function renderWidget($params=array(),$p2 = array()){
@@ -268,18 +281,7 @@ class SearchFieldBase {
 	}
 }
 
-class Field {
-	function Field(){
-		$this->__construct();
-	}
-	function __construct(){
-	}
-
-	function param($key,$default=null){
-		if(array_key_exists($key,$this->params)) return $this->params[$key];
-		return $default;
-	}
-
+class Field extends ParameterisedObject {
 	function getValue($name){
 		return $_REQUEST[$this->getHTMLName($name)];
 	}
@@ -302,7 +304,7 @@ class DropDownField extends Field {
 		DropDownField::__construct($options,$params);
 	}
 	function __construct($options = null,$params = array()){
-		parent::__construct();
+		parent::__construct($params);
 		if($params['dropdownoptions']){
 			$options=array();
 			$optionPairs = explode(',',$params['dropdownoptions']);
@@ -313,7 +315,6 @@ class DropDownField extends Field {
 			}
 		}
 		$this->options = $options;
-		$this->params = $params;
 	}
 
 	function getOptions($joiner,$name){
@@ -351,8 +352,8 @@ class CustomFieldReader {
 }
 
 class DropDownFromValues extends DropDownField {
-	function DropDownFromValues(){
-		DropDownFromValues::__construct();
+	function DropDownFromValues($params=array()){
+		DropDownFromValues::__construct($params);
 	}
 
 	function __construct($params=array()){
@@ -369,6 +370,7 @@ class RadioButtonField extends Field {
 		RadioButtonField::__construct($options,$params);
 	}
 	function __construct($options=array(),$params=array()){
+		parent::__construct($params);
 		if($params['radiobuttonoptions']){
 			$options=array();
 			$optionPairs = explode(',',$params['radiobuttonoptions']);
@@ -379,7 +381,6 @@ class RadioButtonField extends Field {
 			}
 		}
 		$this->options = $options;
-		$this->params = $params;
 	}
 	function getOptions($joiner,$name){
 		if($this->param('fromDb',!$this->options)){
@@ -497,7 +498,14 @@ class RangeComparison extends Comparison{
 	}
 }
 
-class BaseJoiner {
+class BaseJoiner extends ParameterisedObject {
+	function BaseJoiner($name=null,$params=array()){
+		$this->__construct($name,$params);
+	}
+	function __construct($name=null,$params=array()){
+		parent::__construct($params);
+		$this->name=$name;
+	}
 	function process_where($where){
 		return $where;
 	}
@@ -545,22 +553,29 @@ class CustomFieldJoiner extends BaseJoiner{
 		return $options;
 	}
 }
-class CategoryJoiner {
+class CategoryJoiner extends BaseJoiner {
 	function sql_restrict($name,$index,$value,$comparison){
 		if(!($value || $this->params['required'])) return $join;
 		$table = 'meta'.$index;
-		return " AND ( ".$comparison->addSQLWhere("$table.name",$value).") ";
+		return " AND ( ".$comparison->addSQLWhere("$table.name",$value).")";
+	}
+	function getTaxonomy(){
+		return $this->param('taxonomy','category');
+	}
+	function getTaxonomyWhere($table){
+		return "`$table`.taxonomy='".$this->getTaxonomy()."'";
 	}
 	function sql_join($join,$name,$index,$value){
 		if(!($value || $this->params['required'])) return $join;
 		global $wpdb;
 		$table = 'meta'.$index;
 		$rel = 'rel'.$index;
-		return " JOIN $wpdb->term_relationships $rel ON $rel.object_id=$wpdb->posts.id JOIN  $wpdb->terms $table ON $table.term_id=$rel.term_taxonomy_id";
+		$tax = 'tax'.$index;
+		return " JOIN $wpdb->term_relationships $rel ON $rel.object_id=$wpdb->posts.id JOIN  $wpdb->terms $table ON $table.term_id=$rel.term_taxonomy_id JOIN $wpdb->term_taxonomy $tax ON $table.term_id=$tax.term_id AND ".$this->getTaxonomyWhere($tax);
 	}
 	function getAllOptions($fieldName){
 		global $wpdb;
-		$q = mysql_query($sql = "SELECT distinct t.name FROM $wpdb->terms t JOIN $wpdb->term_relationships r ON r.term_taxonomy_id = t.term_id JOIN $wpdb->posts p ON r.object_id=p.id JOIN $wpdb->term_taxonomy x ON t.term_id=x.term_id WHERE post_status='publish' AND x.taxonomy='category'");
+		$q = mysql_query($sql = "SELECT distinct t.name FROM $wpdb->terms t JOIN $wpdb->term_relationships r ON r.term_taxonomy_id = t.term_id JOIN $wpdb->posts p ON r.object_id=p.id JOIN $wpdb->term_taxonomy x ON t.term_id=x.term_id WHERE post_status='publish' AND ".$this->getTaxonomyWhere('x'));
 		$options = array();
 		while($r = mysql_fetch_row($q))
 			$options[$r[0]] = $r[0];
@@ -568,6 +583,11 @@ class CategoryJoiner {
 	}
 	function needsField(){
 		return false;
+	}
+}
+class TagJoiner extends CategoryJoiner {
+	function getTaxonomy(){
+		return $this->param('taxonomy','post_tag');
 	}
 }
 
