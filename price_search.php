@@ -78,6 +78,9 @@ class GreatRealEstateJoiner {
 		if($this->name) $fieldName=$this->name;
 		global $wpdb;
 		$q = mysql_query($sql = "SELECT DISTINCT $fieldName FROM $wpdb->gre_listings");
+		if($e = mysql_error()){
+			die("<h1>$sql</h1>".$e);
+		}
 		$options = array();
 		while($r = mysql_fetch_row($q))
 			$options[$r[0]] = $r[0];
@@ -97,6 +100,11 @@ add_action('plugins_loaded',array('DB_PriceSearch_Widget','init'));
 add_filter('dollar_price','nigerianise_price');
 function nigerianise_price($price){
 	return str_replace("$","&#x20A6;",$price);
+}
+add_filter('custom_search_get_classes','add_real_estate_search_fields');
+function add_real_estate_search_fields($classes){
+	$classes['joiner']['GreatRealEstateJoiner']='Great Real Estate';
+	return $classes;
 }
 
 ?>

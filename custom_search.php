@@ -24,22 +24,31 @@
 			new DB_CustomSearch_Widget();
 		}
 
-		function getInputs($params){
-			$id = $params['widget_id'];
-
-			$config = $this->getConfig($id);
-
-			unset($config['exists']);
-			$inputs = array();
-			foreach($config as $k=>$v){
-				$inputs[] =  new CustomSearchField($v['name'],
-						new $v['input']($v['name']),
-						new $v['comparison'](),
-						new $v['joiner']($v['name'])
-					);
-
+		function getInputs($params = false){
+			if(is_array($params)){
+				$id = $params['widget_id'];
+			} else {
+				$id = $params;
 			}
-			return $inputs;
+			
+			global $CustomSearchFieldInputs;
+			if(!$CustomSearchFieldInputs[$id]){
+			
+				$config = $this->getConfig($id);
+
+				unset($config['exists']);
+				$inputs = array();
+				foreach($config as $k=>$v){
+					$inputs[] =  new CustomSearchField($v['name'],
+							new $v['input']($v['name']),
+							new $v['comparison'](),
+							new $v['joiner']($v['name'])
+						);
+
+				}
+				$CustomSearchFieldInputs[$id]=$inputs;
+			}
+			return $CustomSearchFieldInputs[$id];
 		}
 
 		function form_processPost($post,$old){
@@ -134,6 +143,8 @@
 			return $CustomSearchFieldTypes[$type];
 		}
 	}
+	global $CustomSearchFieldInputs;
+	$CustomSearchFieldInputs = array();
 	global $CustomSearchFieldTypes;
 	$CustomSearchFieldTypes = array();
 

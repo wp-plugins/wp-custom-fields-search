@@ -164,7 +164,7 @@ class DB_Search_Widget extends DB_WP_Widget {
 		return $this->inputs;
 	}
 
-	function renderWidget($params=array()){
+	function renderWidget($params=array(),$p2 = array()){
 		echo "<form method='get' class='custom_search_widget custom_search_".$this->nameAsId()."'>";
 		echo "<div class='searchform-params'>";
 		foreach($this->getInputs($params) as $input){
@@ -174,13 +174,17 @@ class DB_Search_Widget extends DB_WP_Widget {
 		echo "<div class='searchform-controls'>";
 
 		echo "<input type='submit' name='search' value='Search'/>";
-		echo "<input type='hidden' name='search-class' value='".get_class($this).'-'.$this->id."'/>";
+		echo "<input type='hidden' name='search-class' value='".$this->getPostIdentifier()."'/>";
+		echo "<input type='hidden' name='widget_number' value='".$p2['number']."'/>";
 		echo "</div>";
 		echo "</form>";
 	}
 
 	function isPosted(){
-		return $_GET['search-class'] == get_class($this).'-'.$this->id;
+		return $_GET['search-class'] == $this->getPostIdentifier();
+	}
+	function getPostIdentifier(){
+		return get_class($this).'-'.$this->id;
 	}
 	function isHome($isHome){
 		return $isHome && !$this->isPosted();
@@ -192,7 +196,7 @@ class DB_Search_Widget extends DB_WP_Widget {
 
 	function join_meta($join){
 		if($this->isPosted()){
-			foreach($this->inputs as $input){
+			foreach($this->getInputs($_REQUEST['widget_number']) as $input){
 				$join = $input->join_meta($join);
 			}
 		}
@@ -200,7 +204,7 @@ class DB_Search_Widget extends DB_WP_Widget {
 	}
 	function sql_restrict($where){
 		if($this->isPosted()){
-			foreach($this->inputs as $input){
+			foreach($this->getInputs($_REQUEST['widget_number']) as $input){
 				$where = $input->sql_restrict($where);
 			}
 		}
