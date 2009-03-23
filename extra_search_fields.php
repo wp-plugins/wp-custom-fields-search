@@ -222,9 +222,18 @@ class DB_Search_Widget extends DB_WP_Widget {
 
 	function join_meta($join){
 		if($this->isPosted()){
+			$desc = array();
 			foreach($this->getInputs($_REQUEST['widget_number']) as $input){
 				$join = $input->join_meta($join);
+				$desc = $input->describeSearch($desc);
 			}
+			if($desc){
+				$desc = join(" and ",$desc);
+			} else {
+				$desc = "All Entries";
+			}
+			$GLOBALS['s'] = $desc;
+
 		}
 		return $join;
 	}
@@ -235,6 +244,9 @@ class DB_Search_Widget extends DB_WP_Widget {
 			}
 		}
 		return $where;
+	}
+
+	function toSearchString(){
 	}
 }
 
@@ -412,10 +424,16 @@ class Comparison {
 	function addSQLWhere($field,$value){
 		die("Unimplemented function ".__CLASS__.".".__FUNCTION__);
 	}
+	function describeSearch($value){
+		die("Unimplemented function ".__CLASS__.".".__FUNCTION__);
+	}
 }
 class EqualComparison extends Comparison {
 	function addSQLWhere($field,$value){
 		return "$field = '".mysql_escape_string($value)."'";
+	}
+	function describeSearch($value){
+		return " is \"$value\"";
 	}
 }
 class LikeComparison extends Comparison{
@@ -424,6 +442,9 @@ class LikeComparison extends Comparison{
 	}
 	function getLikeString($field,$value){
 		return "$field LIKE '%".mysql_escape_string($value)."%'";
+	}
+	function describeSearch($value){
+		return " contains \"$value\"";
 	}
 }
 
@@ -436,15 +457,24 @@ class WordsLikeComparison extends LikeComparison {
 		}
 		return "(".join(" AND ",$like).")";
 	}
+	function describeSearch($value){
+		return " contains \"".join('" and "',explode(" ",$value))."\"";
+	}
 }
 class LessThanComparison extends Comparison{
 	function addSQLWhere($field,$value){
 		return "$field < '".mysql_escape_string($value)."'";
 	}
+	function describeSearch($value){
+		return " less than \"$value\"";
+	}
 }
 class MoreThanComparison extends Comparison{
 	function addSQLWhere($field,$value){
 		return "$feld > '".mysql_escape_string($value)."%'";
+	}
+	function describeSearch($value){
+		return " more than \"$value\"";
 	}
 }
 class RangeComparison extends Comparison{
@@ -455,6 +485,12 @@ class RangeComparison extends Comparison{
 		if(strlen($min)>0) $where.=" AND $field >= $min";
 		if(strlen($max)>0) $where.=" AND $field <= $max";
 		return $where;
+	}
+	function describeSearch($field,$value){
+		list($min,$max) = explode("-",$value);
+		if(strlen($min)==0) return " less than $max";
+		if(strlen($max)==0) return " more than $min";
+		return " between $min and $max";
 	}
 }
 
@@ -614,14 +650,25 @@ class CustomSearchField extends SearchFieldBase {
 		$form = $this->stripInitialForm($form);
 		return $form.$this->getInput($this->name,$this->joiner);
 	}
+	function hasValue(){
+		return $this->getValue();
+	}
 	function sql_restrict($where){
-		if($value = $this->getValue()){
+		if($this->hasValue()){
+			$value = $this->getValue();
 			$value = $GLOBALS['wpdb']->escape($value);
 			$where.=$this->joiner->sql_restrict($this->name,$this->index,$value,$this->comparison);
 		}
 		if(method_exists($this->joiner,'process_where'))
 			$where = $this->joiner->process_where($where);
 		return $where;
+	}
+	function describeSearch($current){
+		if($this->hasValue()){
+			$current[] = $this->getLabel()." ".$this->comparison->describeSearch($this->getValue());
+		}
+		return $current;
+
 	}
 	function join_meta($join){
 		global $wpdb;
