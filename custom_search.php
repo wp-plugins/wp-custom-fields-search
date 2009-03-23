@@ -208,7 +208,10 @@
 		function print_admin_scripts($params){
 			$jsRoot = $this->getRootURL().'js/';
 			$cssRoot = $this->getRootURL().'css/';
-			foreach(array('Class.js','CustomSearch.js','flexbox/jquery.flexbox.js') as $file){
+			$scripts = array('Class.js','CustomSearch.js');
+			if(version_compare("2.7",$GLOBALS['wp_version'])>0) $scripts[]='jquery.dimensions.js';
+			$scripts[] = 'flexbox/jquery.flexbox.js';
+			foreach($scripts as $file){
 				echo "<script src='$jsRoot/$file' ></script>";
 			}
 			echo "<link rel='stylesheet' href='$cssRoot/admin.css' >";

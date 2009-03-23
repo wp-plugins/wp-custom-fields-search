@@ -10,7 +10,7 @@
 * $Rev: 0.9.2.2 $
 */
 (function($) {
-    $.flexbox = function(div, o) {
+    jQuery.flexbox = function(div, o) {
 
         // TODO: in straight type-ahead mode (showResults: false), if noMatchingResults, dropdown appears after new match
         // TODO: consider having options.mode (select, which replaces html select; combobox; suggest; others?)
@@ -54,23 +54,24 @@
         delim = '\u25CA',       // use an obscure unicode character (lozenge) as the cache key delimiter
         scrolling = false,
         pageSize = o.paging.pageSize,
-        $div = $(div).css('position', 'relative').css('z-index', 0);  
+        $div = jQuery(div).css('position', 'relative');
+	$div.css('z-index', 0);  
 
         // The hiddenField MUST be appended to the div before the input, or IE7 does not shift the dropdown below the input field (it overlaps)
 	var name = (o.name=='asID') ? $div.attr('id') : o.name;
-        var $hdn = $(document.createElement('input'))
+        var $hdn = jQuery(document.createElement('input'))
             .attr('type', 'hidden')
             .attr('id', $div.attr('id') + '_hidden')
             .attr('name', name)
             .val(o.initialValue)
             .appendTo($div);
 
-        var $input = $(document.createElement('input'))
+        var $input = jQuery(document.createElement('input'))
             .attr('id', $div.attr('id') + '_input')
             .attr('autocomplete', 'off') 
             .addClass(o.inputClass)
-            .css('width', o.width + 'px')
-            .appendTo($div)
+            .css('width', o.width + 'px');
+	$input.appendTo($div)
             .click(function(e) {
                 if (o.watermark !== '' && this.value === o.watermark)
                     this.value = '';
@@ -78,7 +79,7 @@
                     this.select();
             })
             .focus(function(e) {
-                $(this).removeClass('watermark');
+                jQuery(this).removeClass('watermark');
             })
             .blur(function(e) {
                 setTimeout(function() { if (!$input.attr('active')) hideResults(); }, 200);
@@ -90,7 +91,7 @@
         else
             $input.val(o.watermark).addClass('watermark');
 
-        if ($.browser.msie)
+        if (jQuery.browser.msie)
             $input.keydown(processKey);
 
         var arrowWidth = 0;
@@ -110,20 +111,20 @@
                     timeout = setTimeout(function() { flexbox(1, true, o.arrowQuery); }, o.queryDelay);
                 }
             };
-            var $arrow = $(document.createElement('span'))
+            var $arrow = jQuery(document.createElement('span'))
                 .attr('id', $div.attr('id') + '_arrow')
                 .addClass(o.arrowClass)
                 .addClass('out')
                 .hover(function() {
-                    $(this).removeClass('out').addClass('over');
+                    jQuery(this).removeClass('out').addClass('over');
                 }, function() {
-                    $(this).removeClass('over').addClass('out');
+                    jQuery(this).removeClass('over').addClass('out');
                 })
                 .mousedown(function() {
-                    $(this).removeClass('over').addClass('active');
+                    jQuery(this).removeClass('over').addClass('active');
                 })
                 .mouseup(function() {
-                    $(this).removeClass('active').addClass('over');
+                    jQuery(this).removeClass('active').addClass('over');
                 })
                 .click(arrowClick)
                 .appendTo($div);
@@ -132,17 +133,23 @@
         }
         if (!o.allowInput) $input.click(arrowClick); // simulate <select> behavior
 
-        var left = ($.browser.msie && $.browser.version.substr(0, 1) === '6')
+        var left = (jQuery.browser.msie && jQuery.browser.version.substr(0, 1) === '6')
             ? -($input.outerWidth() + arrowWidth)
             : 0;
-        var $ctr = $(document.createElement('div'))
-            .attr('id', $div.attr('id') + '_ctr')
-            .css('width', ($input.outerWidth() + arrowWidth - 2) + 'px') // TODO: The -2 here might be because of the border... try to fix
-            .css('top', $input.outerHeight())
-            .css('left', left)
-            .addClass(o.containerClass)
-            .appendTo($div)
-            .hide();
+/*	ctr = jQuery(document.createElement('div'));
+	ctr.attr('id','testing');
+	ctr.css('width',1000);
+	ctr.addClass('css_class');
+	ctr.appendTo($div);
+	ctr.hide();*/
+        var $ctr = jQuery(document.createElement('div'))
+            .attr('id', $div.attr('id') + '_ctr');
+        $ctr.css('width', ($input.outerWidth() + arrowWidth - 2) + 'px'); // TODO: The -2 here might be because of the border... try to fix
+        $ctr.css('top', $input.outerHeight());
+	$ctr.css('left', left);
+        $ctr.addClass(o.containerClass);
+        $ctr.appendTo($div);
+        $ctr.hide();
 
 		$ctr.oldShow = $ctr.show;
 		$ctr.show = function(){
@@ -151,14 +158,14 @@
             	    $ctr.css('left', left)
 		    $ctr.oldShow();
 		};
-        var $content = $(document.createElement('div'))
+        var $content = jQuery(document.createElement('div'))
             .addClass(o.contentClass)
             .appendTo($ctr)
             .scroll(function() {
                 scrolling = true;
             });
 
-        var $paging = $(document.createElement('div')).appendTo($ctr);
+        var $paging = jQuery(document.createElement('div')).appendTo($ctr);
 
         function processKey(e) {
             // handle modifiers
@@ -207,10 +214,10 @@
                         hideResults();
                         break;
                     case 39: // right arrow
-                        $('#' + $div.attr('id') + 'n').click();
+                        jQuery('#' + $div.attr('id') + 'n').click();
                         break;
                     case 37: // left arrow
-                        $('#' + $div.attr('id') + 'p').click();
+                        jQuery('#' + $div.attr('id') + 'p').click();
                         break;
                     default:
                         if (!o.allowInput) { return; }
@@ -227,7 +234,7 @@
         }
 
         function flexbox(p, arrowOrPagingClicked, prevQuery) {
-            var q = prevQuery && prevQuery.length > 0 ? prevQuery : $.trim($input.val());
+            var q = prevQuery && prevQuery.length > 0 ? prevQuery : jQuery.trim($input.val());
 
             if (q.length >= o.minChars || arrowOrPagingClicked) {
                 $content.html('').attr('scrollTop', 0);
@@ -241,7 +248,7 @@
 
                     var params = { q: q, p: p, s: pageSize, contentType: 'application/json; charset=utf-8' };
                     var callback = function(data, overrideQuery) {
-                        if (overrideQuery === true) q = overrideQuery; // must compare to boolean because by default, the string value "success" is passed when the jQuery $.getJSON method's callback is called
+                        if (overrideQuery === true) q = overrideQuery; // must compare to boolean because by default, the string value "success" is passed when the jQuery jQuery.getJSON method's callback is called
                         var totalResults = parseInt(data[o.totalProperty]);
 
                         // Handle client-side paging, if any paging configuration options were specified
@@ -267,8 +274,8 @@
                         showPaging(p, totalResults);
                     };
                     if (typeof (o.source) === 'object') callback(o.source, '');
-                    else if (o.method.toUpperCase() == 'POST') $.post(o.source, params, callback, "json");
-                    else $.getJSON(o.source, params, callback);
+                    else if (o.method.toUpperCase() == 'POST') jQuery.post(o.source, params, callback, "json");
+                    else jQuery.getJSON(o.source, params, callback);
                 }
             } else
                 hideResults();
@@ -303,10 +310,10 @@
                         // TODO: make this alert a function call, and a customizable parameter
                         break;
                     case 39: // right arrow
-                        $('#' + $div.attr('id') + 'n').click();
+                        jQuery('#' + $div.attr('id') + 'n').click();
                         break;
                     case 37: // left arrow
-                        $('#' + $div.attr('id') + 'p').click();
+                        jQuery('#' + $div.attr('id') + 'p').click();
                         break;
                 }
             }
@@ -314,7 +321,7 @@
 
         function handlePagingClick(e) {
             $input.attr('active', true);
-            flexbox(parseInt($(this).attr('page')), true, $input.attr('pq')); // pq == previous query
+            flexbox(parseInt(jQuery(this).attr('page')), true, $input.attr('pq')); // pq == previous query
             return false;
         }
 
@@ -329,11 +336,11 @@
             $paging.addClass(o.paging.cssClass);
 
             // set up our base page link element
-            var $link = $(document.createElement('a'))
+            var $link = jQuery(document.createElement('a'))
                 .attr('href', '#')
                 .addClass('page')
                 .click(handlePagingClick),
-            $span = $(document.createElement('span')).addClass('page'),
+            $span = jQuery(document.createElement('span')).addClass('page'),
             divId = $div.attr('id');
 
             // show first page
@@ -389,7 +396,7 @@
                 }
             }
             else if (o.paging.style === 'input') {
-                var $pagingBox = $(document.createElement('input'))
+                var $pagingBox = jQuery(document.createElement('input'))
                     .addClass('box')
                     .click(function(e) {
                         $input.attr('active', true);
@@ -426,7 +433,7 @@
                     "pages": totalPages
                 };
                 var html = o.paging.summaryTemplate.applyTemplate(summaryData);
-                $(document.createElement('span'))
+                jQuery(document.createElement('span'))
                     .addClass(o.paging.summaryClass)
                     .html(html)
                     .appendTo($paging);
@@ -510,7 +517,7 @@
 
                 if (!o.showResults) return;
 
-                $row = $(document.createElement('div'))
+                $row = jQuery(document.createElement('div'))
                     .attr('id', data[o.displayValue])
                     .attr('val', data[o.hiddenValue])
                     .addClass('row')
@@ -541,7 +548,7 @@
 				.children('div')
 				.mouseover(function() {
 				    $content.children('div').removeClass(o.selectClass);
-				    $(this).addClass(o.selectClass);
+				    jQuery(this).addClass(o.selectClass);
 				})
 				.click(function(e) {
 				    e.preventDefault();
@@ -641,7 +648,7 @@
                 var scrollPos = $content.attr('scrollTop'),
                 curr = $curr[0],
                 parentBottom, bottom, height;
-                if ($.browser.mozilla && parseInt($.browser.version) <= 2) {
+                if (jQuery.browser.mozilla && parseInt(jQuery.browser.version) <= 2) {
                     parentBottom = document.getBoxObjectFor($content[0]).y + $content.attr('offsetHeight');
                     bottom = document.getBoxObjectFor(curr).y + $curr.attr('offsetHeight');
                     height = document.getBoxObjectFor(curr).height;
@@ -671,7 +678,7 @@
                 curr = $curr[0],
                 parent = $curr.parent()[0],
                 parentTop, top, height;
-                if ($.browser.mozilla && parseInt($.browser.version) <= 2) {
+                if (jQuery.browser.mozilla && parseInt(jQuery.browser.version) <= 2) {
                     height = document.getBoxObjectFor(curr).height;
                     parentTop = document.getBoxObjectFor($content[0]).y - (height * 2); // TODO: this is not working when i add another control...
                     top = document.getBoxObjectFor(curr).y - document.getBoxObjectFor($content[0]).y;
@@ -690,13 +697,13 @@
         }
     };
 
-    $.fn.flexbox = function(source, options) {
+    jQuery.fn.flexbox = function(source, options) {
         if (!source)
             return;
 
         try {
-            var defaults = $.fn.flexbox.defaults;
-            var o = $.extend({}, defaults, options);
+            var defaults = jQuery.fn.flexbox.defaults;
+            var o = jQuery.extend({}, defaults, options);
 
             for (var prop in o) {
                 if (defaults[prop] === undefined) throw ('Invalid option specified: ' + prop + '\nPlease check your spelling and try again.');
@@ -704,7 +711,7 @@
             o.source = source;
 
             if (options) {
-                o.paging = (options.paging || options.paging == null) ? $.extend({}, defaults.paging, options.paging) : false;
+                o.paging = (options.paging || options.paging == null) ? jQuery.extend({}, defaults.paging, options.paging) : false;
 
                 for (var prop in o.paging) {
                     if (defaults.paging[prop] === undefined) throw ('Invalid option specified: ' + prop + '\nPlease check your spelling and try again.');
@@ -716,7 +723,7 @@
             }
 
             this.each(function() {
-                new $.flexbox(this, o);
+                new jQuery.flexbox(this, o);
             });
 
             return this;
@@ -726,7 +733,7 @@
     };
 
     // plugin defaults - added as a property on our plugin function so they can be set independently
-    $.fn.flexbox.defaults = {
+    jQuery.fn.flexbox.defaults = {
         method: 'GET', // One of 'GET' or 'POST'
         queryDelay: 100, // num of milliseconds before query is run.
         allowInput: true, // set to false to disallow the user from typing in queries
@@ -768,8 +775,8 @@
 	name: 'asID'
     };
 
-    $.fn.setValue = function(val) {
+    jQuery.fn.setValue = function(val) {
         var id = '#' + this.attr('id');
-        $(id + '_hidden,' + id + '_input').val(val).removeClass('watermark');
+        jQuery(id + '_hidden,' + id + '_input').val(val).removeClass('watermark');
     };
 })(jQuery);
