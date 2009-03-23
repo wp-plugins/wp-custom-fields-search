@@ -32,14 +32,15 @@ class GreatRealEstateJoiner extends BaseJoiner {
 	}
 	function sql_restrict($name,$index,$value,$comparison){
 		if($this->name) $name=$this->name;
-		$table = 'meta'.$index;
+		global $wpdb;
+		$table = $wpdb->gre_listings;
 		return " AND ( ".$comparison->addSQLWhere("$table.$name",$value).") ";
 	}
-	function sql_join($name,$index,$value){
-		if($this->name) $name=$this->name;
+	function sql_join($join){
 		global $wpdb;
-		$table = 'meta'.$index;
-		return " JOIN $wpdb->gre_listings $table ON $table.pageid=$wpdb->posts.id";
+		$table = $wpdb->gre_listings;
+		if(!strpos($join,$wpdb->gre_listings)) $join.=" JOIN $wpdb->gre_listings ON $wpdb->gre_listings.pageid=$wpdb->posts.id";
+		return $join;
 	}
 	function getAllOptions($fieldName){
 		if($this->name) $fieldName=$this->name;
@@ -58,11 +59,6 @@ class GreatRealEstateJoiner extends BaseJoiner {
 		$cleared = preg_replace("/AND $wpdb->posts.post_type = '(post|page)'/","",$where);
 		$cleared = preg_replace("/$wpdb->posts.ID = '\d+'/","1",$cleared);
 		return $cleared;
-	}
-	function process_join($join){
-		global $wpdb;
-		if(!strpos($join,$wpdb->gre_listings)) $join.=" JOIN $wpdb->gre_listings ON $wpdb->gre_listings.pageid=$wpdb->posts.id";
-		return $join;
 	}
 	function getSuggestedFields(){
 		return array('listPrice'=>'List Price','city','county');

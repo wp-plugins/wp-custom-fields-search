@@ -482,9 +482,10 @@ class CustomFieldJoiner extends BaseJoiner{
 
 	}
 	function sql_join($name,$index,$value){
+		if(!$value && !$this->params['required']) return $join;
 		global $wpdb;
 		$table = 'meta'.$index;
-		return " JOIN $wpdb->postmeta $table ON $table.post_id=$wpdb->posts.id";
+		return "$join JOIN $wpdb->postmeta $table ON $table.post_id=$wpdb->posts.id";
 	}
 	function getAllOptions($fieldName){
 		global $wpdb;
@@ -508,7 +509,8 @@ class CategoryJoiner {
 		$table = 'meta'.$index;
 		return " AND ( ".$comparison->addSQLWhere("$table.name",$value).") ";
 	}
-	function sql_join($name,$index,$value){
+	function sql_join($join,$name,$index,$value){
+		if(!$value && !$this->params['required']) return $join;
 		global $wpdb;
 		$table = 'meta'.$index;
 		$rel = 'rel'.$index;
@@ -543,8 +545,8 @@ class PostDataJoiner extends BaseJoiner {
 			return " AND ( ".$comparison->addSQLWhere("$table.$name",$value).") ";
 		}
 	}
-	function sql_join($name,$index,$value){
-		return "";
+	function sql_join($join,$name,$index,$value){
+		return $join;
 	}
 	function getAllOptions($fieldName){
 		global $wpdb;
@@ -621,11 +623,7 @@ class CustomSearchField extends SearchFieldBase {
 	}
 	function join_meta($join){
 		global $wpdb;
-		if($value = $this->getValue()){
-			$join.=$this->joiner->sql_join($this->name,$this->index,$value,$this->comparison);
-		}
-		if(method_exists($this->joiner,'process_join'))
-			$join = $this->joiner->process_join($join);
+		$join=$this->joiner->sql_join($join,$this->name,$this->index,$value,$this->comparison);
 		return $join;
 	}
 
