@@ -147,10 +147,10 @@
 			$inputs="<td><input type='text' name='$pref"."[label]' value='$values[label]' class='form-field-title'/></td>";
 			$output.="<table class='form-field-table'><tr>$titles</tr><tr>$inputs</tr></table>";
 			$inputs='';$titles='';
-			$titles="<th>DB Field</th>";
+			$titles="<th>Data Field</th>";
 			$inputs="<td><div id='form-field-dbname-$prefId-$id' class='form-field-title-div'><input type='text' name='$pref"."[name]' value='$values[name]' class='form-field-title'/></div></td>";
 			$count=1;
-			foreach(array('joiner'=>'Table','comparison'=>'Compare','input'=>'Widget') as $k=>$v){
+			foreach(array('joiner'=>'Data Type','comparison'=>'Compare','input'=>'Widget') as $k=>$v){
 				$dd = new AdminDropDown($pref."[$k]",$values[$k],$this->getClasses($k),array('onChange'=>'CustomSearch.get('.$prefId.').updateOptions('.$id.',"'.$k.'")'));
 				$titles="<th>".$v."</th>".$titles;
 				$inputs="<td>".$dd->getInput()."</td>".$inputs;
@@ -214,9 +214,9 @@
 					"input"=>array(
 						"TextField" => "Text Input",
 						"DropDownField" => "Drop Down",
-						"DropDownFromValues" => "Drop Down (DB Values)",
+						"DropDownFromValues" => "Drop Down (Auto Values)",
 						"RadioButtonField" => "Radio Button",
-						"RadioButtonFromValues" => "Radio Button (DB Values)",
+						"RadioButtonFromValues" => "Radio Button (Auto Values)",
 					),
 					"comparison"=>array(
 						"EqualComparison" => "Equals",
