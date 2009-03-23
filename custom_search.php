@@ -40,6 +40,28 @@
 		function init(){
 			global $CustomSearchFieldStatic;
 			$CustomSearchFieldStatic['Object'] = new DB_CustomSearch_Widget();
+			$CustomSearchFieldStatic['Object']->ensureUpToDate();
+		}
+
+		function currentVersion(){
+			return 0.3;
+		}
+
+		function ensureUpToDate(){
+			$version = $this->getConfig('version');
+			$latest = $this->currentVersion();
+			if($version<$latest) $this->upgrade($version,$latest);
+		}
+
+		function upgrade($current,$target){
+			$options = $this->getConfig();
+			if($current<0.3){
+				$config = $this->getDefaultConfig();
+				$config['name'] = 'Default Preset';
+				$options['preset-default'] = $config;
+			}
+			$options['version']=$target;
+			update_option($this->id,$options);
 		}
 
 		function getInputs($params = false,$visitedPresets=array()){
@@ -175,7 +197,7 @@
 		}
 
 		function getNonInputFields(){
-			return array('exists','name','preset');
+			return array('exists','name','preset','version');
 		}
 		function singleFieldHTML($pref,$id,$values){
 			$prefId = preg_replace('/^.*\[([^]]*)\]$/','\\1',$pref);
