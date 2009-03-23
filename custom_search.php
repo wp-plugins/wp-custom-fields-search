@@ -1,4 +1,4 @@
-<?
+<?php
 /*
  * Copyright 2009 Don Benjamin
  * Licensed under the Apache License, Version 2.0 (the "License"); 
@@ -78,11 +78,11 @@
 			$this->form_existsInput($pref);
 			$rand = rand();
 ?>
-	<div id='config-template-<?=$prefId?>' style='display: none;'>
-		<?= $this->singleFieldHTML($pref,'###TEMPLATE_ID###',null);?>
+	<div id='config-template-<?php=$prefId?>' style='display: none;'>
+		<?php= $this->singleFieldHTML($pref,'###TEMPLATE_ID###',null);?>
 	</div>
 
-<?
+<?php
 			foreach($this->getClasses('input') as $class=>$desc) {
 				if(class_exists($class))
 					$form = new $class();
@@ -90,17 +90,17 @@
 				if(method_exists($form,'getConfigForm')){
 					if($form = $form->getConfigForm($pref.'[###TEMPLATE_ID###]',array('name'=>'###TEMPLATE_NAME###'))){
 ?>
-	<div id='config-input-templates-<?=$class?>-<?=$prefId?>' style='display: none;'>
-		<?=$form?>
+	<div id='config-input-templates-<?php=$class?>-<?php=$prefId?>' style='display: none;'>
+		<?php=$form?>
 	</div>
 		
-<?					}
+<?php					}
 				}
 			}
  ?>
-	<div id='config-form-<?=$prefId?>'>
-		<label for='<?=$prefId?>[name]'>Search Title</label><input type='text' class='form-title-input' id='<?=$prefId?>[name]' name='<?=$pref?>[name]' value='<?=$values['name']?>'/>
-<?
+	<div id='config-form-<?php=$prefId?>'>
+		<label for='<?php=$prefId?>[name]'>Search Title</label><input type='text' class='form-title-input' id='<?php=$prefId?>[name]' name='<?php=$pref?>[name]' value='<?php=$values['name']?>'/>
+<?php
 			$defaults=array();
 			if(!$values) $values = array(1=>$defaults);
 			$nonFields = $this->getNonInputFields();
@@ -111,10 +111,10 @@
 ?>
 	</div>
 
-	<br/><a href='#' onClick="return CustomSearch.get('<?=$prefId?>').add();">Add Field</a>
+	<br/><a href='#' onClick="return CustomSearch.get('<?php=$prefId?>').add();">Add Field</a>
 	<script type='text/javascript'>
-		CustomSearch.create('<?=$prefId?>');
-<?
+		CustomSearch.create('<?php=$prefId?>');
+<?php
 	foreach($this->getClasses('joiner') as $joinerClass=>$desc){
 		if(method_exists($joinerClass,'getSuggestedFields')){
 			$options = eval("return $joinerClass::getSuggestedFields();");
@@ -132,7 +132,7 @@
 	}
 ?>
 	</script>
-<?
+<?php
 		}
 
 		function getNonInputFields(){

@@ -1,4 +1,4 @@
-<?
+<?php
 /*
  * Copyright 2009 Don Benjamin
  * Licensed under the Apache License, Version 2.0 (the "License"); 
