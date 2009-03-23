@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 /*
-* Plugin Name: Custom Field Search
-* Plugin URI: http://www.don-benjamin.co.uk/wordpress-plugins/custom-search
+* Plugin Name: WP Custom Search
+* Plugin URI: http://www.don-benjamin.co.uk/wordpress-plugins/wp-custom-search
 * Description: Allows user to build custom search form.  Allows the site admin to configure multiple html inputs for different fields including custom fields.  Also provides an extensible mechanism for integrating with other plugins data structures.
 * Version: 0.1
 * Author: Don Benjamin
