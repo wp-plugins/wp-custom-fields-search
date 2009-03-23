@@ -23,7 +23,7 @@
  * Author URI: http://don-benjamin.co.uk
  * */
 
-$debugMode = true;
+$debugMode =false;
 
 class DB_WP_Widget {
 	function DB_WP_Widget($name,$params=array()){
