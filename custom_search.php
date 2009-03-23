@@ -31,7 +31,7 @@
 			DB_CustomSearch_Widget::__construct($params);
 		}
 		function __construct($params=array()){
-			parent::__construct('Configurable',$params);
+			parent::__construct('Custom Fields ',$params);
 			add_action('admin_print_scripts', array(&$this,'print_admin_scripts'), 90);
 		}
 		function init(){
