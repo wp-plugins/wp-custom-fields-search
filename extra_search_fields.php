@@ -435,20 +435,32 @@ class CategorySearch {
 }
 
 class CustomSearchField extends SearchFieldBase {
-	function CustomSearchField($name,$input=false,$comparison=false,$joiner=false){
-		CustomSearchField::__construct($name,$input,$comparison,$joiner);
+	function CustomSearchField($nameOrParams,$input=false,$comparison=false,$joiner=false){
+		CustomSearchField::__construct($nameOrParams,$input,$comparison,$joiner);
 	}
-	function __construct($name,$input=false,$comparison=false,$joiner=false){
+	function __construct($nameOrParams,$input=false,$comparison=false,$joiner=false){
 		parent::__construct();
-		$this->name = $name;
-		
-		if(!$input) $input = new TextField();
-		$this->input = $input;
-		if($comparison===false) $comparison = new LikeComparison();
-		$this->comparison = $comparison;
-		if($joiner===false) $joiner = new CustomFieldJoiner;
-		$this->joiner = $joiner;
+		if(!is_array($nameOrParams)){
+			$params = array('name'=>$nameOrParams);
+		} else {
+			$params = $nameOrParams;
+		}
+		$this->name = $params['name'];
+		$this->params = $params;
 
+		$input = $this->param('input','TextField');
+		$comparison = $this->param('comparison','LikeComparison');
+		$joiner = $this->param('joiner','CustomFieldJoiner');
+
+		if(!$input) $input = new TextField();
+		$this->input = new $input(array(),$params);
+		$this->comparison = new $comparison();
+		$this->joiner = new $joiner($this->param('name'));
+
+	}
+	function param($key,$default=null){
+		if(array_key_exists($key,$this->params)) return $this->params[$key];
+		return $default;
 	}
 
 	function stripInitialForm($form){
@@ -481,7 +493,8 @@ class CustomSearchField extends SearchFieldBase {
 		return $this->input->getValue($this->name);
 	}
 	function getLabel(){
-		return ucwords($this->name);
+		if(!$this->params['label']) $this->params['label'] = ucwords($this->name);
+		return $this->params['label'];
 	}
 
 	function getInput(){

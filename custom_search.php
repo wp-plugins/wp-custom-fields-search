@@ -42,11 +42,7 @@
 				foreach($config as $k=>$v){
 					if(in_array($k,$nonFields)) continue;
 					if(!(class_exists($v['input']) && class_exists($v['comparison']) && class_exists($v['joiner']))) continue;
-					$inputs[] =  new CustomSearchField($v['name'],
-							new $v['input'](array(),$v),
-							new $v['comparison'](),
-							new $v['joiner']($v['name'])
-						);
+					$inputs[] =  new CustomSearchField($v);
 
 				}
 				$CustomSearchFieldInputs[$id]=$inputs;
@@ -116,8 +112,9 @@
 			$pref = $pref."[$id]";
 			$htmlId = $pref."[exists]";
 			$output = "<input type='hidden' name='$htmlId' value='1'/>";
-			$titles="<th>Field</th>";
+			$titles="<th>DB Field</th><th>Label</th>";
 			$inputs="<td><input type='text' name='$pref"."[name]' value='$values[name]' class='form-field-title'/></td>";
+			$inputs.="<td><input type='text' name='$pref"."[label]' value='$values[label]' class='form-field-title'/></td>";
 			$output.="<table class='form-field-table'><tr>$titles</tr><tr>$inputs</tr></table>";
 			$inputs='';$titles='';
 			foreach(array('joiner'=>'Table','comparison'=>'Compare','input'=>'Widget') as $k=>$v){
