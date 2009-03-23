@@ -111,7 +111,7 @@
 ?>
 	</div>
 
-	<br/><a href='#' onClick="return CustomSearch['<?=$prefId?>'].add();">Add Field</a>
+	<br/><a href='#' onClick="return CustomSearch.get('<?=$prefId?>').add();">Add Field</a>
 	<script type='text/javascript'>
 		CustomSearch.create('<?=$prefId?>');
 <?
@@ -125,9 +125,9 @@
 				$options[$i] = json_encode(array('id'=>$k,'name'=>$v));
 			}
 			$str = '['.join(',',$options).']';
-			echo "CustomSearch['$prefId'].setOptionsFor('$joinerClass',".$str.");\n";
+			echo "CustomSearch.setOptionsFor('$joinerClass',".$str.");\n";
 		}elseif(eval("return $joinerClass::needsField();")){
-			echo "CustomSearch['$prefId'].setOptionsFor('$joinerClass',[]);\n";
+			echo "CustomSearch.setOptionsFor('$joinerClass',[]);\n";
 		}
 	}
 ?>
@@ -151,7 +151,7 @@
 			$inputs="<td><div id='form-field-dbname-$prefId-$id' class='form-field-title-div'><input type='text' name='$pref"."[name]' value='$values[name]' class='form-field-title'/></div></td>";
 			$count=1;
 			foreach(array('joiner'=>'Table','comparison'=>'Compare','input'=>'Widget') as $k=>$v){
-				$dd = new AdminDropDown($pref."[$k]",$values[$k],$this->getClasses($k),array('onChange'=>'CustomSearch['.$prefId.'].updateOptions('.$id.',"'.$k.'")'));
+				$dd = new AdminDropDown($pref."[$k]",$values[$k],$this->getClasses($k),array('onChange'=>'CustomSearch.get('.$prefId.').updateOptions('.$id.',"'.$k.'")'));
 				$titles="<th>".$v."</th>".$titles;
 				$inputs="<td>".$dd->getInput()."</td>".$inputs;
 				if(++$count==2){
@@ -176,7 +176,7 @@
 
 			$inputs.="<td><div id='$this->id"."-$prefId"."-$id"."-widget-config'>$widgetConfig</div></td>";
 			$output.="<table class='form-field-table'><tr>$titles</tr><tr>$inputs</tr></table>";
-			$output.="<a href='#' onClick=\"return CustomSearch['$prefId'].remove('$id');\">Remove Field</a>";
+			$output.="<a href='#' onClick=\"return CustomSearch.get('$prefId').remove('$id');\">Remove Field</a>";
 			return "<div class='field-wrapper'>$output</div>";
 		}
 

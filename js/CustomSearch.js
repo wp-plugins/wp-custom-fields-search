@@ -92,14 +92,18 @@ CustomSearch = Class.create( {
 		jQuery('#form-field-dbname-'+this.id+'-'+id).find("*").each(function(){jQuery(this).remove()})
 		jQuery('#form-field-dbname-'+this.id+'-'+id).flexbox(this.flexboxData[id],{width:100,name:'db_customsearch_widget['+this.id+']['+id+'][name]',maxCacheBytes:0,paging:false,initialValue:initVal})
 		this.updateOptions(id,'joiner');
-       },
-	setOptionsFor: function(joiner,options){
-		this.namesFor[joiner] = options;
-	}
+       }
 });
 if(!CustomSearch.sharedOptions) CustomSearch.sharedOptions={};
+CustomSearch.setOptionsFor = function(joiner,options){
+	CustomSearch.sharedOptions[joiner] = options;
+};
 CustomSearch.create = function(id){
 	CustomSearch[id] = new CustomSearch(id);
+};
+CustomSearch.get = function(id){
+	if(!CustomSearch[id]) CustomSearch.create(id);
+	return CustomSearch[id];
 };
 
 var testing=false;
