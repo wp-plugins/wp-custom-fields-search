@@ -41,24 +41,29 @@
 			new DB_CustomSearch_Widget();
 		}
 
-		function getInputs($params = false){
+		function getInputs($params = false,$visitedPresets=array()){
 			if(is_array($params)){
 				$id = $params['widget_id'];
 			} else {
 				$id = $params;
 			}
+			if($visitedPresets[$id]) return array();
+			$visitedPresets[$id]=true;
 			
 			global $CustomSearchFieldInputs;
 			if(!$CustomSearchFieldInputs[$id]){
 			
 				$config = $this->getConfig($id);
-
 				$inputs = array();
+				if($config['preset']) $inputs = $this->getInputs($config['preset'],$visitedPresets);
 				$nonFields = $this->getNonInputFields();
 				if($config)
 				foreach($config as $k=>$v){
 					if(in_array($k,$nonFields)) continue;
-					if(!(class_exists($v['input']) && class_exists($v['comparison']) && class_exists($v['joiner']))) continue;
+					if(!(class_exists($v['input']) && class_exists($v['comparison']) && class_exists($v['joiner']))) {
+						echo "<h1>".class_exists($v['input'])." - ".class_exists($v['comparison'])." - ".class_exists($v['joiner'])."</h1>";
+						continue;
+					}
 					$inputs[] =  new CustomSearchField($v);
 
 				}
@@ -88,7 +93,7 @@
 				2=>array(
 					'label'=>'Category',
 					'input'=>'DropDownField',
-					'comparison'=>'EqualsComparison',
+					'comparison'=>'EqualComparison',
 					'joiner'=>'CategoryJoiner'
 				),
 			);
@@ -127,9 +132,14 @@
 <?php
 			if(!$values) $values = $defaults;
 			$maxId=0;
+			$presets = $this->getPresets();
+			array_unshift($presets,'NONE');
 ?>
-		<label for='<?php echo $prefId?>[name]'>Search Title</label><input type='text' class='form-title-input' id='<?php echo $prefId?>[name]' name='<?php echo $pref?>[name]' value='<?php echo $values['name']?>'/>
+		<div class='searchform-name-wrapper'><label for='<?php echo $prefId?>[name]'>Search Title</label><input type='text' class='form-title-input' id='<?php echo $prefId?>[name]' name='<?php echo $pref?>[name]' value='<?php echo $values['name']?>'/></div>
+		<div class='searchform-preset-wrapper'><label for='<?php echo $prefId?>[preset]'>Use Preset</label>
 <?php
+			$dd = new AdminDropDown($pref."[preset]",$values['preset'],$presets);
+			echo $dd->getInput()."</div>";
 			$nonFields = $this->getNonInputFields();
 			foreach($values as $id => $val){
 				$maxId = max($id,$maxId);
@@ -164,7 +174,7 @@
 		}
 
 		function getNonInputFields(){
-			return array('exists','name');
+			return array('exists','name','preset');
 		}
 		function singleFieldHTML($pref,$id,$values){
 			$prefId = preg_replace('/^.*\[([^]]*)\]$/','\\1',$pref);
@@ -264,14 +274,19 @@
 		function plugin_menu(){
 			add_options_page('Form Presets','Custom Fields Search',8,__FILE__,array(&$this,'presets_form'));
 		}
-		function presets_form(){
-			echo "<h1>Search Presets Config</h1>";
+		function getPresets(){
 			$presets = array();
-			foreach(array_keys($this->getConfig()) as $key){
+			foreach(array_keys($config = $this->getConfig()) as $key){
 				if(strpos($key,'preset-')===0) {
 					$presets[$key] = $key;
+					if($name = $config[$key]['name'])
+						$presets[$key]=$name;
 				}
 			}
+			return $presets;
+		}
+		function presets_form(){
+			$presets=$this->getPresets();
 			if(!$preset = $_REQUEST['selected-preset']){
 				$preset = 'preset-default';
 			}
