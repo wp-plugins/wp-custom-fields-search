@@ -1,7 +1,7 @@
 <?php if($title && !(@$params['noTitle'])){
 	echo $params['before_title'].$title.$params['after_title'];
 }?>
-	<form method='get' class='<?php echo $formCssClass?>' action='<?php echo $formAction?>'>";
+	<form method='get' class='<?php echo $formCssClass?>' action='<?php echo $formAction?>'>
 <?php echo $hidden ?>
 		<div class='searchform-params'>
 <?		foreach($inputs as $input){?>
