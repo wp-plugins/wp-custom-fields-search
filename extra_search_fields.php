@@ -524,7 +524,8 @@ class CustomSearchField extends SearchFieldBase {
 		if($value = $this->getValue()){
 			$value = $GLOBALS['wpdb']->escape($value);
 			$where.=$this->joiner->sql_restrict($this->name,$this->index,$value,$this->comparison);
-			$where = $this->joiner->process_where($where);
+			if(method_exists($this->joiner,'process_where'))
+				$where = $this->joiner->process_where($where);
 		}
 		return $where;
 	}
