@@ -287,7 +287,9 @@ class SearchFieldBase {
 
 class Field extends ParameterisedObject {
 	function getValue($name){
-		return $_REQUEST[$this->getHTMLName($name)];
+		$v =  $_REQUEST[$this->getHTMLName($name)];
+		if(get_magic_quotes_gpc()) $v= stripslashes($v);
+		return $v;
 	}
 
 	function getHTMLName($name){
@@ -338,14 +340,14 @@ class DropDownField extends Field {
 
 		$options = '';
 		foreach($this->getOptions($joiner,$name) as $option=>$label){
+			$checked = ($option==$v)?" selected='true'":"";
 			$option = htmlspecialchars($option,ENT_QUOTES);
 			$label = htmlspecialchars($label,ENT_QUOTES);
-			$checked = ($option==$v)?" selected='true'":"";
 			$options.="<option value='$option'$checked>$label</option>";
 		}
 		$atts = '';
 		if($this->params['onChange']) $atts = ' onChange="'.htmlspecialchars($this->params['onChange']).'"';
-		return "<select name='$id'$atts>$options</select>";
+		return "<select name='$id'$atts>$options</select>".htmlspecialchars($v);
 	}
 	function getConfigForm($id,$values){
 		return "<label for='$id-dropdown-options'>Drop Down Options</label><input id='$id-dropdown-options' name='$id"."[dropdownoptions]' value='$values[dropdownoptions]'/>";
@@ -709,7 +711,6 @@ class CustomSearchField extends SearchFieldBase {
 	function getOldValue(){ return $this->getValue(); }
 	function getValue(){
 		$v = $this->input->getValue($this->name);
-		if(get_magic_quotes_gpc()) $v= stripslashes($v);
 		return $v;
 	}
 	function getLabel(){
