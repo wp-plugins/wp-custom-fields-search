@@ -109,12 +109,13 @@ class DB_WP_Widget extends ParameterisedObject {
 	function defaultWidgetConfig(){
 		return array('exists'=>'1');
 	}
-	function getConfig($id){
+	function getConfig($id=null){
 		$options = get_option($this->id);
+		if(is_null($id)) return $options;
 		$id = preg_replace('/^.*-(\d+)$/','\\1',$id);
 		return $options[$id];
 	}
-	function configForm($args){
+	function configForm($args,$force=false){
 		static $first;
 		global $wp_registered_widgets;
 
@@ -126,7 +127,7 @@ class DB_WP_Widget extends ParameterisedObject {
 
 		$options = get_option($this->id);
 
-		if(!$updated[$this->id] && $_POST['sidebar']){
+		if(!$updated[$this->id] && ($_POST['sidebar'] || $force)){
 			$updated[$this->id]=true;
 			$sidebar = (string) $_POST['sidebar'];
 			$default_options=$this->defaultWidgetConfig();
