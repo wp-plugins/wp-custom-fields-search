@@ -1,5 +1,13 @@
 <?php
 /*
+Plugin Name: WP Custom Search
+Plugin URI: http://www.don-benjamin.co.uk/wordpress-plugins/wp-custom-search
+Description: Allows admin to build custom search form.  Allows the site admin to configure multiple html inputs for different fields including custom fields.  Also provides an extensible mechanism for integrating with other plugins data structures.
+Version: 0.3.2
+Author: Don Benjamin
+Author URI: http://www.don-benjamin.co.uk/
+*/
+/*
  * Copyright 2009 Don Benjamin
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -13,14 +21,6 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License.
  */
-/*
-* Plugin Name: WP Custom Search
-* Plugin URI: http://www.don-benjamin.co.uk/wordpress-plugins/wp-custom-search
-* Description: Allows admin to build custom search form.  Allows the site admin to configure multiple html inputs for different fields including custom fields.  Also provides an extensible mechanism for integrating with other plugins data structures.
-* Version: 0.3.2
-* Author: Don Benjamin
-* Author URI: http://www.don-benjamin.co.uk/
-* */
 	require_once(dirname(__FILE__).'/extra_search_fields.php');
 
 	//Add Widget for configurable search.
