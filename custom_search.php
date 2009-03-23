@@ -36,9 +36,10 @@
 			
 				$config = $this->getConfig($id);
 
-				unset($config['exists']);
 				$inputs = array();
+				$nonFields = $this->getNonInputFields();
 				foreach($config as $k=>$v){
+					if(in_array($k,$nonFields)) continue;
 					if(!($v['input'] && $v['comparison'] && $v['joiner'])) continue;
 					$inputs[] =  new CustomSearchField($v['name'],
 							new $v['input']($v['name']),
@@ -50,6 +51,10 @@
 				$CustomSearchFieldInputs[$id]=$inputs;
 			}
 			return $CustomSearchFieldInputs[$id];
+		}
+		function getTitle($params){
+			$config = $this->getConfig($params['widget_id']);
+			return $config['name'];
 		}
 
 		function form_processPost($post,$old){
@@ -69,11 +74,13 @@
 		CustomSearch.create('<?=$prefId?>');
 	</script>
 	<div id='config-form-<?=$prefId?>'>
+		<label for='<?=$prefId?>[name]'>Search Title</label><input type='text' id='<?=$prefId?>[name]' name='<?=$pref?>[name]' value='<?=$values['name']?>'/>
 <?
 			$defaults=array();
-			unset($values['exists']);
 			if(!$values) $values = array(1=>$defaults);
+			$nonFields = $this->getNonInputFields();
 			foreach($values as $id => $val){
+				if(in_array($id,$nonFields)) continue;
 				echo "<div id='config-form-$prefId-$id'>".$this->singleFieldHTML($pref,$id,$val)."</div>";
 			}
 ?>
@@ -81,6 +88,10 @@
 
 	<br/><a href='#' onClick="return CustomSearch['<?=$prefId?>'].add();">Add Field</a>
 <?
+		}
+
+		function getNonInputFields(){
+			return array('exists','name');
 		}
 		function singleFieldHTML($pref,$id,$values){
 			$prefId = preg_replace('/^.*\[(\d+|%i%)\].*/','\\1',$pref);
