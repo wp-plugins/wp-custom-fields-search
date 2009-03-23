@@ -271,14 +271,28 @@
 				}
 			}
 			if(!$preset = $_REQUEST['selected-preset']){
-				$preset = 'default';
+				$preset = 'preset-default';
 			}
-			if(!$presets["preset-$preset"]){
+			if(!$presets[$preset]){
 				$defaults = $this->getDefaultConfig();
 				$options = $this->getConfig();
-				$options["preset-$preset"] = $defaults;
+				$options[$preset] = $defaults;
+				if($n = $_POST[$this->id][$preset]['name'])
+					$options[$preset]['name'] = $n;
+				elseif($preset=='preset-default')
+					$options[$preset]['name'] = 'Default';
+				else
+					$options[$preset]['name'] = 'New Preset';
 				update_option($this->id,$options);
-				$presets[] = "preset-$preset";
+				$presets[] = "$preset";
+			}
+
+			if($deleteAllPresets=false){
+				$options = $this->getConfig();
+				foreach($options as $key=>$v){
+					if(strpos($key,'preset-')===0) unset($options[$key]);
+				}
+				update_option($this->id,$options);
 			}
 
 			$index = 1;
@@ -286,15 +300,19 @@
 			$presets["preset-p$index"] = 'New Preset';
 
 			$linkBase = $_SERVER['REQUEST_URI'];
-			$linkBase = preg_replace("/&?preset=[^&]*(&|$)/",'',$linkBase);
+			$linkBase = preg_replace("/&?selected-preset=[^&]*(&|$)/",'',$linkBase);
 			foreach($presets as $key=>$name){
+				if($n = $_POST[$this->id][$preset]['name'])
 				$config = $this->getConfig($name);
 				if($config) $name=$config['name'];
+				if($n = $_POST[$this->id][$key]['name'])
+					$name = $n;
 				echo "<li><a href='$linkBase&selected-preset=$key'>Preset $name</a></li>";
 			}
 
 			echo "\n<form method='post'><input type='hidden' name='selected-preset' value='$preset'>\n";
-			$this->configForm("preset-$preset",$_POST['selected-preset']);
+			$this->configForm($preset,$_POST['selected-preset']);
+			echo "<input type='submit'/>";
 			echo "</form>";
 		}
 	}
