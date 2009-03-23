@@ -101,7 +101,12 @@
 	<div id='config-form-<?php echo $prefId?>'>
 		<label for='<?php echo $prefId?>[name]'>Search Title</label><input type='text' class='form-title-input' id='<?php echo $prefId?>[name]' name='<?php echo $pref?>[name]' value='<?php echo $values['name']?>'/>
 <?php
-			$defaults=array();
+			$defaults=array(
+				'label'=>'KeyWords',
+				'input'=>'TextField',
+				'comparison'=>'WordsLikeComparison',
+				'joiner'=>'PostDataJoiner',
+			);
 			if(!$values) $values = array(1=>$defaults);
 			$nonFields = $this->getNonInputFields();
 			foreach($values as $id => $val){
@@ -214,9 +219,7 @@
 					"input"=>array(
 						"TextField" => "Text Input",
 						"DropDownField" => "Drop Down",
-						"DropDownFromValues" => "Drop Down (Auto Values)",
 						"RadioButtonField" => "Radio Button",
-						"RadioButtonFromValues" => "Radio Button (Auto Values)",
 					),
 					"comparison"=>array(
 						"EqualComparison" => "Equals",
