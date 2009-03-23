@@ -16,6 +16,10 @@
 
 /** This file contains all the code to provide search fields for searching
  * properties defined with the greatrealestate plugin.
+ *
+ * It is designed to work with the greatrealestate property management plugin.
+ *
+ * 	http://www.rogertheriault.com/agents/plugins/great-real-estate-plugin/
  */
 require_once(dirname(__FILE__).'/../extra_search_fields.php');
 
