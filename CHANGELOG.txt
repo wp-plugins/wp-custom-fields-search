@@ -1,0 +1,7 @@
+17/03/2009 
+	Made a more sensible default form and hides the form parameters until clicked to produce a slightly less daunting interface
+	Automatic drop downs only populated from live fields.
+	Corrected a problem with defaults in PHP4 
+	Always joins for certain search types, prevents un-typed content appearing in searches with no parameters/
+
+12/03/2009	Initial Release 0.1
