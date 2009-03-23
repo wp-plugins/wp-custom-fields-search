@@ -159,7 +159,7 @@
 		function print_admin_scripts($params){
 			$jsRoot = $this->getRootURL().'js/';
 			$cssRoot = $this->getRootURL().'css/';
-			foreach(array('CustomSearch.js') as $file){
+			foreach(array('Class.js','CustomSearch.js') as $file){
 				echo "<script src='$jsRoot/$file' ></script>";
 			}
 			echo "<link rel='stylesheet' href='$cssRoot/admin.css' >";

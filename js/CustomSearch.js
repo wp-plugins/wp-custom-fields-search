@@ -12,10 +12,11 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License.
  */
-CustomSearch = function(id,count) {
-	this.id=id;
-
-	this.add = function (){
+CustomSearch = Class.create( {
+	init : function (id) {
+		this.id=id;
+	},
+	add: function (){
 		var html = jQuery('#config-template-'+this.id).html();
 		var oldHtml = false;
 		var count=0;
@@ -29,24 +30,24 @@ CustomSearch = function(id,count) {
 
 		
 		return false;
-	};
-	this.replaceAll = function(haystack,find,replace){
+	},
+	replaceAll: function(haystack,find,replace){
 		do {
 			oldHaystack = haystack;
 			haystack = haystack.replace(find,replace);
 		} while(haystack!=oldHaystack);
 		return haystack;
-	};
+	},
 
-	this.getForm = function (id){
+	getForm: function (id){
 		return jQuery('#config-form-'+this.id+'-'+id);
-	}
-	this.remove = function (id){
+	},
+	remove: function (id){
 		this.getForm(id).remove();
 		return false;
-	};
+	},
 
-	this.updateOptions = function(id) {
+	updateOptions: function(id) {
 		type = this.getForm(id).find('[@name="db_customsearch_widget['+this.id+']['+id+'][input]"]').val();
 		template = jQuery('#config-input-templates-'+type+'-'+this.id);
 		div = jQuery(hid = '#db_customsearch_widget-'+this.id+'-'+id+'-widget-config');
@@ -57,12 +58,12 @@ CustomSearch = function(id,count) {
 		name='';
 		html = this.replaceAll(html,'###TEMPLATE_NAME###',name);
 		div.html(html);
-	};
-};
+	}
+});
 
 CustomSearch.create = function(id){
 	CustomSearch[id] = new CustomSearch(id);
-}
+};
 
 var testing=false;
 if(testing)
