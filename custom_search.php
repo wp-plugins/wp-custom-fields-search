@@ -85,7 +85,7 @@
 				),
 				2=>array(
 					'label'=>'Category',
-					'input'=>'DropDown',
+					'input'=>'DropDownField',
 					'comparison'=>'EqualsComparison',
 					'joiner'=>'CategoryJoiner'
 				),
