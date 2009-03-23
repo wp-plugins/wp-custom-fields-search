@@ -136,7 +136,7 @@
 			$inputs.="<td><div id='$this->id"."-$prefId"."-$id"."-widget-config'>$widgetConfig</div></td>";
 			$output.="<table class='form-field-table'><tr>$titles</tr><tr>$inputs</tr></table>";
 			$output.="<a href='#' onClick=\"return CustomSearch['$prefId'].remove('$id');\">Remove Field</a>";
-			return $output;
+			return "<div class='field-wrapper'>$output</div>";
 		}
 
 		function getRootURL(){
@@ -172,13 +172,15 @@
 						"TextField" => "Text Input",
 						"DropDownField" => "Drop Down",
 						"DropDownFromValues" => "Drop Down (DB Values)",
-						"RadioButtonInput" => "Radio Button",
+						"RadioButtonField" => "Radio Button",
 						"RadioButtonFromValues" => "Radio Button (DB Values)",
 					),
 					"comparison"=>array(
 						"EqualComparison" => "Equals",
+						"LikeComparison" => "In",
+						"LessThanComparison" => "Less Than",
+						"MoreThanComparison" => "More Than",
 						"RangeComparison" => "Range",
-						"LikeComparison" => "In" 
 					)
 				);
 				$CustomSearchFieldTypes = apply_filters('custom_search_get_classes',$CustomSearchFieldTypes);

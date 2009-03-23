@@ -11,3 +11,10 @@
 .form-field-title {
 	width: 100%;
 }
+
+.field-wrapper {
+	border: solid black 1px;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	padding: 3px;
+}

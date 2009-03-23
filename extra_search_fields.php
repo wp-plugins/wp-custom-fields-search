@@ -326,11 +326,21 @@ class DropDownFromValues extends DropDownField {
 	}
 }
 class RadioButtonField extends Field {
-	function RadioButtonField($options=array()){
-		RadioButtonField::__construct($options);
+	function RadioButtonField($options=array(),$params=array()){
+		RadioButtonField::__construct($options,$params);
 	}
-	function __construct($options=array()){
+	function __construct($options=array(),$params=array()){
+		if($params['radiobuttonoptions']){
+			$options=array();
+			$optionPairs = explode(',',$params['radiobuttonoptions']);
+			foreach($optionPairs as $option){
+				list($k,$v) = explode(':',$option);
+				if(!$v) $v=$k;
+				$options[$k]=$v;
+			}
+		}
 		$this->options = $options;
+		$this->params = $params;
 	}
 	function getOptions(){
 		return $this->options;
@@ -342,9 +352,12 @@ class RadioButtonField extends Field {
 		$options = '';
 		foreach($this->getOptions($joiner,$name) as $option=>$label){
 			$checked = ($option==$v)?" checked='true'":"";
-			$options.="<input type='radio' name='$name' value='$option'$checked> $label";
+			$options.="<input type='radio' name='$id' value='$option'$checked> $label";
 		}
 		return $options;
+	}
+	function getConfigForm($id,$values){
+		return "<label for='$id-radiobutton-options'>Radio Button Options</label><input id='$id-radiobutton-options' name='$id"."[radiobuttonoptions]' value='$values[radiobuttonoptions]'/>";
 	}
 }
 class RadioButtonFromValues extends RadioButtonField {
@@ -357,6 +370,9 @@ class RadioButtonFromValues extends RadioButtonField {
 	}
 	function getOptions($joiner,$name){
 		return $joiner->getAllOptions($name);
+	}
+	function getConfigForm($id,$values){
+		return "";
 	}
 }
 
@@ -373,6 +389,16 @@ class EqualComparison extends Comparison {
 class LikeComparison extends Comparison{
 	function addSQLWhere($field,$value){
 		return "$field LIKE '%".mysql_escape_string($value)."%'";
+	}
+}
+class LessThanComparison extends Comparison{
+	function addSQLWhere($field,$value){
+		return "$field < '".mysql_escape_string($value)."'";
+	}
+}
+class MoreThanComparison extends Comparison{
+	function addSQLWhere($field,$value){
+		return "$feld > '".mysql_escape_string($value)."%'";
 	}
 }
 class RangeComparison extends Comparison{
@@ -392,9 +418,21 @@ class BaseJoiner {
 	}
 }
 class CustomFieldJoiner extends BaseJoiner{
+	function CustomFieldJoiner($name,$params){
+		$this->__construct($name,$params);
+	}
+	function __construct($name,$params){
+		$this->params = $params;
+	}
+	function param($key,$default=null){
+		if(array_key_exists($key,$this->params)) return $this->params[$key];
+		return $default;
+	}
 	function sql_restrict($name,$index,$value,$comparison){
 		$table = 'meta'.$index;
-		return " AND ( $table.meta_key='$name' AND ".$comparison->addSQLWhere("$table.meta_value",$value).") ";
+		$field = "$table.meta_value".($this->param('numeric',false)?'*1':'');
+		return " AND ( $table.meta_key='$name' AND ".$comparison->addSQLWhere($field,$value).") ";
+
 	}
 	function sql_join($name,$index,$value){
 		global $wpdb;
@@ -448,17 +486,21 @@ class CustomSearchField extends SearchFieldBase {
 		$this->name = $params['name'];
 		$this->params = $params;
 
-		if(!$input){
+		$this->joiner = $joiner;
+		$this->comparison = $comparison;
+		$this->input = $input;
+
+		if(!$this->input){
 			$input = $this->param('input','TextField');
 			$this->input = new $input(array(),$params);
 		}
-		if(!$comparison){
+		if(!$this->comparison){
 			$comparison = $this->param('comparison','LikeComparison');
 			$this->comparison = new $comparison();
 		}
-		if(!$joiner){
+		if(!$this->joiner){
 			$joiner = $this->param('joiner','CustomFieldJoiner');
-			$this->joiner = new $joiner($this->param('name'));
+			$this->joiner = new $joiner($this->param('name'),$this->params);
 		}
 
 
@@ -480,6 +522,7 @@ class CustomSearchField extends SearchFieldBase {
 	}
 	function sql_restrict($where){
 		if($value = $this->getValue()){
+			$value = $GLOBALS['wpdb']->escape($value);
 			$where.=$this->joiner->sql_restrict($this->name,$this->index,$value,$this->comparison);
 			$where = $this->joiner->process_where($where);
 		}
