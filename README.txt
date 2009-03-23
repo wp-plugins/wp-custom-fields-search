@@ -1,5 +1,5 @@
 Custom Search
-Version: 0.1
+Version: 0.2
 
 See LICENSE.txt for copyright information
 
