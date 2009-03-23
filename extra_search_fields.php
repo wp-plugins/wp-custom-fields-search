@@ -172,7 +172,7 @@ class DB_Search_Widget extends DB_WP_Widget {
 		$this->inputs[] = $input;
 	}
 	function outputStylesheets(){
-			echo "\n".'<style type="text/css" media="screen">@import "'. WP_CONTENT_URL .'/plugins/custom-search/css/searchforms.css";</style>'."\n";
+		echo "\n".'<style type="text/css" media="screen">@import "'. WP_CONTENT_URL .'/plugins/custom-search/css/searchforms.css";</style>'."\n";
 	}
 
 	function getInputs($params){
@@ -190,7 +190,8 @@ class DB_Search_Widget extends DB_WP_Widget {
 		echo "<form method='get' class='custom_search_widget custom_search_".$this->nameAsId()."'>";
 		echo "<div class='searchform-params'>";
 		foreach($this->getInputs($params) as $input){
-			echo $input->getInput();
+			$inputClass = method_exists($input,'getCSSClass')?$input->getCSSClass():get_class($input);
+			echo "<div class='$inputClass'>".$input->getInput()."</div>";
 		}
 		echo "</div>";
 		echo "<div class='searchform-controls'>";
@@ -367,9 +368,14 @@ class RadioButtonField extends Field {
 		$options = '';
 		foreach($this->getOptions($joiner,$name) as $option=>$label){
 			$checked = ($option==$v)?" checked='true'":"";
-			$options.="<input type='radio' name='$id' value='$option'$checked> $label";
+			$htmlId = "$id-$option";
+
+			$options.="<div class='radio-button-wrapper'><input type='radio' name='$id' id='$htmlId' value='$option'$checked> <label for='$htmlId'>$label</label></div>";
 		}
 		return $options;
+	}
+	function getCSSClass(){
+		return "RadioButton";
 	}
 	function getConfigForm($id,$values){
 		return "<label for='$id-radiobutton-options'>Radio Button Options</label><input id='$id-radiobutton-options' name='$id"."[radiobuttonoptions]' value='$values[radiobuttonoptions]'/>";
@@ -487,7 +493,7 @@ class CategoryJoiner {
 	}
 	function getAllOptions($fieldName){
 		global $wpdb;
-		$q = mysql_query($sql = "SELECT name FROM $wpdb->terms");
+		$q = mysql_query($sql = "SELECT distinct t.name FROM $wpdb->terms t JOIN $wpdb->term_relationships r ON r.term_taxonomy_id = t.term_id JOIN $wpdb->posts p ON r.object_id=p.id WHERE post_status='publish'");
 		$options = array();
 		while($r = mysql_fetch_row($q))
 			$options[$r[0]] = $r[0];
@@ -609,6 +615,9 @@ class CustomSearchField extends SearchFieldBase {
 
 	function getInput(){
 		return "<div class='searchform-param'><label class='searchform-label'>".$this->getLabel()."</label><span class='searchform-input-wrapper'>".$this->input->getInput($this->name,$this->joiner)."</span></div>";
+	}
+	function getCSSClass(){
+		return method_exists($this->input,'getCSSClass')?$this->input->getCSSClass():get_class($this->input);
 	}
 }
 
