@@ -2,7 +2,7 @@
 Contributors: don@don-benjamin.co.uk
 Tags: search,custom fields,widget,sidebar
 Requires at least: 2.5
-Tested up to: 2.7
+Tested up to: 2.7.1
 Stable tag: 0.3.2
 
 This plugin allows multiple form inputs to be configured to search different aspects of a post including custom fields.
@@ -61,7 +61,7 @@ The "Range" comparison is a little more complicated and requires the user input 
 
 I hope that helps, please let me know if you have any trouble (or joy) with the plugin or if any of my instructions don"t make sense.
 
-== **Using Presets** == 
+== Using Presets == 
 
 Presets are a new feature in version 0.3, they allow search forms to be configured separately from the sidebar widgets, the configured form doesn"t directly appear on the site but can be included in two ways.
 
