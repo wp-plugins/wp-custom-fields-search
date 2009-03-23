@@ -15,11 +15,11 @@
  */
 /*
 * Plugin Name: Custom Search Forms
-* Plugin URI: http://wp.don-benjamin.co.uk/custom_search
-* Description: [INCOMPLETE] Allows user to build custom search forms.
+* Plugin URI: http://www.don-benjamin.co.uk/wordpress/projects/foss/wp-plugins/wordpress-configurable-search-plugin-01-beta/
+* Description: Allows user to build custom search forms.
 * Version: 0.1
 * Author: Don Benjamin
-* Author URI: http://don-benjamin.co.uk
+* Author URI: http://www.don-benjamin.co.uk/
 * */
 	require_once(dirname(__FILE__).'/extra_search_fields.php');
 
