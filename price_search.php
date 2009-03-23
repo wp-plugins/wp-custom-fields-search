@@ -45,12 +45,12 @@ class PriceSearchField extends CustomSearchField {
 	}
 	function __construct(){
 		parent::__construct('List Price',new DropDownField(
-			array(
+			apply_filters('price_search_options',array(
 				''=>'ANY',
 				'0:10'=>'0 to 10',
 				'10:50'=>'10 to 50',
 				'50:200'=>'50 to 200',
-				'200:'=>'200+')
+				'200:'=>'200+'))
 			), new RangeComparison(),
 				new GreatRealEstateJoiner("ListPrice"));
 	}
