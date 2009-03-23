@@ -16,9 +16,10 @@ To use this preset in your templates copy this code to the appropriate place in 
 	<? } ?>
 </div>
 
-<form method='post'><div class='searchforms-config-form'><input type='hidden' name='selected-preset' value='<?php echo $preset?>'>
+<form method='post'><div class='searchforms-config-form'>
+<?php echo $hidden?>
 		<h4>Edit Preset "<?php echo $plugin->getConfig($preset,'name')?>"</h4>
-		<?php $plugin->configForm($preset,$_POST['selected-preset']&& !$_POST['delete']) ?>
+		<?php $plugin->configForm($preset,$shouldSave) ?>
 		<div class='options-controls'>
 			<div class='options-button'>
 				<input type='submit' value='Save Changes'/>

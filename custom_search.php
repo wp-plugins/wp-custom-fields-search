@@ -84,7 +84,6 @@
 				foreach($config as $k=>$v){
 					if(in_array($k,$nonFields)) continue;
 					if(!(class_exists($v['input']) && class_exists($v['comparison']) && class_exists($v['joiner']))) {
-						echo "<h1>".class_exists($v['input'])." - ".class_exists($v['comparison'])." - ".class_exists($v['joiner'])."</h1>";
 						continue;
 					}
 					$inputs[] =  new CustomSearchField($v);
@@ -329,10 +328,10 @@
 				$presets[$preset] = $options[$preset]['name'];
 			}
 			if($_POST['delete']){
+				check_admin_referer($this->id.'-editpreset-'.$preset);
 				$options = $this->getConfig();
 				unset($options[$preset]);
 				unset($presets[$preset]);
-				echo "<h1>DELETING $preset</h1>";
 				update_option($this->id,$options);
 				list($preset,$name) = each($presets);
 			}
@@ -351,6 +350,12 @@
 				$presets[$key]=$name;
 			}
 			$plugin=&$this;
+			ob_start();
+			wp_nonce_field($this->id.'-editpreset-'.$preset);
+			$hidden = ob_get_contents();
+			$hidden.="<input type='hidden' name='selected-preset' value='$preset'>";
+			$shouldSave = $_POST['selected-preset'] && !$_POST['delete'] && check_admin_referer($this->id.'-editpreset-'.$preset);
+			ob_end_clean();
 			include(dirname(__FILE__).'/templates/options.php');
 		}
 	}
