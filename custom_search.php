@@ -119,9 +119,10 @@
 		if(method_exists($joinerClass,'getSuggestedFields')){
 			$options = eval("return $joinerClass::getSuggestedFields();");
 			$str = '';
-			foreach($options as $k=>$v){
+			foreach($options as $i=>$v){
+				$k=$i;
 				if(is_numeric($k)) $k=$v;
-				$options[$k] = json_encode(array('id'=>$k,'name'=>$v));
+				$options[$i] = json_encode(array('id'=>$k,'name'=>$v));
 			}
 			$str = '['.join(',',$options).']';
 			echo "CustomSearch['$prefId'].setOptionsFor('$joinerClass',".$str.");\n";

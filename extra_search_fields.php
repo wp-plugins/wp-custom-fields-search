@@ -465,6 +465,14 @@ class CustomFieldJoiner extends BaseJoiner{
 			$options[$r[0]] = $r[0];
 		return $options;
 	}
+	function getSuggestedFields(){
+		global $wpdb;
+		$q = mysql_query($sql = "SELECT DISTINCT meta_key FROM $wpdb->postmeta WHERE meta_key NOT LIKE '_%'");
+		$options = array();
+		while($r = mysql_fetch_row($q))
+			$options[$r[0]] = $r[0];
+		return $options;
+	}
 }
 class CategoryJoiner {
 	function sql_restrict($name,$index,$value,$comparison){
@@ -491,18 +499,20 @@ class CategoryJoiner {
 }
 
 class PostDataJoiner extends BaseJoiner {
-	function isClearField($name){
-		$clear = array('ID','comment_status','ping_status','to_ping','pinged','guid','comment_count','menu_order');
-		return in_array($name,$clear);
-	}
 	function sql_restrict($name,$index,$value,$comparison){
 		global $wpdb;
 		$table = $wpdb->posts;
-		if(strpos($name,'post_')!==0){
-			if(!$this->isClearField($name))
-				$name = "post_$name";
+		if($name=='all'){
+			$logic = array();
+			foreach($this->getSuggestedFields() as $name=>$desc){
+				if($name=='all') continue;
+				$logic[] =  "( ".$comparison->addSQLWhere("$table.$name",$value).") ";
+			}
+			$logic = " AND (".join(" OR ",$logic).")";
+			return $logic;
+		} else {
+			return " AND ( ".$comparison->addSQLWhere("$table.$name",$value).") ";
 		}
-		return " AND ( ".$comparison->addSQLWhere("$table.$name",$value).") ";
 	}
 	function sql_join($name,$index,$value){
 		return "";

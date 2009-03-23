@@ -16,11 +16,11 @@ CustomSearch = Class.create( {
 	init : function (id) {
 		this.id=id;
 		me = this;
+		this.namesFor = CustomSearch.sharedOptions;
 		this.getForm().find('.form-field-title-div').each(function(k,el){
 			el = jQuery(el);
 			var index = el.attr('id').replace(/.*-/,'')
 			me.createFlexbox(index);
-			me.updateOptions(index,'joiner');
 		});
 	},
 	add: function (){
@@ -34,6 +34,7 @@ CustomSearch = Class.create( {
 		html = this.replaceAll(html,'###TEMPLATE_ID###',count);
 		html=html.replace('config-template-'+this.id,newId);
 		jQuery('<div id="'+newId+'">'+html+"</div>").appendTo('#config-form-'+this.id);
+		this.createFlexbox(count);
 
 		
 		return false;
@@ -90,16 +91,13 @@ CustomSearch = Class.create( {
 
 		jQuery('#form-field-dbname-'+this.id+'-'+id).find("*").each(function(){jQuery(this).remove()})
 		jQuery('#form-field-dbname-'+this.id+'-'+id).flexbox(this.flexboxData[id],{width:100,name:'db_customsearch_widget['+this.id+']['+id+'][name]',maxCacheBytes:0,paging:false,initialValue:initVal})
+		this.updateOptions(id,'joiner');
        },
-	namesFor: {
-		'PostDataJoiner': [{id:'first',name:'first'},{id:'second',name:'second'}],
-		'GreatRealEstateJoiner': [{id:'listPrice',name:'listPrice'},{id:'city',name:'city'}]
-	},
 	setOptionsFor: function(joiner,options){
 		this.namesFor[joiner] = options;
 	}
 });
-
+if(!CustomSearch.sharedOptions) CustomSearch.sharedOptions={};
 CustomSearch.create = function(id){
 	CustomSearch[id] = new CustomSearch(id);
 };
