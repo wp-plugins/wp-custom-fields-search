@@ -331,6 +331,8 @@ class DropDownField extends Field {
 
 		$options = '';
 		foreach($this->getOptions($joiner,$name) as $option=>$label){
+			$option = htmlspecialchars($option,ENT_QUOTES);
+			$label = htmlspecialchars($label,ENT_QUOTES);
 			$checked = ($option==$v)?" selected='true'":"";
 			$options.="<option value='$option'$checked>$label</option>";
 		}
@@ -392,6 +394,8 @@ class RadioButtonField extends Field {
 
 		$options = '';
 		foreach($this->getOptions($joiner,$name) as $option=>$label){
+			$option = htmlspecialchars($option,ENT_QUOTES);
+			$label = htmlspecialchars($label,ENT_QUOTES);
 			$checked = ($option==$v)?" checked='true'":"";
 			$htmlId = "$id-$option";
 
@@ -430,7 +434,7 @@ class Comparison {
 }
 class EqualComparison extends Comparison {
 	function addSQLWhere($field,$value){
-		return "$field = '".mysql_escape_string($value)."'";
+		return "$field = '$value'";
 	}
 	function describeSearch($value){
 		return " is \"$value\"";
@@ -441,7 +445,7 @@ class LikeComparison extends Comparison{
 		return $this->getLikeString($field,$value);
 	}
 	function getLikeString($field,$value){
-		return "$field LIKE '%".mysql_escape_string($value)."%'";
+		return "$field LIKE '%$value%'";
 	}
 	function describeSearch($value){
 		return " contains \"$value\"";
@@ -463,7 +467,7 @@ class WordsLikeComparison extends LikeComparison {
 }
 class LessThanComparison extends Comparison{
 	function addSQLWhere($field,$value){
-		return "$field < '".mysql_escape_string($value)."'";
+		return "$field < '$value'";
 	}
 	function describeSearch($value){
 		return " less than \"$value\"";
@@ -471,7 +475,7 @@ class LessThanComparison extends Comparison{
 }
 class MoreThanComparison extends Comparison{
 	function addSQLWhere($field,$value){
-		return "$feld > '".mysql_escape_string($value)."%'";
+		return "$feld > '$value'";
 	}
 	function describeSearch($value){
 		return " more than \"$value\"";
@@ -479,7 +483,6 @@ class MoreThanComparison extends Comparison{
 }
 class RangeComparison extends Comparison{
 	function addSQLWhere($field,$value){
-		$value = mysql_escape_string($value);
 		list($min,$max) = explode("-",$value);
 		$where=1;
 		if(strlen($min)>0) $where.=" AND $field >= $min";
@@ -679,7 +682,9 @@ class CustomSearchField extends SearchFieldBase {
 
 	function getOldValue(){ return $this->getValue(); }
 	function getValue(){
-		return $this->input->getValue($this->name);
+		$v = $this->input->getValue($this->name);
+		if(get_magic_quotes_gpc()) $v= stripslashes($v);
+		return $v;
 	}
 	function getLabel(){
 		if(!$this->params['label']) $this->params['label'] = ucwords($this->name);
