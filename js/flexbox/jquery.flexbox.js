@@ -144,6 +144,13 @@
             .appendTo($div)
             .hide();
 
+		$ctr.oldShow = $ctr.show;
+		$ctr.show = function(){
+	            $ctr.css('width', ($input.outerWidth() + arrowWidth - 2) + 'px');
+            	    $ctr.css('top', $input.outerHeight())
+            	    $ctr.css('left', left)
+		    $ctr.oldShow();
+		};
         var $content = $(document.createElement('div'))
             .addClass(o.contentClass)
             .appendTo($ctr)

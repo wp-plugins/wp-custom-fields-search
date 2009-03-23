@@ -19,8 +19,16 @@
 	width: 100%;
 	text-align: center;
 }
+.form-field-table td {
+	text-align: center;
+}
 .form-field-table select {
 	width: 100%;
+}
+.form-field-title-div {
+	margin: auto;
+	width: 130px;
+
 }
 .form-field-title {
 	width: 100%;
