@@ -179,8 +179,9 @@
 			if(!$CustomSearchFieldTypes){
 				$CustomSearchFieldTypes = array(
 					"joiner"=>array(
+						"PostDataJoiner" => "Post Field",
 						"CustomFieldJoiner" => "Custom Field",
-						"CategoryJoiner" => "Category" 
+						"CategoryJoiner" => "Category"
 					),
 					"input"=>array(
 						"TextField" => "Text Input",

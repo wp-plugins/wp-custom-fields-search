@@ -484,6 +484,33 @@ class CategoryJoiner {
 	}
 }
 
+class PostDataJoiner extends BaseJoiner {
+	function isClearField($name){
+		$clear = array('ID','comment_status','ping_status','to_ping','pinged','guid','comment_count','menu_order');
+		return in_array($name,$clear);
+	}
+	function sql_restrict($name,$index,$value,$comparison){
+		global $wpdb;
+		$table = $wpdb->posts;
+		if(strpos($name,'post_')!==0){
+			if(!$this->isClearField($name))
+				$name = "post_$name";
+		}
+		return " AND ( ".$comparison->addSQLWhere("$table.$name",$value).") ";
+	}
+	function sql_join($name,$index,$value){
+		return "";
+	}
+	function getAllOptions($fieldName){
+		global $wpdb;
+		$q = mysql_query($sql = "SELECT $fieldName FROM $wpdb->posts");
+		$options = array();
+		while($r = mysql_fetch_row($q))
+			$options[$r[0]] = $r[0];
+		return $options;
+	}
+}
+
 class CategorySearch {
 }
 
