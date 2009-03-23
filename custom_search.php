@@ -26,6 +26,7 @@
 	//Add Widget for configurable search.
 	add_action('plugins_loaded',array('DB_CustomSearch_Widget','init'));
 
+
 	class DB_CustomSearch_Widget extends DB_Search_Widget {
 		function DB_CustomSearch_Widget($params=array()){
 			DB_CustomSearch_Widget::__construct($params);
@@ -33,6 +34,7 @@
 		function __construct($params=array()){
 			parent::__construct('Custom Fields ',$params);
 			add_action('admin_print_scripts', array(&$this,'print_admin_scripts'), 90);
+			add_action('admin_menu', array(&$this,'plugin_menu'), 90);
 			if(version_compare("2.7",$GLOBALS['wp_version'])>0) wp_enqueue_script('dimensions');
 		}
 		function init(){
@@ -74,8 +76,8 @@
 			if(!$post) $post=array('exists'=>1);
 			return $post;
 		}
-		function form_outputForm($values,$pref){
-			$defaults=array('name'=>'Site Search', 
+		function getDefaultConfig(){
+			return array('name'=>'Site Search', 
 				1=>array(
 					'label'=>'Key Words',
 					'input'=>'TextField',
@@ -90,6 +92,9 @@
 					'joiner'=>'CategoryJoiner'
 				),
 			);
+		}
+		function form_outputForm($values,$pref){
+			$defaults=$this->getDefaultConfig();
 			$prefId = preg_replace('/^.*\[(\d+|%i%)\].*/','\\1',$pref);
 			$this->form_existsInput($pref);
 			$rand = rand();
@@ -253,6 +258,44 @@
 				$CustomSearchFieldTypes = apply_filters('custom_search_get_classes',$CustomSearchFieldTypes);
 			}
 			return $CustomSearchFieldTypes[$type];
+		}
+		function plugin_menu(){
+			add_options_page('Form Presets','Custom Fields Search',8,__FILE__,array(&$this,'presets_form'));
+		}
+		function presets_form(){
+			echo "<h1>Search Presets Config</h1>";
+			$presets = array();
+			foreach(array_keys($this->getConfig()) as $key){
+				if(strpos($key,'preset-')===0) {
+					$presets[$key] = $key;
+				}
+			}
+			if(!$preset = $_REQUEST['selected-preset']){
+				$preset = 'default';
+			}
+			if(!$presets["preset-$preset"]){
+				$defaults = $this->getDefaultConfig();
+				$options = $this->getConfig();
+				$options["preset-$preset"] = $defaults;
+				update_option($this->id,$options);
+				$presets[] = "preset-$preset";
+			}
+
+			$index = 1;
+			while($presets["preset-p$index"]) $index++;
+			$presets["preset-p$index"] = 'New Preset';
+
+			$linkBase = $_SERVER['REQUEST_URI'];
+			$linkBase = preg_replace("/preset=[^&]*(&|$)/",'',$linkBase);
+			foreach($presets as $key=>$name){
+				$config = $this->getConfig($name);
+				if($config) $name=$config['name'];
+				echo "<li><a href='$linkBase&selected-preset=$key'>Preset $name</a></li>";
+			}
+
+			echo "<form method='post'><input type='hidden' name='selected-preset' value='$preset'>";
+			$this->configForm("preset-$preset",$_POST['selected-preset']);
+			echo "</form>";
 		}
 	}
 	global $CustomSearchFieldInputs;
