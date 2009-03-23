@@ -2,7 +2,7 @@
 /*
 * Plugin Name: Custom Search Forms
 * Plugin URI: http://wp.don-benjamin.co.uk/custom_search
-* Description: Allows user to build custom search forms.
+* Description: [INCOMPLETE] Allows user to build custom search forms.
 * Version: 0.1
 * Author: Don Benjamin
 * Author URI: http://don-benjamin.co.uk
