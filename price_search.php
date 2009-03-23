@@ -15,7 +15,7 @@ class DB_PriceSearch_Widget extends DB_Search_Widget {
 		DB_PriceSearch_Widget::__construct();
 	}
 	function __construct(){
-		parent::__construct("Price");
+		parent::__construct("Property");
 		$this->addInput(new PriceSearchField());
 		$this->addInput( new CustomSearchField('bedrooms',
 				new DropDownFromValues('bedrooms'),
@@ -41,7 +41,7 @@ class DB_PriceSearch_Widget extends DB_Search_Widget {
 
 class PriceSearchField extends CustomSearchField {
 	function PriceSearchField(){
-		$this->__construct();
+		PriceSearchField::__construct();
 	}
 	function __construct(){
 		parent::__construct('List Price',new DropDownField(
@@ -58,7 +58,7 @@ class PriceSearchField extends CustomSearchField {
 
 class GreatRealEstateJoiner {
 	function GreatRealEstateJoiner($name=null){
-		$this->__construct($name);
+		GreatRealEstateJoiner::__construct($name);
 	}
 	function __construct($name){
 		$this->name = $name;

@@ -21,10 +21,10 @@ class DB_WP_Widget {
 
 //		register_sidebar_widget($this->name,array(&$this,'renderWidget'));
 		$doesOwnConfig = $this->params['doesOwnConfig'];
+		$desc = $this->getParam('description',$this->name);
 		$widget_ops = array('classname' => $this->id, 'description' => __($desc));
 		$control_ops = array('width' => 400, 'height' => 350, 'id_base' => $this->id);
 		$name = $this->name;
-		$desc = $this->getParam('description',$this->name);
 	
 		$id = false;
 		do {
@@ -164,7 +164,14 @@ class DB_Search_Widget extends DB_WP_Widget {
 		return $this->inputs;
 	}
 
+	function getTitle(){
+		return $this->getParam('description',$this->name);
+	}
+
 	function renderWidget($params=array(),$p2 = array()){
+		if($title=$this->getTitle()){
+			echo $params['before_title'].$title.$params['after_title'];
+		}
 		echo "<form method='get' class='custom_search_widget custom_search_".$this->nameAsId()."'>";
 		echo "<div class='searchform-params'>";
 		foreach($this->getInputs($params) as $input){
@@ -215,7 +222,7 @@ class DB_Search_Widget extends DB_WP_Widget {
 
 class SearchFieldBase {
 	function SearchFieldBase(){
-		$this->__construct();
+		SearchFieldBase::__construct();
 	}
 	function __construct(){
 		add_filter('search_params',array(&$this,'form_inputs'));
@@ -250,7 +257,7 @@ class TextField extends Field {
 class TextInput extends TextField{}
 class DropDownField extends Field {
 	function DropDownField($options){
-		$this->__construct($options);
+		DropDownField::__construct($options);
 	}
 	function __construct($options = array()){
 		$this->options = $options;
@@ -279,7 +286,7 @@ class CustomFieldReader {
 
 class DropDownFromValues extends DropDownField {
 	function DropDownFromValues($fieldName){
-		$this->__construct($fieldName);
+		DropDownFromValues::__construct($fieldName);
 	}
 
 	function __construct($fieldName){
@@ -295,7 +302,7 @@ class DropDownFromValues extends DropDownField {
 }
 class RadioButtonField extends Field {
 	function RadioButtonField($options){
-		$this->__construct($options);
+		RadioButtonField::__construct($options);
 	}
 	function __construct($options){
 		$this->options = $options;
@@ -317,7 +324,7 @@ class RadioButtonField extends Field {
 }
 class RadioButtonFromValues extends RadioButtonField {
 	function RadioButtonFromValues($fieldName){
-		$this->__construct($fieldName);
+		RadioButtonFromValues::__construct($fieldName);
 	}
 
 	function __construct($fieldName){
@@ -405,7 +412,7 @@ class CategorySearch {
 
 class CustomSearchField extends SearchFieldBase {
 	function CustomSearchField($name,$input=false,$comparison=false,$joiner=false){
-		$this->__construct($name,$input,$comparison,$joiner);
+		CustomSearchField::__construct($name,$input,$comparison,$joiner);
 	}
 	function __construct($name,$input=false,$comparison=false,$joiner=false){
 		parent::__construct();

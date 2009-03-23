@@ -14,7 +14,7 @@
 
 	class DB_CustomSearch_Widget extends DB_Search_Widget {
 		function DB_CustomSearch_Widget($params=array()){
-			$this->__construct($params);
+			DB_CustomSearch_Widget::__construct($params);
 		}
 		function __construct($params=array()){
 			parent::__construct('Configurable',$params);
@@ -39,6 +39,7 @@
 				unset($config['exists']);
 				$inputs = array();
 				foreach($config as $k=>$v){
+					if(!($v['input'] && $v['comparison'] && $v['joiner'])) continue;
 					$inputs[] =  new CustomSearchField($v['name'],
 							new $v['input']($v['name']),
 							new $v['comparison'](),
@@ -149,8 +150,8 @@
 	$CustomSearchFieldTypes = array();
 
 	class AdminDropDown extends DropDownField {
-		function DropDown($name,$value,$options){
-			$this->__construct($name,$value,$options);
+		function AdminDropDown($name,$value,$options){
+			AdminDropDown::__construct($name,$value,$options);
 		}
 		function __construct($name,$value,$options){
 			parent::__construct($options);
