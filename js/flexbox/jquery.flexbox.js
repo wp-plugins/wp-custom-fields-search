@@ -57,10 +57,11 @@
         $div = $(div).css('position', 'relative').css('z-index', 0);  
 
         // The hiddenField MUST be appended to the div before the input, or IE7 does not shift the dropdown below the input field (it overlaps)
+	var name = (o.name=='asID') ? $div.attr('id') : o.name;
         var $hdn = $(document.createElement('input'))
             .attr('type', 'hidden')
             .attr('id', $div.attr('id') + '_hidden')
-            .attr('name', $div.attr('id'))
+            .attr('name', name)
             .val(o.initialValue)
             .appendTo($div);
 
@@ -756,7 +757,8 @@
             showSummary: true, // whether to show 'displaying 1-10 of 200 results' text
             summaryClass: 'summary', // class for 'displaying 1-10 of 200 results', prefix with containerClass
             summaryTemplate: 'Displaying {start}-{end} of {total} results' // can use {page} and {pages} as well
-        }
+        },
+	name: 'asID'
     };
 
     $.fn.setValue = function(val) {
