@@ -96,7 +96,7 @@
 	<div id='config-template-<?php echo $prefId?>' style='display: none;'>
 	<?php 
 		$templateDefaults = $defaults[1];
-		$templateDefaults['name'] = 'New Field';
+		$templateDefaults['label'] = 'Field ###TEMPLATE_ID###';
 		echo  $this->singleFieldHTML($pref,'###TEMPLATE_ID###',$templateDefaults);
 	?>
 	</div>
@@ -106,7 +106,7 @@
 				if(class_exists($class))
 					$form = new $class();
 				else $form = false;
-				if(method_exists($form,'getConfigForm')){
+				if(compat_method_exists($form,'getConfigForm')){
 					if($form = $form->getConfigForm($pref.'[###TEMPLATE_ID###]',array('name'=>'###TEMPLATE_NAME###'))){
 ?>
 	<div id='config-input-templates-<?php echo $class?>-<?php echo $prefId?>' style='display: none;'>
@@ -136,7 +136,7 @@
 		CustomSearch.create('<?php echo $prefId?>');
 <?php
 	foreach($this->getClasses('joiner') as $joinerClass=>$desc){
-		if(method_exists($joinerClass,'getSuggestedFields')){
+		if(compat_method_exists($joinerClass,'getSuggestedFields')){
 			$options = eval("return $joinerClass::getSuggestedFields();");
 			$str = '';
 			foreach($options as $i=>$v){
@@ -190,7 +190,7 @@
 
 			if(class_exists($widgetClass = $values['input'])){
 				$widget = new $widgetClass();
-				if(method_exists($widget,'getConfigForm'))
+				if(compat_method_exists($widget,'getConfigForm'))
 					$widgetConfig=$widget->getConfigForm($pref,$values);
 			}
 
@@ -263,7 +263,8 @@
 			AdminDropDown::__construct($name,$value,$options,$params);
 		}
 		function __construct($name,$value,$options,$params=array()){
-			parent::__construct($options,$params);
+			$params['options'] = $options;
+			parent::__construct($params);
 			$this->name = $name;
 			$this->value = $value;
 		}
@@ -278,3 +279,51 @@
 		}
 	}
 
+if (!function_exists('json_encode'))
+{
+  function json_encode($a=false)
+  {
+    if (is_null($a)) return 'null';
+    if ($a === false) return 'false';
+    if ($a === true) return 'true';
+    if (is_scalar($a))
+    {
+      if (is_float($a))
+      {
+        // Always use "." for floats.
+        return floatval(str_replace(",", ".", strval($a)));
+      }
+
+      if (is_string($a))
+      {
+        static $jsonReplaces = array(array("\\", "/", "\n", "\t", "\r", "\b", "\f", '"'), array('\\\\', '\\/', '\\n', '\\t', '\\r', '\\b', '\\f', '\"'));
+        return '"' . str_replace($jsonReplaces[0], $jsonReplaces[1], $a) . '"';
+      }
+      else
+        return $a;
+    }
+    $isList = true;
+    for ($i = 0, reset($a); $i < count($a); $i++, next($a))
+    {
+      if (key($a) !== $i)
+      {
+        $isList = false;
+        break;
+      }
+    }
+    $result = array();
+    if ($isList)
+    {
+      foreach ($a as $v) $result[] = json_encode($v);
+      return '[' . join(',', $result) . ']';
+    }
+    else
+    {
+      foreach ($a as $k => $v) $result[] = json_encode($k).':'.json_encode($v);
+      return '{' . join(',', $result) . '}';
+    }
+  }
+}
+function compat_method_exists($class,$method){
+	return method_exists($class,$method) || in_array(strtolower($method),get_class_methods($class));
+}

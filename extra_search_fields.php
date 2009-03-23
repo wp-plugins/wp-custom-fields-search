@@ -32,6 +32,13 @@ class ParameterisedObject {
 	}
 	function __construct($params=array()){
 		$this->setParams($params);
+		if(!is_array($this->params)){
+			foreach(debug_backtrace() as $trace){
+				extract($trace);
+				echo "<li>$file:$line $class.$function</li>";
+			}
+			die("<h1>".get_class($this)."</h1>");
+		}
 	}
 
 	function setParams($params){
@@ -39,9 +46,6 @@ class ParameterisedObject {
 	}
 
 	function param($key,$default=null){
-		if(!is_array($this->params)){
-			die("<h1>".get_class($this)."</h1>");
-		}
 		if(!array_key_exists($key,$this->params)) return $default;
 		return $this->params[$key];
 	}
@@ -300,19 +304,21 @@ class TextField extends Field {
 }
 class TextInput extends TextField{}
 class DropDownField extends Field {
-	function DropDownField($options=null,$params=array()){
-		DropDownField::__construct($options,$params);
+	function DropDownField($params=array()){
+		$this->__construct($params);
 	}
-	function __construct($options = null,$params = array()){
+	function __construct($params = array()){
 		parent::__construct($params);
-		if($params['dropdownoptions']){
+		if($optionString = $this->param('dropdownoptions',false)){
 			$options=array();
-			$optionPairs = explode(',',$params['dropdownoptions']);
+			$optionPairs = explode(',',$optionString);
 			foreach($optionPairs as $option){
 				list($k,$v) = explode(':',$option);
 				if(!$v) $v=$k;
 				$options[$k]=$v;
 			}
+		} else {
+			$options = $this->param('options',array());
 		}
 		$this->options = $options;
 	}
@@ -353,7 +359,7 @@ class CustomFieldReader {
 
 class DropDownFromValues extends DropDownField {
 	function DropDownFromValues($params=array()){
-		DropDownFromValues::__construct($params);
+		$this->__construct($params);
 	}
 
 	function __construct($params=array()){
@@ -646,7 +652,7 @@ class CustomSearchField extends SearchFieldBase {
 
 		if(!is_object($this->input)){
 			$input = $this->param('input','TextField');
-			$this->input = new $input(array(),$params);
+			$this->input = new $input($params);
 		}
 		if(!is_object($this->comparison)){
 			$comparison = $this->param('comparison','LikeComparison');
