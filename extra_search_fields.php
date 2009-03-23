@@ -519,7 +519,7 @@ class CustomFieldJoiner extends BaseJoiner{
 		return " AND ( $table.meta_key='$name' AND ".$comparison->addSQLWhere($field,$value).") ";
 
 	}
-	function sql_join($name,$index,$value){
+	function sql_join($join,$name,$index,$value){
 		if(!$value && !$this->params['required']) return $join;
 		global $wpdb;
 		$table = 'meta'.$index;
@@ -544,11 +544,12 @@ class CustomFieldJoiner extends BaseJoiner{
 }
 class CategoryJoiner {
 	function sql_restrict($name,$index,$value,$comparison){
+		if(!($value || $this->params['required'])) return $join;
 		$table = 'meta'.$index;
 		return " AND ( ".$comparison->addSQLWhere("$table.name",$value).") ";
 	}
 	function sql_join($join,$name,$index,$value){
-		if(!$value && !$this->params['required']) return $join;
+//		if(!($value || $this->params['required'])) return $join;
 		global $wpdb;
 		$table = 'meta'.$index;
 		$rel = 'rel'.$index;
@@ -704,6 +705,7 @@ if($debugMode){
 	add_filter('posts_request','debug_dump_query');
 	function debug_dump_query($query){
 		echo "<h1>$query</h1>";
+		return $query;
 	}
 }
 ?>
