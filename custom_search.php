@@ -329,13 +329,13 @@
 				echo "<li><a href='$linkBase&selected-preset=$key'>Preset $name</a></li>";
 			}
 			echo "</ul></div>";
-			echo "<div class='presets-example-code'> To use this preset in your templates use this code:
+			echo "<div class='presets-example-code'> To use this preset in your templates use this code:<br/>
 				<code>".htmlspecialchars("<?php wp_custom_fields_search('$preset'); ?>")."</code></div>";
 
-			echo "\n<form method='post'><input type='hidden' name='selected-preset' value='$preset'>\n";
+			echo "\n<form method='post'><div class='searchforms-config-form'><input type='hidden' name='selected-preset' value='$preset'>\n";
 			$this->configForm($preset,$_POST['selected-preset']);
 			echo "<input type='submit'/>";
-			echo "</form>";
+			echo "</div></form>";
 		}
 	}
 	global $CustomSearchFieldStatic;

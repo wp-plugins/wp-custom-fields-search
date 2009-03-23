@@ -48,3 +48,22 @@
 .ffb-input {
 	border-right: none;
 }
+.presets-selector {
+	clear: both;
+}
+.presets-selector, .presets-example-code {
+	float: left;
+	width: 50%;
+}
+
+.presets-selector ul {
+	list-style: none;
+}
+.presets-selector li {
+	display: block;
+	float: left;
+	width: 50%;
+}
+.searchforms-config-form {
+	clear: left;
+}
