@@ -20,7 +20,7 @@ class DB_PriceSearch_Widget extends DB_Search_Widget {
 		$this->addInput( new CustomSearchField('bedrooms',
 				new DropDownFromValues('bedrooms'),
 				new EqualComparison(),
-				new GreatRealEstateJoiner()));
+				new GreatRealEstateJoiner('bedrooms')));
 		$this->addInput(new CustomSearchField('Type',
 				new DropDownFromValues('propertyType'),
 				new EqualComparison(),
@@ -28,11 +28,11 @@ class DB_PriceSearch_Widget extends DB_Search_Widget {
 		$this->addInput( new CustomSearchField('bathrooms',
 				new DropDownFromValues('bathrooms'),
 				new EqualComparison(),
-				new GreatRealEstateJoiner()));
+				new GreatRealEstateJoiner('bathrooms')));
 		$this->addInput(new CustomSearchField('city',
 				new DropDownFromValues('city'),
 				new EqualComparison(),
-				new GreatRealEstateJoiner()));
+				new GreatRealEstateJoiner('city')));
 	}
 	function init(){
 		new DB_PriceSearch_Widget();
