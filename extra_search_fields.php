@@ -72,6 +72,7 @@ class DB_WP_Widget {
 	}
 	function getConfig($id){
 		$options = get_option($this->id);
+		$id = preg_replace('/^.*-(\d+)$/','\\1',$id);
 		return $options[$id];
 	}
 	function configForm($args){
@@ -242,6 +243,7 @@ class Field {
 }
 class TextField extends Field {
 }
+class TextInput extends TextField{}
 class DropDownField extends Field {
 	function DropDownField($options){
 		$this->__construct($options);

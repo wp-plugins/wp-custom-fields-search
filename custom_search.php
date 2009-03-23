@@ -28,8 +28,18 @@
 			$id = $params['widget_id'];
 
 			$config = $this->getConfig($id);
-			var_dump($config);
-			return parent::getInputs($params);
+
+			unset($config['exists']);
+			$inputs = array();
+			foreach($config as $k=>$v){
+				$inputs[] =  new CustomSearchField($v['name'],
+						new $v['input']($v['name']),
+						new $v['comparison'](),
+						new $v['joiner']($v['name'])
+					);
+
+			}
+			return $inputs;
 		}
 
 		function form_processPost($post,$old){
@@ -107,7 +117,7 @@
 						"CategoryJoiner" => "Category" 
 					),
 					"input"=>array(
-						"TextInput" => "Text Input",
+						"TextField" => "Text Input",
 						"DropDownField" => "Drop Down",
 						"DropDownFromValues" => "Drop Down (DB Values)",
 						"RadioButtonInput" => "Radio Button",
