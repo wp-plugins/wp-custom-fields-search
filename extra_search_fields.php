@@ -493,7 +493,7 @@ class CategoryJoiner {
 	}
 	function getAllOptions($fieldName){
 		global $wpdb;
-		$q = mysql_query($sql = "SELECT distinct t.name FROM $wpdb->terms t JOIN $wpdb->term_relationships r ON r.term_taxonomy_id = t.term_id JOIN $wpdb->posts p ON r.object_id=p.id WHERE post_status='publish'");
+		$q = mysql_query($sql = "SELECT distinct t.name FROM $wpdb->terms t JOIN $wpdb->term_relationships r ON r.term_taxonomy_id = t.term_id JOIN $wpdb->posts p ON r.object_id=p.id JOIN $wpdb->term_taxonomy x ON t.term_id=x.term_id WHERE post_status='publish' AND x.taxonomy='category'");
 		$options = array();
 		while($r = mysql_fetch_row($q))
 			$options[$r[0]] = $r[0];
