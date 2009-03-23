@@ -38,7 +38,8 @@
 			if(version_compare("2.7",$GLOBALS['wp_version'])>0) wp_enqueue_script('dimensions');
 		}
 		function init(){
-			new DB_CustomSearch_Widget();
+			global $CustomSearchFieldStatic;
+			$CustomSearchFieldStatic['Object'] = new DB_CustomSearch_Widget();
 		}
 
 		function getInputs($params = false,$visitedPresets=array()){
@@ -50,8 +51,8 @@
 			if($visitedPresets[$id]) return array();
 			$visitedPresets[$id]=true;
 			
-			global $CustomSearchFieldInputs;
-			if(!$CustomSearchFieldInputs[$id]){
+			global $CustomSearchFieldStatic;
+			if(!$CustomSearchFieldStatic['Inputs'][$id]){
 			
 				$config = $this->getConfig($id);
 				$inputs = array();
@@ -67,9 +68,9 @@
 					$inputs[] =  new CustomSearchField($v);
 
 				}
-				$CustomSearchFieldInputs[$id]=$inputs;
+				$CustomSearchFieldStatic['Inputs'][$id]=$inputs;
 			}
-			return $CustomSearchFieldInputs[$id];
+			return $CustomSearchFieldStatic['Inputs'][$id];
 		}
 		function getTitle($params){
 			$config = $this->getConfig($params['widget_id']);
@@ -244,9 +245,9 @@
 			return $this->getClasses('input');
 		}
 		function getClasses($type){
-			global $CustomSearchFieldTypes;
-			if(!$CustomSearchFieldTypes){
-				$CustomSearchFieldTypes = array(
+			global $CustomSearchFieldStatic;
+			if(!$CustomSearchFieldStatic['Types']){
+				$CustomSearchFieldStatic['Types'] = array(
 					"joiner"=>array(
 						"PostDataJoiner" => "Post Field",
 						"CustomFieldJoiner" => "Custom Field",
@@ -267,9 +268,9 @@
 						"RangeComparison" => "Range",
 					)
 				);
-				$CustomSearchFieldTypes = apply_filters('custom_search_get_classes',$CustomSearchFieldTypes);
+				$CustomSearchFieldStatic['Types'] = apply_filters('custom_search_get_classes',$CustomSearchFieldStatic['Types']);
 			}
-			return $CustomSearchFieldTypes[$type];
+			return $CustomSearchFieldStatic['Types'][$type];
 		}
 		function plugin_menu(){
 			add_options_page('Form Presets','Custom Fields Search',8,__FILE__,array(&$this,'presets_form'));
@@ -333,10 +334,9 @@
 			echo "</form>";
 		}
 	}
-	global $CustomSearchFieldInputs;
-	$CustomSearchFieldInputs = array();
-	global $CustomSearchFieldTypes;
-	$CustomSearchFieldTypes = array();
+	global $CustomSearchFieldStatic;
+	$CustomSearchFieldStatic['Inputs'] = array();
+	$CustomSearchFieldStatic['Types'] = array();
 
 	class AdminDropDown extends DropDownField {
 		function AdminDropDown($name,$value,$options,$params=array()){
@@ -404,6 +404,10 @@ if (!function_exists('json_encode'))
       return '{' . join(',', $result) . '}';
     }
   }
+}
+function wp_custom_fields_search($presetName='default'){
+	global $CustomSearchFieldStatic;
+	$CustomSearchFieldStatic['Object']->renderWidget(array('widget_id'=>'preset-'.$presetName,'noTitle'=>true),array('number'=>'preset-'.$presetName));
 }
 function compat_method_exists($class,$method){
 	return method_exists($class,$method) || in_array(strtolower($method),get_class_methods($class));

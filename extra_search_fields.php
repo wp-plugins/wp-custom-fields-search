@@ -210,7 +210,7 @@ class DB_Search_Widget extends DB_WP_Widget {
 	}
 
 	function renderWidget($params=array(),$p2 = array()){
-		if($title=$this->getTitle($params)){
+		if(($title=$this->getTitle($params)) && !(@$params['noTitle'])){
 			echo $params['before_title'].$title.$params['after_title'];
 		}
 		echo "<form method='get' class='custom_search_widget custom_search_".$this->nameAsId()."' action='".get_option('siteurl')."'>";
