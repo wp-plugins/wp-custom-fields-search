@@ -1,4 +1,5 @@
 18/03/2009 
+	Drop down values with quotes are re-selected in the search form after search.
 	Back end field suggestions fixed for PHP4
 17/03/2009 
 	Made a more sensible default form and hides the form parameters until clicked to produce a slightly less daunting interface
