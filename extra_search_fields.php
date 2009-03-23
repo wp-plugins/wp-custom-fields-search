@@ -142,6 +142,7 @@ class DB_Search_Widget extends DB_WP_Widget {
 		add_filter('posts_join',array(&$this,'join_meta'));
 		add_filter('posts_where',array(&$this,'sql_restrict'));
 		add_filter('home_template',array(&$this,'rewriteHome'));
+		add_filter('page_template',array(&$this,'rewriteHome'));
 		add_action('wp_head', array(&$this,'outputStylesheets'), 1);
 	}
 	function addInput($input){
