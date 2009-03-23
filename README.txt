@@ -18,8 +18,6 @@ I originally developed this plugin for a client project. Basically the problem t
 
 The plugin is now at point where I think it could be useful to other people although I"m aware that there are a lot of improvements that could be made. Please let me know if you have any suggestions or complaints and I will do my best to get them resolved.
 
-For more complete information please visit our [official plugin page](http://www.don-benjamin.co.uk/wordpress-plugins/wp-custom-fields-search)
-
 == Installation ==
 I will try to put more complete documentation together at some point but for now this is a quick start guide to building a search form.i
 
