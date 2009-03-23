@@ -520,7 +520,7 @@ class CustomFieldJoiner extends BaseJoiner{
 
 	}
 	function sql_join($join,$name,$index,$value){
-		if(!$value && !$this->params['required']) return $join;
+		if(!$value && !$this->param('required',false)) return $join;
 		global $wpdb;
 		$table = 'meta'.$index;
 		return "$join JOIN $wpdb->postmeta $table ON $table.post_id=$wpdb->posts.id";
@@ -673,7 +673,7 @@ class CustomSearchField extends SearchFieldBase {
 	}
 	function join_meta($join){
 		global $wpdb;
-		$join=$this->joiner->sql_join($join,$this->name,$this->index,$value,$this->comparison);
+		$join=$this->joiner->sql_join($join,$this->name,$this->index,$this->getValue(),$this->comparison);
 		return $join;
 	}
 
