@@ -345,7 +345,7 @@
 			foreach($presets as $key=>$name){
 				$config = $this->getConfig($key);
 				if($config && $config['name']) $name=$config['name'];
-				if($n = $_POST[$this->id][$key]['name'])
+				if(($n = $_POST[$this->id][$key]['name'])&&(!$_POST['delete']))
 					$name = $n;
 				$presets[$key]=$name;
 			}
