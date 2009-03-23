@@ -23,7 +23,7 @@
  * Author URI: http://don-benjamin.co.uk
  * */
 
-$debugMode = false;
+$debugMode = true;
 
 class DB_WP_Widget {
 	function DB_WP_Widget($name,$params=array()){
@@ -549,7 +549,7 @@ class CategoryJoiner {
 		return " AND ( ".$comparison->addSQLWhere("$table.name",$value).") ";
 	}
 	function sql_join($join,$name,$index,$value){
-//		if(!($value || $this->params['required'])) return $join;
+		if(!($value || $this->params['required'])) return $join;
 		global $wpdb;
 		$table = 'meta'.$index;
 		$rel = 'rel'.$index;
