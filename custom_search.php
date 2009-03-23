@@ -38,11 +38,12 @@
 
 				$inputs = array();
 				$nonFields = $this->getNonInputFields();
+				if($config)
 				foreach($config as $k=>$v){
 					if(in_array($k,$nonFields)) continue;
-					if(!($v['input'] && $v['comparison'] && $v['joiner'])) continue;
+					if(!(class_exists($v['input']) && class_exists($v['comparison']) && class_exists($v['joiner']))) continue;
 					$inputs[] =  new CustomSearchField($v['name'],
-							new $v['input']($v['name']),
+							new $v['input'](array(),$v),
 							new $v['comparison'](),
 							new $v['joiner']($v['name'])
 						);
@@ -69,6 +70,24 @@
 ?>
 	<div id='config-template-<?=$prefId?>' style='display: none;'>
 		<?= $this->singleFieldHTML($pref,'###TEMPLATE_ID###',null);?>
+	</div>
+	<div id='config-input-templates-<?=$prefId?>' style='display: hidden;'>
+<?
+			foreach($this->getClasses('input') as $class=>$desc) {
+				if(class_exists($class))
+					$form = new $class();
+				else $form = false;
+				if(method_exists($form,'getConfigForm')){
+					if($form = $form->getConfigForm('###TEMPLATE_ID###',array('name'=>'###TEMPLATE_NAME###'))){
+?>
+	<div id='config-input-templates-<?=$class?>-<?=$prefId?>'>
+		<?=$form?>
+	</div>
+		
+<?					}
+				}
+			}
+ ?>
 	</div>
 	<script type='text/javascript'>
 		CustomSearch.create('<?=$prefId?>');
@@ -100,12 +119,26 @@
 			$output = "<input type='hidden' name='$htmlId' value='1'/>";
 			$titles="<th>Field</th>";
 			$inputs="<td><input type='text' name='$pref"."[name]' value='$values[name]'/></td>";
+			$output.="<table style='width: 100%'><tr>$titles</tr><tr>$inputs</tr></table>";
+			$inputs='';$titles='';
 			foreach(array('joiner'=>'Table','comparison'=>'Compare','input'=>'Widget') as $k=>$v){
-				$dd = new AdminDropDown($pref."[$k]",$values[$k],$this->getClasses($k));
+				$dd = new AdminDropDown($pref."[$k]",$values[$k],$this->getClasses($k),array('onChange'=>'CustomSearch['.$prefId.'].updateOptions('.$id.')'));
 				$titles.="<th>".$v."</th>";
 				$inputs.="<td>".$dd->getInput()."</td>";
 			}
-			$output.="<table><tr>$titles</tr><tr>$inputs</tr></table>";
+			$output.="<table style='width: 100%'><tr>$titles</tr><tr>$inputs</tr></table>";
+			$titles="<th>Numeric</th><th>Widget Config</th>";
+			$inputs="<td><input type='checkbox' ".($values['numeric']?"checked='true'":"")." name='$pref"."[numeric]'/></td>";
+
+			if(class_exists($widgetClass = $values['input'])){
+				$widget = new $widgetClass();
+				if(method_exists($widget,'getConfigForm'))
+					$widgetConfig=$widget->getConfigForm($pref,$values);
+			}
+
+
+			$inputs.="<td><div id='$this->id"."-$prefId"."-$id"."-widget-config'>$widgetConfig</div></td>";
+			$output.="<table style='width: 100%'><tr>$titles</tr><tr>$inputs</tr></table>";
 			$output.="<a href='#' onClick=\"return CustomSearch['$prefId'].remove('$id');\">Remove Field</a>";
 			return $output;
 		}
@@ -161,11 +194,11 @@
 	$CustomSearchFieldTypes = array();
 
 	class AdminDropDown extends DropDownField {
-		function AdminDropDown($name,$value,$options){
-			AdminDropDown::__construct($name,$value,$options);
+		function AdminDropDown($name,$value,$options,$params=array()){
+			AdminDropDown::__construct($name,$value,$options,$params);
 		}
-		function __construct($name,$value,$options){
-			parent::__construct($options);
+		function __construct($name,$value,$options,$params=array()){
+			parent::__construct($options,$params);
 			$this->name = $name;
 			$this->value = $value;
 		}

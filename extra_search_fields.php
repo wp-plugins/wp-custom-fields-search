@@ -238,6 +238,12 @@ class SearchFieldBase {
 }
 
 class Field {
+	function Field(){
+		$this->__construct();
+	}
+	function __construct(){
+	}
+
 	function getValue($name){
 		return $_REQUEST[$this->getHTMLName($name)];
 	}
@@ -256,11 +262,22 @@ class TextField extends Field {
 }
 class TextInput extends TextField{}
 class DropDownField extends Field {
-	function DropDownField($options){
-		DropDownField::__construct($options);
+	function DropDownField($options=null,$params=array()){
+		DropDownField::__construct($options,$params);
 	}
-	function __construct($options = array()){
+	function __construct($options = null,$params = array()){
+		parent::__construct();
+		if($params['dropdownoptions']){
+			$options=array();
+			$optionPairs = explode(',',$params['dropdownoptions']);
+			foreach($optionPairs as $option){
+				list($k,$v) = explode(':',$option);
+				if(!$v) $v=$k;
+				$options[$k]=$v;
+			}
+		}
 		$this->options = $options;
+		$this->params = $params;
 	}
 
 	function getOptions(){
@@ -275,7 +292,12 @@ class DropDownField extends Field {
 			$checked = ($option==$v)?" selected='true'":"";
 			$options.="<option value='$option'$checked>$label</option>";
 		}
-		return "<select name='$id'>$options</select>";
+		$atts = '';
+		if($this->params['onChange']) $atts = ' onChange="'.htmlspecialchars($this->params['onChange']).'"';
+		return "<select name='$id'$atts>$options</select>";
+	}
+	function getConfigForm($id,$values){
+		return "<label for='$id-dropdown-options'>Drop Down Options</label><input id='$id-dropdown-options' name='$id"."[dropdownoptions]' value='$values[dropdownoptions]'/>";
 	}
 }
 
@@ -285,11 +307,11 @@ class CustomFieldReader {
 }
 
 class DropDownFromValues extends DropDownField {
-	function DropDownFromValues($fieldName){
-		DropDownFromValues::__construct($fieldName);
+	function DropDownFromValues(){
+		DropDownFromValues::__construct();
 	}
 
-	function __construct($fieldName){
+	function __construct(){
 		parent::__construct($options);
 	}
 
@@ -299,12 +321,15 @@ class DropDownFromValues extends DropDownField {
 
 		return $options;
 	}
+	function getConfigForm($id,$values){
+		return "";
+	}
 }
 class RadioButtonField extends Field {
-	function RadioButtonField($options){
+	function RadioButtonField($options=array()){
 		RadioButtonField::__construct($options);
 	}
-	function __construct($options){
+	function __construct($options=array()){
 		$this->options = $options;
 	}
 	function getOptions(){
@@ -323,12 +348,11 @@ class RadioButtonField extends Field {
 	}
 }
 class RadioButtonFromValues extends RadioButtonField {
-	function RadioButtonFromValues($fieldName){
+	function RadioButtonFromValues($fieldName=null){
 		RadioButtonFromValues::__construct($fieldName);
 	}
 
-	function __construct($fieldName){
-		$options=CustomFieldReader::getValues($fieldName);
+	function __construct($fieldName=null){
 		parent::__construct($options);
 	}
 	function getOptions($joiner,$name){
@@ -354,7 +378,7 @@ class LikeComparison extends Comparison{
 class RangeComparison extends Comparison{
 	function addSQLWhere($field,$value){
 		$value = mysql_escape_string($value);
-		list($min,$max) = explode(":",$value);
+		list($min,$max) = explode("-",$value);
 		$where=1;
 		if(strlen($min)>0) $where.=" AND $field >= $min";
 		if(strlen($max)>0) $where.=" AND $field <= $max";
