@@ -550,4 +550,11 @@ class CustomSearchField extends SearchFieldBase {
 		return "<div class='searchform-param'><label class='searchform-label'>".$this->getLabel()."</label><span class='searchform-input-wrapper'>".$this->input->getInput($this->name,$this->joiner)."</span></div>";
 	}
 }
+
+$dir = opendir($path = dirname(__FILE__).'/bridges');
+while($file = readdir($dir)){
+	if(is_file("$path/$file") && preg_match("/^[^.].*\.php$/",$file)){
+		require_once("$path/$file");
+	}
+}
 ?>
