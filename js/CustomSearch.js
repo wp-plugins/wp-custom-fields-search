@@ -21,7 +21,7 @@ CustomSearch = Class.create( {
 	},
 	createFlexboxes: function(){
 		if(this.getForm().length<1){
-			setTimeout("CustomSearch["+this.id+"].createFlexboxes()",100);
+			setTimeout("CustomSearch['"+this.id+"'].createFlexboxes()",100);
 			return;
 		}
 		this.getForm().find('.form-field-title-div').each(function(k,el){

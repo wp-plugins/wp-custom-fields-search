@@ -119,7 +119,7 @@ class DB_WP_Widget extends ParameterisedObject {
 		static $first;
 		global $wp_registered_widgets;
 
-		if ( is_numeric($args) )
+		if ( !is_array($args) )
 			$args = array( 'number' => $args );
 
 		$args = wp_parse_args($args,array('number'=>-1));

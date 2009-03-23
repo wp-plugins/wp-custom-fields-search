@@ -95,7 +95,7 @@
 		}
 		function form_outputForm($values,$pref){
 			$defaults=$this->getDefaultConfig();
-			$prefId = preg_replace('/^.*\[(\d+|%i%)\].*/','\\1',$pref);
+			$prefId = preg_replace('/^.*\[([^]]*)\]$/','\\1',$pref);
 			$this->form_existsInput($pref);
 			$rand = rand();
 ?>
@@ -165,7 +165,7 @@
 			return array('exists','name');
 		}
 		function singleFieldHTML($pref,$id,$values){
-			$prefId = preg_replace('/^.*\[(\d+|%i%)\].*/','\\1',$pref);
+			$prefId = preg_replace('/^.*\[([^]]*)\]$/','\\1',$pref);
 			$pref = $pref."[$id]";
 			$htmlId = $pref."[exists]";
 			$output = "<input type='hidden' name='$htmlId' value='1'/>";
@@ -286,14 +286,14 @@
 			$presets["preset-p$index"] = 'New Preset';
 
 			$linkBase = $_SERVER['REQUEST_URI'];
-			$linkBase = preg_replace("/preset=[^&]*(&|$)/",'',$linkBase);
+			$linkBase = preg_replace("/&?preset=[^&]*(&|$)/",'',$linkBase);
 			foreach($presets as $key=>$name){
 				$config = $this->getConfig($name);
 				if($config) $name=$config['name'];
 				echo "<li><a href='$linkBase&selected-preset=$key'>Preset $name</a></li>";
 			}
 
-			echo "<form method='post'><input type='hidden' name='selected-preset' value='$preset'>";
+			echo "\n<form method='post'><input type='hidden' name='selected-preset' value='$preset'>\n";
 			$this->configForm("preset-$preset",$_POST['selected-preset']);
 			echo "</form>";
 		}
