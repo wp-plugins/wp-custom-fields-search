@@ -103,7 +103,8 @@ function nigerianise_price($price){
 }
 add_filter('custom_search_get_classes','add_real_estate_search_fields');
 function add_real_estate_search_fields($classes){
-	$classes['joiner']['GreatRealEstateJoiner']='Great Real Estate';
+	if(function_exists('greatrealestate_init'))
+		$classes['joiner']['GreatRealEstateJoiner']='Great Real Estate';
 	return $classes;
 }
 
