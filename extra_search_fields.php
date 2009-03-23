@@ -261,6 +261,13 @@ class DB_Search_Widget extends DB_WP_Widget {
 	}
 	function sql_restrict($where){
 		if($this->isPosted()){
+			global $wpdb;
+			/** This could possibly be considered invasive, need to think this bit through
+			 * properly.
+			 */
+			$where = preg_replace("_AND\s*\(ID\s*=\s*'\d+'\)_","",$where);
+			$where = preg_replace("/AND $wpdb->posts.post_type = '(post|page)'/","",$where);
+			$where.= " AND ($wpdb->posts.post_type='post')";
 			foreach($this->getInputs($_REQUEST['widget_number']) as $input){
 				$where = $input->sql_restrict($where);
 			}

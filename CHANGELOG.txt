@@ -1,3 +1,6 @@
+20/03/2009
+	Works when run via a rewritten URL (in some cases anyway)
+	Compatible with WP 2.7 and jQuery 1.2.3
 18/03/2009 
 	Drop down values with quotes are re-selected in the search form after search.
 	Back end field suggestions fixed for PHP4
