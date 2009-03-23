@@ -210,24 +210,14 @@ class DB_Search_Widget extends DB_WP_Widget {
 	}
 
 	function renderWidget($params=array(),$p2 = array()){
-		if(($title=$this->getTitle($params)) && !(@$params['noTitle'])){
-			echo $params['before_title'].$title.$params['after_title'];
-		}
-		echo "<form method='get' class='custom_search_widget custom_search_".$this->nameAsId()."' action='".get_option('siteurl')."'>";
-		echo "<div class='searchform-params'>";
-		foreach($this->getInputs($params) as $input){
-			$inputClass = method_exists($input,'getCSSClass')?$input->getCSSClass():get_class($input);
-			echo "<div class='$inputClass'>".$input->getInput()."</div>";
-		}
-		echo "</div>";
-		echo "<div class='searchform-controls'>";
-
-		echo "<input type='submit' name='search' value='Search'/>";
-		echo "<input type='hidden' name='search-class' value='".$this->getPostIdentifier()."'/>";
-		echo "<input type='hidden' name='widget_number' value='".$p2['number']."'/>";
-		echo "</div>";
-		echo "<div class='searchform-spoiler'><a href='http://www.don-benjamin.co.uk/wordpress-plugins/custom-search/'>Powered By DB</a></div>";
-		echo "</form>";
+		$title = $this->getTitle($params);
+		$inputs = $this->getInputs($params);
+		$hidden = "<input type='hidden' name='search-class' value='".$this->getPostIdentifier()."'/><input type='hidden' name='widget_number' value='".$p2['number']."'/>";
+		$formCssClass = 'custom_search widget custom_search_'.$this->nameAsId();
+		$formAction = get_option('siteurl');
+		$formTemplate = locate_template('wp-custom-fields-search-form.php');
+		if(!$formTemplate) $formTemplate = dirname(__FILE__).'/templates/wp-custom-fields-search-form.php';
+		include($formTemplate);
 	}
 
 	function isPosted(){
@@ -314,6 +304,9 @@ class Field extends ParameterisedObject {
 		$htmlName = $this->getHTMLName($name);
 		$value = $this->getValue($name);
 		return "<input name='$htmlName' value='$value'/>";
+	}
+	function getCSSClass(){
+		return get_class($this);
 	}
 }
 class TextField extends Field {
