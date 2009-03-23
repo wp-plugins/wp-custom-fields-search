@@ -142,9 +142,13 @@ class DB_Search_Widget extends DB_WP_Widget {
 		add_filter('posts_join',array(&$this,'join_meta'));
 		add_filter('posts_where',array(&$this,'sql_restrict'));
 		add_filter('home_template',array(&$this,'rewriteHome'));
+		add_action('wp_head', array(&$this,'outputStylesheets'), 1);
 	}
 	function addInput($input){
 		$this->inputs[] = $input;
+	}
+	function outputStylesheets(){
+			echo "\n".'<style type="text/css" media="screen">@import "'. WP_CONTENT_URL .'/plugins/custom-search/css/searchforms.css";</style>'."\n";
 	}
 
 	function getInputs($params){

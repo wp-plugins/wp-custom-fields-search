@@ -1,0 +1,29 @@
+.searchform-label {
+        display: block;
+        float: left;
+        width: 35%;
+        overflow: hidden;
+        font-size:1.1em;
+        font-family: sans-serif;
+        font-weight: bold;
+        padding-top: 4px;
+}
+.searchform-input-wrapper {
+        display: block;
+        float: left;
+        width: 60%;
+}
+.searchform-input-wrapper input,
+.searchform-input-wrapper select{
+        width: 100%;
+}
+.searchform-param {
+        clear: both;
+}
+.searchform-params {
+        clear: both;
+}
+.searchform-controls {
+        clear: both;
+        text-align: right;
+}
