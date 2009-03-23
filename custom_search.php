@@ -220,7 +220,8 @@
 					),
 					"comparison"=>array(
 						"EqualComparison" => "Equals",
-						"LikeComparison" => "In",
+						"LikeComparison" => "Phrase In",
+						"WordsLikeComparison" => "Words In",
 						"LessThanComparison" => "Less Than",
 						"MoreThanComparison" => "More Than",
 						"RangeComparison" => "Range",

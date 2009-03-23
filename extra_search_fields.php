@@ -409,7 +409,21 @@ class EqualComparison extends Comparison {
 }
 class LikeComparison extends Comparison{
 	function addSQLWhere($field,$value){
+		return $this->getLikeString($field,$value);
+	}
+	function getLikeString($field,$value){
 		return "$field LIKE '%".mysql_escape_string($value)."%'";
+	}
+}
+
+class WordsLikeComparison extends LikeComparison {
+	function addSQLWhere($field,$value){
+		$words = explode(" ",$value);
+		$like = array(1);
+		foreach($words as $word){
+			$like[] = $this->getLikeString($field,$word);
+		}
+		return "(".join(" AND ",$like).")";
 	}
 }
 class LessThanComparison extends Comparison{
