@@ -15,6 +15,13 @@
 CustomSearch = Class.create( {
 	init : function (id) {
 		this.id=id;
+		me = this;
+		this.getForm().find('.form-field-title-div').each(function(k,el){
+			el = jQuery(el);
+			var index = el.attr('id').replace(/.*-/,'')
+			me.createFlexbox(index);
+			me.updateOptions(index,'joiner');
+		});
 	},
 	add: function (){
 		var html = jQuery('#config-template-'+this.id).html();
@@ -40,14 +47,18 @@ CustomSearch = Class.create( {
 	},
 
 	getForm: function (id){
-		return jQuery('#config-form-'+this.id+'-'+id);
+		var htmId='#config-form-'+this.id;
+		if(id) htmId+='-'+id;
+		return jQuery(htmId);
 	},
 	remove: function (id){
 		this.getForm(id).remove();
 		return false;
 	},
 
-	updateOptions: function(id) {
+	updateOptions: function(id,changed) {
+		switch(changed){
+		case 'input':
 		type = this.getForm(id).find('[@name="db_customsearch_widget['+this.id+']['+id+'][input]"]').val();
 		template = jQuery('#config-input-templates-'+type+'-'+this.id);
 		div = jQuery(hid = '#db_customsearch_widget-'+this.id+'-'+id+'-widget-config');
@@ -58,6 +69,34 @@ CustomSearch = Class.create( {
 		name='';
 		html = this.replaceAll(html,'###TEMPLATE_NAME###',name);
 		div.html(html);
+		break;
+			case 'joiner':
+				type = this.getForm(id).find('[@name="db_customsearch_widget['+this.id+']['+id+'][joiner]"]').val();
+				if(this.namesFor[type]){
+					this.flexboxData[id].results = this.namesFor[type];
+					jQuery('#form-field-dbname-'+this.id+'-'+id).show();
+					jQuery('#form-field-dbname-'+this.id+'-'+id);
+				} else {
+					jQuery('#form-field-dbname-'+this.id+'-'+id).hide();
+				}
+				break;
+		}
+	},
+	flexboxData : {},
+	createFlexbox: function(id){
+		if(!this.flexboxData[id]) this.flexboxData[id] = {results:[]};
+		initVal = jQuery('#form-field-dbname-'+this.id+'-'+id).find("input")[0].value;
+
+
+		jQuery('#form-field-dbname-'+this.id+'-'+id).find("*").each(function(){jQuery(this).remove()})
+		jQuery('#form-field-dbname-'+this.id+'-'+id).flexbox(this.flexboxData[id],{width:100,name:'db_customsearch_widget['+this.id+']['+id+'][name]',maxCacheBytes:0,paging:false,initialValue:initVal})
+       },
+	namesFor: {
+		'PostDataJoiner': [{id:'first',name:'first'},{id:'second',name:'second'}],
+		'GreatRealEstateJoiner': [{id:'listPrice',name:'listPrice'},{id:'city',name:'city'}]
+	},
+	setOptionsFor: function(joiner,options){
+		this.namesFor[joiner] = options;
 	}
 });
 

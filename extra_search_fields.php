@@ -431,6 +431,9 @@ class BaseJoiner {
 	function process_where($where){
 		return $where;
 	}
+	function needsField(){
+		return true;
+	}
 }
 class CustomFieldJoiner extends BaseJoiner{
 	function CustomFieldJoiner($name,$params){
@@ -482,6 +485,9 @@ class CategoryJoiner {
 			$options[$r[0]] = $r[0];
 		return $options;
 	}
+	function needsField(){
+		return false;
+	}
 }
 
 class PostDataJoiner extends BaseJoiner {
@@ -508,6 +514,9 @@ class PostDataJoiner extends BaseJoiner {
 		while($r = mysql_fetch_row($q))
 			$options[$r[0]] = $r[0];
 		return $options;
+	}
+	function getSuggestedFields(){
+		return array('all'=>'All Fields','post_content'=>'Body Text','post_title'=>'Title','post_author'=>'Author','post_date'=>'Date');
 	}
 }
 

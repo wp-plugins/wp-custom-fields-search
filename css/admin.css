@@ -32,3 +32,11 @@
 	margin-bottom: 10px;
 	padding: 3px;
 }
+
+.ffb-arrow {
+	margin-top: 1px;
+	border-top: solid gray 2px;
+}
+.ffb-input {
+	border-right: none;
+}

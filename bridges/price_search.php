@@ -19,7 +19,7 @@
  */
 require_once(dirname(__FILE__).'/../extra_search_fields.php');
 
-class GreatRealEstateJoiner {
+class GreatRealEstateJoiner extends BaseJoiner {
 	function GreatRealEstateJoiner($name=null){
 		GreatRealEstateJoiner::__construct($name);
 	}
@@ -54,6 +54,9 @@ class GreatRealEstateJoiner {
 		$cleared = preg_replace("/AND $wpdb->posts.post_type = '(post|page)'/","",$where);
 		$cleared = preg_replace("/$wpdb->posts.ID = '\d+'/","1",$cleared);
 		return $cleared;
+	}
+	function getSuggestedFields(){
+		return array('listPrice'=>'List Price','city','county');
 	}
 }
 

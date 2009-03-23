@@ -98,9 +98,6 @@
 				}
 			}
  ?>
-	<script type='text/javascript'>
-		CustomSearch.create('<?=$prefId?>');
-	</script>
 	<div id='config-form-<?=$prefId?>'>
 		<label for='<?=$prefId?>[name]'>Search Title</label><input type='text' class='form-title-input' id='<?=$prefId?>[name]' name='<?=$pref?>[name]' value='<?=$values['name']?>'/>
 <?
@@ -115,6 +112,25 @@
 	</div>
 
 	<br/><a href='#' onClick="return CustomSearch['<?=$prefId?>'].add();">Add Field</a>
+	<script type='text/javascript'>
+		CustomSearch.create('<?=$prefId?>');
+<?
+	foreach($this->getClasses('joiner') as $joinerClass=>$desc){
+		if(method_exists($joinerClass,'getSuggestedFields')){
+			$options = eval("return $joinerClass::getSuggestedFields();");
+			$str = '';
+			foreach($options as $k=>$v){
+				if(is_numeric($k)) $k=$v;
+				$options[$k] = json_encode(array('id'=>$k,'name'=>$v));
+			}
+			$str = '['.join(',',$options).']';
+			echo "CustomSearch['$prefId'].setOptionsFor('$joinerClass',".$str.");\n";
+		}elseif(eval("return $joinerClass::needsField();")){
+			echo "CustomSearch['$prefId'].setOptionsFor('$joinerClass',[]);\n";
+		}
+	}
+?>
+	</script>
 <?
 		}
 
@@ -131,10 +147,10 @@
 			$output.="<table class='form-field-table'><tr>$titles</tr><tr>$inputs</tr></table>";
 			$inputs='';$titles='';
 			$titles="<th>DB Field</th>";
-			$inputs="<td><div id='form-field-dbname-$prefId-$id'><input type='text' name='$pref"."[name]' value='$values[name]' class='form-field-title'/></div></td>";
+			$inputs="<td><div id='form-field-dbname-$prefId-$id' class='form-field-title-div'><input type='text' name='$pref"."[name]' value='$values[name]' class='form-field-title'/></div></td>";
 			$count=1;
 			foreach(array('joiner'=>'Table','comparison'=>'Compare','input'=>'Widget') as $k=>$v){
-				$dd = new AdminDropDown($pref."[$k]",$values[$k],$this->getClasses($k),array('onChange'=>'CustomSearch['.$prefId.'].updateOptions('.$id.')'));
+				$dd = new AdminDropDown($pref."[$k]",$values[$k],$this->getClasses($k),array('onChange'=>'CustomSearch['.$prefId.'].updateOptions('.$id.',"'.$k.'")'));
 				$titles="<th>".$v."</th>".$titles;
 				$inputs="<td>".$dd->getInput()."</td>".$inputs;
 				if(++$count==2){
