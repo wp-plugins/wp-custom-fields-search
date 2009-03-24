@@ -16,7 +16,7 @@ The blog admin is able to build a customised search form. It allows you to searc
 
 I originally developed this plugin for a client project. Basically the problem they had was that they were storing real estate data as wordpress posts with associated custom fields and they wanted to search for entries based on price, location and features which was not possible with the default wordpress search.
 
-The plugin is now at point where I think it could be useful to other people although I"m aware that there are a lot of improvements that could be made. Please let me know if you have any suggestions or complaints and I will do my best to get them resolved.
+The plugin is now at point where I think it could be useful to other people although I"m aware that there are a lot of improvements that could be made. Please [let me know](http://www.don-benjamin.co.uk/wordpress/contact) if you have any suggestions or complaints and I will do my best to get them resolved.
 
 == Installation ==
 I will try to put more complete documentation together at some point but for now this is a quick start guide to building a search form.i
