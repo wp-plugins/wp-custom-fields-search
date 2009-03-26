@@ -3,7 +3,7 @@ Contributors: don@don-benjamin.co.uk
 Tags: search,custom fields,widget,sidebar
 Requires at least: 2.5
 Tested up to: 2.7.1
-Stable tag: 0.3.2
+Stable tag: 0.3.3
 
 This plugin allows multiple form inputs to be configured to search different aspects of a post including custom fields.
 
@@ -31,9 +31,15 @@ Method 1: Add the search as a sidebar widget
 
 Method 2: Add the search code directly into your template
 
-1. Go to the custom fields config page in your admin section, Settings " WP Custom Fields Search
+1. Go to the custom fields config page in your admin section, Settings > WP Custom Fields Search
 2. Copy the example PHP code from this page into your template file.
 3. You should now have a basic search form on the front of your site, to customise this further follow the instructions below for setting up fields.
+
+Method 3: Add a tag into your posts/pages
+
+1. Go to the custom fields config page in your admin section, Settings > WP Custom Fields Search
+2. Copy the example tag for posts from this page into the content of the page or post in which you want the form to appear.
+3. You should now have a basic search form in this page/post, to customise this further follow the instructions below for setting up fields.
 
 == Screenshots ==
 1. Front end search box

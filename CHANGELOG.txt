@@ -1,3 +1,5 @@
+23/03/2009	Release 0.3.3
+	Added tag syntax for placing search forms in posts.
 23/03/2009	Release 0.3.2
 	Added Wordpress.org format readme file.
 23/03/2009	Release 0.3
