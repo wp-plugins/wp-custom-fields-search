@@ -35,6 +35,7 @@ Author URI: http://www.don-benjamin.co.uk/
 			parent::__construct('Custom Fields ',$params);
 			add_action('admin_print_scripts', array(&$this,'print_admin_scripts'), 90);
 			add_action('admin_menu', array(&$this,'plugin_menu'), 90);
+			add_filter('the_content', array(&$this,'process_tag'),9);
 			if(version_compare("2.7",$GLOBALS['wp_version'])>0) wp_enqueue_script('dimensions');
 		}
 		function init(){
@@ -357,6 +358,22 @@ Author URI: http://www.don-benjamin.co.uk/
 			$shouldSave = $_POST['selected-preset'] && !$_POST['delete'] && check_admin_referer($this->id.'-editpreset-'.$preset);
 			ob_end_clean();
 			include(dirname(__FILE__).'/templates/options.php');
+		}
+		function process_tag($content){
+			$regex = '/\[\s*wp-custom-fields-search(?:\s+([^\]]+(?:\s+.*)?))?\]/';
+			return preg_replace_callback($regex, array(&$this, 'generate_from_tag'), $content);
+		}
+		function generate_from_tag($reMatches){
+			global $CustomSearchFieldStatic;
+			ob_start();
+
+			$preset=$reMatches[1];
+			if(!$preset) $preset = 'default';
+			wp_custom_fields_search($preset);
+
+			$form = ob_get_contents();
+			ob_end_clean();
+			return $form;
 		}
 	}
 	global $CustomSearchFieldStatic;

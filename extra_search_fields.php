@@ -112,7 +112,8 @@ class DB_WP_Widget extends ParameterisedObject {
 	function getConfig($id=null,$key=null){
 		$options = get_option($this->id);
 		if(is_null($id)) return $options;
-		$id = preg_replace('/^.*-(\d+)$/','\\1',$id);
+		if(!array_key_exists($id,$options))
+			$id = preg_replace('/^.*-(\d+)$/','\\1',$id);
 		if(is_null($key))
 			return $options[$id];
 		else 

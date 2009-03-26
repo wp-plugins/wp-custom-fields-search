@@ -14,6 +14,15 @@ To use this preset in your templates copy this code to the appropriate place in 
 		<pre><code><?php echo htmlspecialchars("<?php if(function_exists('wp_custom_fields_search')) 
 	wp_custom_fields_search('$preset'); ?>")?></code></pre>
 	<? } ?>
+	<h4>Tag For Posts</h4>
+To use this preset in your posts/pages copy this code to the appropriate place in your post/page:<br/>
+	<?php if($preset=='preset-default') { ?> 
+		<pre><code><?php echo htmlspecialchars("[wp-custom-fields-search]");?></pre></code>
+	<?php } else { 
+		$presetLabel = substr($preset,7);
+	?>
+		<pre><code><?php echo htmlspecialchars("[wp-custom-fields-search $presetLabel]");?></pre></code>
+	<? } ?>
 </div>
 
 <form method='post'><div class='searchforms-config-form'>
