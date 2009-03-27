@@ -4,7 +4,7 @@
 	<form method='get' class='<?php echo $formCssClass?>' action='<?php echo $formAction?>'>
 <?php echo $hidden ?>
 		<div class='searchform-params'>
-<?		foreach($inputs as $input){?>
+<?php		foreach($inputs as $input){?>
 <div class='<?php echo $input->getCSSClass()?>'><?php echo $input->getInput()?></div>
 <?php		}?>
 </div>
