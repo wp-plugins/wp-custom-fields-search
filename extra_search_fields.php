@@ -739,12 +739,15 @@ class CustomSearchField extends SearchFieldBase {
 	}
 }
 
-$dir = opendir($path = dirname(__FILE__).'/bridges');
-while($file = readdir($dir)){
-	if(is_file("$path/$file") && preg_match("/^[^.].*\.php$/",$file)){
-		require_once("$path/$file");
+function wp_custom_search_fields_include_bridges(){
+	$dir = opendir($path = dirname(__FILE__).'/bridges');
+	while($file = readdir($dir)){
+		if(is_file("$path/$file") && preg_match("/^[^.].*\.php$/",$file)){
+			require_once("$path/$file");
+		}
 	}
 }
+wp_custom_search_fields_include_bridges();
 
 if($debugMode){
 	add_filter('posts_request','debug_dump_query');
