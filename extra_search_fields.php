@@ -220,7 +220,7 @@ class DB_Search_Widget extends DB_WP_Widget {
 		$formCssClass = 'custom_search widget custom_search_'.$this->nameAsId();
 		$formAction = get_option('siteurl');
 		if(function_exists('locate_template'))
-			$formTemplate = locate_template('wp-custom-fields-search-form.php');
+			$formTemplate = locate_template(array('wp-custom-fields-search-form.php'));
 		if(!$formTemplate) $formTemplate = dirname(__FILE__).'/templates/wp-custom-fields-search-form.php';
 		include($formTemplate);
 	}
