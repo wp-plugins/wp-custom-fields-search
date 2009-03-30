@@ -3,7 +3,7 @@
 Plugin Name: WP Custom Search
 Plugin URI: http://www.don-benjamin.co.uk/wordpress-plugins/wp-custom-search
 Description: Allows admin to build custom search form.  Allows the site admin to configure multiple html inputs for different fields including custom fields.  Also provides an extensible mechanism for integrating with other plugins data structures.
-Version: 0.3.4
+Version: 0.3.5
 Author: Don Benjamin
 Author URI: http://www.don-benjamin.co.uk/
 */
@@ -45,7 +45,7 @@ Author URI: http://www.don-benjamin.co.uk/
 		}
 
 		function currentVersion(){
-			return "0.3.4";
+			return "0.3.5";
 		}
 
 		function ensureUpToDate(){
