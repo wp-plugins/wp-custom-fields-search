@@ -36,6 +36,7 @@ Author URI: http://www.don-benjamin.co.uk/
 			add_action('admin_print_scripts', array(&$this,'print_admin_scripts'), 90);
 			add_action('admin_menu', array(&$this,'plugin_menu'), 90);
 			add_filter('the_content', array(&$this,'process_tag'),9);
+			wp_enqueue_script('jquery');
 			if(version_compare("2.7",$GLOBALS['wp_version'])>0) wp_enqueue_script('dimensions');
 		}
 		function init(){
