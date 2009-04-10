@@ -1,3 +1,6 @@
+10/04/2009
+	Sorts drop down options 
+	Allows use of multiple category inputs
 30/03/2009	Release 0.3.5
 	Fixed short tags in templates (thanks to Dr North)
 	Fixed bug in loading of search templates.
