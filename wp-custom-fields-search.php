@@ -284,6 +284,7 @@ Author URI: http://www.don-benjamin.co.uk/
 						"TextField" => "Text Input",
 						"DropDownField" => "Drop Down",
 						"RadioButtonField" => "Radio Button",
+						"HiddenField" => "Hidden Constant",
 					),
 					"comparison"=>array(
 						"EqualComparison" => "Equals",

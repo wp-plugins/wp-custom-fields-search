@@ -222,6 +222,13 @@ class DB_Search_Widget extends DB_WP_Widget {
 		if(function_exists('locate_template'))
 			$formTemplate = locate_template(array('wp-custom-fields-search-form.php'));
 		if(!$formTemplate) $formTemplate = dirname(__FILE__).'/templates/wp-custom-fields-search-form.php';
+
+		foreach($inputs as $k=>$v){
+			if($v->isHidden()){
+				$hidden.=$v->getInput();
+				unset($inputs[$k]);
+			}
+		}
 		include($formTemplate);
 	}
 
@@ -367,6 +374,27 @@ class DropDownField extends Field {
 	}
 	function getConfigForm($id,$values){
 		return "<label for='$id-dropdown-options'>Drop Down Options</label><input id='$id-dropdown-options' name='$id"."[dropdownoptions]' value='$values[dropdownoptions]'/>";
+	}
+}
+class HiddenField extends Field {
+	function HiddenField(){
+		call_user_func_array(array($this,'__construct'),func_get_args());
+	}
+	function __construct($params = array()){
+		$params['hidden']=true;
+		parent::__construct($params);
+	}
+	function getValue(){
+		return $this->param('constant-value',null);
+	}
+
+	function getInput($name){
+		$v=$this->getValue($name);
+		$id = $this->getHTMLName($name);
+		return "<input type='hidden' name='".htmlspecialchars($name)."' value='".htmlspecialchars($v)."'/>";
+	}
+	function getConfigForm($id,$values){
+		return "<label for='$id-constant-value'>Constant Value</label><input id='$id-constant-value' name='$id"."[constant-value]' value='{$values['constant-value']}'/>";
 	}
 }
 
@@ -741,6 +769,9 @@ class CustomSearchField extends SearchFieldBase {
 		return $this->params['label'];
 	}
 
+	function isHidden(){
+		return $this->input->param('hidden',false);
+	}
 	function getInput(){
 		return "<div class='searchform-param'><label class='searchform-label'>".$this->getLabel()."</label><span class='searchform-input-wrapper'>".$this->input->getInput($this->getQualifiedName(),$this->joiner)."</span></div>";
 	}
