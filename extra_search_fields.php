@@ -340,7 +340,9 @@ class DropDownField extends Field {
 	function getOptions($joiner,$name){
 		if($this->param('fromDb',!$this->options)){
 			$options = array(''=>'ANY');
-			$options +=$joiner->getAllOptions($name);
+			$auto = $joiner->getAllOptions($name);
+			asort($auto);
+			$options +=$auto;
 			return $options;
 		} else {
 			return $this->options;
