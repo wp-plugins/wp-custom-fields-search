@@ -225,7 +225,7 @@ class DB_Search_Widget extends DB_WP_Widget {
 
 		foreach($inputs as $k=>$v){
 			if($v->isHidden()){
-				$hidden.=$v->getInput();
+				$hidden.=$v->getInput(false);
 				unset($inputs[$k]);
 			}
 		}
@@ -772,8 +772,12 @@ class CustomSearchField extends SearchFieldBase {
 	function isHidden(){
 		return $this->input->param('hidden',false);
 	}
-	function getInput(){
-		return "<div class='searchform-param'><label class='searchform-label'>".$this->getLabel()."</label><span class='searchform-input-wrapper'>".$this->input->getInput($this->getQualifiedName(),$this->joiner)."</span></div>";
+	function getInput($wrap=true){
+		$input = $this->input->getInput($this->getQualifiedName(),$this->joiner);
+		if($wrap){
+			$input = "<div class='searchform-param'><label class='searchform-label'>".$this->getLabel()."</label><span class='searchform-input-wrapper'>$input</span></div>";
+		}
+		return $input;
 	}
 	function getCSSClass(){
 		return method_exists($this->input,'getCSSClass')?$this->input->getCSSClass():get_class($this->input);
