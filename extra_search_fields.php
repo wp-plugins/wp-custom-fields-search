@@ -359,7 +359,7 @@ class DropDownField extends Field {
 		}
 		$atts = '';
 		if($this->params['onChange']) $atts = ' onChange="'.htmlspecialchars($this->params['onChange']).'"';
-		if($this->params['id']) $atts = ' id="'.htmlspecialchars($this->params['id']).'"';
+		if($this->params['id']) $atts .= ' id="'.htmlspecialchars($this->params['id']).'"';
 		return "<select name='$id'$atts>$options</select>";
 	}
 	function getConfigForm($id,$values){
