@@ -348,12 +348,13 @@ class DropDownField extends Field {
 			return $this->options;
 		}
 	}
-	function getInput($name,$joiner){
+	function getInput($name,$joiner,$fieldName=null){
+		if(!$fieldName) $fieldName=$name;
 		$v = $this->getValue($name);
 		$id = $this->getHTMLName($name);
 
 		$options = '';
-		foreach($this->getOptions($joiner,$name) as $option=>$label){
+		foreach($this->getOptions($joiner,$fieldName) as $option=>$label){
 			$checked = ($option==$v)?" selected='true'":"";
 			$option = htmlspecialchars($option,ENT_QUOTES);
 			$label = htmlspecialchars($label,ENT_QUOTES);
@@ -412,12 +413,13 @@ class RadioButtonField extends Field {
 			return $this->options;
 		}
 	}
-	function getInput($name,$joiner){
+	function getInput($name,$joiner,$fieldName=null){
+		if(!$fieldName) $fieldName=$name;
 		$v = $this->getValue($name);
 		$id = $this->getHTMLName($name);
 
 		$options = '';
-		foreach($this->getOptions($joiner,$name) as $option=>$label){
+		foreach($this->getOptions($joiner,$fieldName) as $option=>$label){
 			$option = htmlspecialchars($option,ENT_QUOTES);
 			$label = htmlspecialchars($label,ENT_QUOTES);
 			$checked = ($option==$v)?" checked='true'":"";
@@ -682,6 +684,9 @@ class CustomSearchField extends SearchFieldBase {
 
 
 	}
+	function setIndex($n){
+		$this->index=$n;
+	}
 	function param($key,$default=null){
 		if(array_key_exists($key,$this->params)) return $this->params[$key];
 		return $default;
@@ -723,9 +728,12 @@ class CustomSearchField extends SearchFieldBase {
 		return $join;
 	}
 
+	function getQualifiedName(){
+		return $this->name.'-'.$this->index;
+	}
 	function getOldValue(){ return $this->getValue(); }
 	function getValue(){
-		$v = $this->input->getValue($this->name);
+		$v = $this->input->getValue($this->getQualifiedName(),$this->name);
 		return $v;
 	}
 	function getLabel(){
@@ -734,7 +742,7 @@ class CustomSearchField extends SearchFieldBase {
 	}
 
 	function getInput(){
-		return "<div class='searchform-param'><label class='searchform-label'>".$this->getLabel()."</label><span class='searchform-input-wrapper'>".$this->input->getInput($this->name,$this->joiner)."</span></div>";
+		return "<div class='searchform-param'><label class='searchform-label'>".$this->getLabel()."</label><span class='searchform-input-wrapper'>".$this->input->getInput($this->getQualifiedName(),$this->joiner)."</span></div>";
 	}
 	function getCSSClass(){
 		return method_exists($this->input,'getCSSClass')?$this->input->getCSSClass():get_class($this->input);

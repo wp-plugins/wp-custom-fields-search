@@ -91,6 +91,9 @@ Author URI: http://www.don-benjamin.co.uk/
 					$inputs[] =  new CustomSearchField($v);
 
 				}
+				foreach($inputs as $k=>$v){
+					$inputs[$k]->setIndex($k);
+				}
 				$CustomSearchFieldStatic['Inputs'][$id]=$inputs;
 			}
 			return $CustomSearchFieldStatic['Inputs'][$id];
