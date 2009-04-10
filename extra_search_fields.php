@@ -596,7 +596,7 @@ class CategoryJoiner extends BaseJoiner {
 		$table = 'meta'.$index;
 		$rel = 'rel'.$index;
 		$tax = 'tax'.$index;
-		return " JOIN $wpdb->term_relationships $rel ON $rel.object_id=$wpdb->posts.id JOIN  $wpdb->terms $table ON $table.term_id=$rel.term_taxonomy_id JOIN $wpdb->term_taxonomy $tax ON $table.term_id=$tax.term_id AND ".$this->getTaxonomyWhere($tax);
+		return $join." JOIN $wpdb->term_relationships $rel ON $rel.object_id=$wpdb->posts.id JOIN  $wpdb->terms $table ON $table.term_id=$rel.term_taxonomy_id JOIN $wpdb->term_taxonomy $tax ON $table.term_id=$tax.term_id AND ".$this->getTaxonomyWhere($tax);
 	}
 	function getAllOptions($fieldName){
 		global $wpdb;
