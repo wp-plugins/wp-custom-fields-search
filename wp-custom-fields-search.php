@@ -6,6 +6,7 @@ Description: Allows admin to build custom search form.  Allows the site admin to
 Version: 0.3.6
 Author: Don Benjamin
 Author URI: http://www.don-benjamin.co.uk/
+Text Domain: wp-custom-fields-search
 */
 /*
  * Copyright 2009 Don Benjamin
@@ -32,7 +33,8 @@ Author URI: http://www.don-benjamin.co.uk/
 			DB_CustomSearch_Widget::__construct($params);
 		}
 		function __construct($params=array()){
-			parent::__construct('Custom Fields ',$params);
+			$this->loadTranslations();
+			parent::__construct(__('Custom Fields ','wp-custom-fields-search'),$params);
 			add_action('admin_print_scripts', array(&$this,'print_admin_scripts'), 90);
 			add_action('admin_menu', array(&$this,'plugin_menu'), 90);
 			add_filter('the_content', array(&$this,'process_tag'),9);
@@ -59,7 +61,7 @@ Author URI: http://www.don-benjamin.co.uk/
 			$options = $this->getConfig();
 			if(version_compare($current,"0.3")<0){
 				$config = $this->getDefaultConfig();
-				$config['name'] = 'Default Preset';
+				$config['name'] = __('Default Preset','wp-custom-fields-search');
 				$options['preset-default'] = $config;
 			}
 			$options['version']=$target;
@@ -111,14 +113,14 @@ Author URI: http://www.don-benjamin.co.uk/
 		function getDefaultConfig(){
 			return array('name'=>'Site Search', 
 				1=>array(
-					'label'=>'Key Words',
+					'label'=>__('Key Words','wp-custom-fields-search'),
 					'input'=>'TextField',
 					'comparison'=>'WordsLikeComparison',
 					'joiner'=>'PostDataJoiner',
 					'name'=>'all'
 				),
 				2=>array(
-					'label'=>'Category',
+					'label'=>__('Category','wp-custom-fields-search'),
 					'input'=>'DropDownField',
 					'comparison'=>'EqualComparison',
 					'joiner'=>'CategoryJoiner'
@@ -160,10 +162,10 @@ Author URI: http://www.don-benjamin.co.uk/
 			if(!$values) $values = $defaults;
 			$maxId=0;
 			$presets = $this->getPresets();
-			array_unshift($presets,'NONE');
+			array_unshift($presets,__('NONE','wp-custom-fields-search'));
 ?>
-		<div class='searchform-name-wrapper'><label for='<?php echo $prefId?>[name]'>Search Title</label><input type='text' class='form-title-input' id='<?php echo $prefId?>[name]' name='<?php echo $pref?>[name]' value='<?php echo $values['name']?>'/></div>
-		<div class='searchform-preset-wrapper'><label for='<?php echo $prefId?>[preset]'>Use Preset</label>
+		<div class='searchform-name-wrapper'><label for='<?php echo $prefId?>[name]'><?php echo __('Search Title','wp-custom-fields-search')?></label><input type='text' class='form-title-input' id='<?php echo $prefId?>[name]' name='<?php echo $pref?>[name]' value='<?php echo $values['name']?>'/></div>
+		<div class='searchform-preset-wrapper'><label for='<?php echo $prefId?>[preset]'><?php echo __('Use Preset','wp-custom-fields-search')?></label>
 <?php
 			$dd = new AdminDropDown($pref."[preset]",$values['preset'],$presets);
 			echo $dd->getInput()."</div>";
@@ -176,7 +178,7 @@ Author URI: http://www.don-benjamin.co.uk/
 ?>
 	</div>
 
-	<br/><a href='#' onClick="return CustomSearch.get('<?php echo $prefId?>').add();">Add Field</a>
+	<br/><a href='#' onClick="return CustomSearch.get('<?php echo $prefId?>').add();"><?php echo __('Add Field','wp-custom-fields-search')?></a>
 	<script type='text/javascript'>
 			CustomSearch.create('<?php echo $prefId?>','<?php echo $maxId?>');
 <?php
@@ -208,15 +210,15 @@ Author URI: http://www.don-benjamin.co.uk/
 			$pref = $pref."[$id]";
 			$htmlId = $pref."[exists]";
 			$output = "<input type='hidden' name='$htmlId' value='1'/>";
-			$titles="<th>Label</th>";
-			$inputs="<td><input type='text' name='$pref"."[label]' value='$values[label]' class='form-field-title'/></td><td><a href='#' onClick='return CustomSearch.get(\"$prefId\").toggleOptions(\"$id\");'>Show/Hide Config</a></td>";
+			$titles="<th>".__('Label','wp-custom-fields-search')."</th>";
+			$inputs="<td><input type='text' name='$pref"."[label]' value='$values[label]' class='form-field-title'/></td><td><a href='#' onClick='return CustomSearch.get(\"$prefId\").toggleOptions(\"$id\");'>".__('Show/Hide Config','wp-custom-fields-search')."</a></td>";
 			$output.="<table class='form-field-table'><tr>$titles</tr><tr>$inputs</tr></table>";
 			$output.="<div id='form-field-advancedoptions-$prefId-$id' style='display: none'>";
 			$inputs='';$titles='';
-			$titles="<th>Data Field</th>";
+			$titles="<th>".__('Data Field','wp-custom-fields-search')."</th>";
 			$inputs="<td><div id='form-field-dbname-$prefId-$id' class='form-field-title-div'><input type='text' name='$pref"."[name]' value='$values[name]' class='form-field-title'/></div></td>";
 			$count=1;
-			foreach(array('joiner'=>'Data Type','comparison'=>'Compare','input'=>'Widget') as $k=>$v){
+			foreach(array('joiner'=>__('Data Type','wp-custom-fields-search'),'comparison'=>__('Compare','wp-custom-fields-search'),'input'=>__('Widget','wp-custom-fields-search')) as $k=>$v){
 				$dd = new AdminDropDown($pref."[$k]",$values[$k],$this->getClasses($k),array('onChange'=>'CustomSearch.get("'.$prefId.'").updateOptions("'.$id.'","'.$k.'")'));
 				$titles="<th>".$v."</th>".$titles;
 				$inputs="<td>".$dd->getInput()."</td>".$inputs;
@@ -230,7 +232,7 @@ Author URI: http://www.don-benjamin.co.uk/
 				$output.="<table class='form-field-table'><tr>$titles</tr><tr>$inputs</tr></table>";
 				$inputs = $titles='';
 			}
-			$titles.="<th>Numeric</th><th>Widget Config</th>";
+			$titles.="<th>".__('Numeric','wp-custom-fields-search')."</th><th>".__('Widget Config','wp-custom-fields-search')."</th>";
 			$inputs.="<td><input type='checkbox' ".($values['numeric']?"checked='true'":"")." name='$pref"."[numeric]'/></td>";
 
 			if(class_exists($widgetClass = $values['input'])){
@@ -275,24 +277,24 @@ Author URI: http://www.don-benjamin.co.uk/
 			if(!$CustomSearchFieldStatic['Types']){
 				$CustomSearchFieldStatic['Types'] = array(
 					"joiner"=>array(
-						"PostDataJoiner" => "Post Field",
-						"CustomFieldJoiner" => "Custom Field",
-						"CategoryJoiner" => "Category",
-						"TagJoiner" => "Tag",
+						"PostDataJoiner" =>__( "Post Field",'wp-custom-fields-search'),
+						"CustomFieldJoiner" =>__( "Custom Field",'wp-custom-fields-search'),
+						"CategoryJoiner" =>__( "Category",'wp-custom-fields-search'),
+						"TagJoiner" =>__( "Tag",'wp-custom-fields-search'),
 					),
 					"input"=>array(
-						"TextField" => "Text Input",
-						"DropDownField" => "Drop Down",
-						"RadioButtonField" => "Radio Button",
-						"HiddenField" => "Hidden Constant",
+						"TextField" =>__( "Text Input",'wp-custom-fields-search'),
+						"DropDownField" =>__( "Drop Down",'wp-custom-fields-search'),
+						"RadioButtonField" =>__( "Radio Button",'wp-custom-fields-search'),
+						"HiddenField" =>__( "Hidden Constant",'wp-custom-fields-search'),
 					),
 					"comparison"=>array(
-						"EqualComparison" => "Equals",
-						"LikeComparison" => "Phrase In",
-						"WordsLikeComparison" => "Words In",
-						"LessThanComparison" => "Less Than",
-						"MoreThanComparison" => "More Than",
-						"RangeComparison" => "Range",
+						"EqualComparison" =>__( "Equals",'wp-custom-fields-search'),
+						"LikeComparison" =>__( "Phrase In",'wp-custom-fields-search'),
+						"WordsLikeComparison" =>__( "Words In",'wp-custom-fields-search'),
+						"LessThanComparison" =>__( "Less Than",'wp-custom-fields-search'),
+						"MoreThanComparison" =>__( "More Than",'wp-custom-fields-search'),
+						"RangeComparison" =>__( "Range",'wp-custom-fields-search'),
 					)
 				);
 				$CustomSearchFieldStatic['Types'] = apply_filters('custom_search_get_classes',$CustomSearchFieldStatic['Types']);
@@ -344,7 +346,7 @@ Author URI: http://www.don-benjamin.co.uk/
 
 			$index = 1;
 			while($presets["preset-$index"]) $index++;
-			$presets["preset-$index"] = 'New Preset';
+			$presets["preset-$index"] = __('New Preset','wp-custom-fields-search');
 
 			$linkBase = $_SERVER['REQUEST_URI'];
 			$linkBase = preg_replace("/&?selected-preset=[^&]*(&|$)/",'',$linkBase);

@@ -1,12 +1,12 @@
 <div class='presets-selector'><ul>
-	<h4>Select Preset</h4>
+<h4><?php _e('Select Preset','wp-custom-fields-search')?></h4>
 <?php	foreach($presets as $key=>$name){ ?>
 <li><a href='<?php echo $linkBase?>&selected-preset=<?php echo $key?>'><?php echo $name?></a></li>
 <?php	}	?>
 </ul></div>
 <div class='presets-example-code'> 
-	<h4>Template Code</h4>
-To use this preset in your templates copy this code to the appropriate place in your template file:<br/>
+<h4><?php _e('Template Code','wp-custom-fields-search')?></h4>
+<?php _e('To use this preset in your templates copy this code to the appropriate place in your template file:','wp-custom-fields-search')?><br/>
 	<?php if($preset=='preset-default') { ?> 
 		<pre><code><?php echo htmlspecialchars("<?php if(function_exists('wp_custom_fields_search')) 
 	wp_custom_fields_search(); ?>")?></code></pre>
@@ -14,8 +14,8 @@ To use this preset in your templates copy this code to the appropriate place in 
 		<pre><code><?php echo htmlspecialchars("<?php if(function_exists('wp_custom_fields_search')) 
 	wp_custom_fields_search('$preset'); ?>")?></code></pre>
 	<?php } ?>
-	<h4>Tag For Posts</h4>
-To use this preset in your posts/pages copy this code to the appropriate place in your post/page:<br/>
+	<h4><?php _e('Tag For Posts','wp-custom-fields-search')?></h4>
+<?php _e('To use this preset in your posts/pages copy this code to the appropriate place in your post/page:','wp-custom-fields-search')?><br/>
 	<?php if($preset=='preset-default') { ?> 
 		<pre><code><?php echo htmlspecialchars("[wp-custom-fields-search]");?></pre></code>
 	<?php } else { 
@@ -31,10 +31,10 @@ To use this preset in your posts/pages copy this code to the appropriate place i
 		<?php $plugin->configForm($preset,$shouldSave) ?>
 		<div class='options-controls'>
 			<div class='options-button'>
-				<input type='submit' value='Save Changes'/>
+			<input type='submit' value='<?php _e('Save Changes','wp-custom-fields-search')?>'/>
 			</div>
 			<div class='options-button'>
-				<input type='submit' name='delete' value='Delete' onClick='return confirm("Are you sure you want to delete this preset?")'/>
+			<input type='submit' name='delete' value='<?php _e('Delete','wp-custom-fields-search')?>' onClick='return confirm("<?php _e('Are you sure you want to delete this preset?','wp-custom-fields-search')?>")'/>
 			</div>
 		</div>
 </div></form>

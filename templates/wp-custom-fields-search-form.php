@@ -10,7 +10,7 @@
 </div>
 <div class='searchform-controls'>
 
-<input type='submit' name='search' value='Search'/>
+<input type='submit' name='search' value='<?php _e('Search','wp-custom-fields-search')?>'/>
 </div>
 <div class='searchform-spoiler'><a href='http://www.don-benjamin.co.uk/wordpress-plugins/custom-search/'>Powered By DB</a></div>
 </form>

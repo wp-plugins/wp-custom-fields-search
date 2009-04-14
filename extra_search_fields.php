@@ -190,12 +190,25 @@ class DB_Search_Widget extends DB_WP_Widget {
 		DB_Search_Widget::__construct($name);
 	}
 	function __construct($name='Custom',$params=array()){
-		parent::__construct("$name Search",$params);
+		$this->loadTranslations();
+		parent::__construct(sprintf(__('%1$s Search','wp-custom-fields-search'),$name),$params);
 		add_filter('posts_join',array(&$this,'join_meta'));
 		add_filter('posts_where',array(&$this,'sql_restrict'));
 		add_filter('home_template',array(&$this,'rewriteHome'));
 		add_filter('page_template',array(&$this,'rewriteHome'));
+		add_filter( 'get_search_query', array(&$this,'getSearchDescription'));
 		add_action('wp_head', array(&$this,'outputStylesheets'), 1);
+	}
+	function loadTranslations(){
+		static $loaded;
+		if ( !$loaded && function_exists('load_plugin_textdomain') ) {
+			$loaded=true;
+			if ( !defined('WP_PLUGIN_DIR') ) {
+				load_plugin_textdomain('wp-custom-fields-search', str_replace( ABSPATH, '', dirname(__FILE__) ) );
+			} else {
+				load_plugin_textdomain('wp-custom-fields-search', false, dirname( plugin_basename(__FILE__) ) );
+			}
+		}
 	}
 	function addInput($input){
 		$this->inputs[] = $input;
@@ -254,14 +267,18 @@ class DB_Search_Widget extends DB_WP_Widget {
 				$desc = $input->describeSearch($desc);
 			}
 			if($desc){
-				$desc = join(" and ",$desc);
+				$desc = join(__(" and ",'wp-custom-fields-search'),$desc);
 			} else {
-				$desc = "All Entries";
+				$desc = __("All Entries",'wp-custom-fields-search');
 			}
-			$GLOBALS['s'] = $desc;
-
+			$this->desc=$desc;
 		}
 		return $join;
+	}
+
+	function getSearchDescription($desc){
+		if($this->isPosted()) return $this->desc;
+		return $desc;
 	}
 	function sql_restrict($where){
 		if($this->isPosted()){
@@ -346,7 +363,7 @@ class DropDownField extends Field {
 
 	function getOptions($joiner,$name){
 		if($this->param('fromDb',!$this->options)){
-			$options = array(''=>'ANY');
+			$options = array(''=>__('ANY','wp-custom-fields-search'));
 			$auto = $joiner->getAllOptions($name);
 			asort($auto);
 			$options +=$auto;
@@ -373,7 +390,7 @@ class DropDownField extends Field {
 		return "<select name='$id'$atts>$options</select>";
 	}
 	function getConfigForm($id,$values){
-		return "<label for='$id-dropdown-options'>Drop Down Options</label><input id='$id-dropdown-options' name='$id"."[dropdownoptions]' value='$values[dropdownoptions]'/>";
+		return "<label for='$id-dropdown-options'>".__('Drop Down Options','wp-custom-fields-search')."</label><input id='$id-dropdown-options' name='$id"."[dropdownoptions]' value='$values[dropdownoptions]'/>";
 	}
 }
 class HiddenField extends Field {
@@ -394,7 +411,7 @@ class HiddenField extends Field {
 		return "<input type='hidden' name='".htmlspecialchars($name)."' value='".htmlspecialchars($v)."'/>";
 	}
 	function getConfigForm($id,$values){
-		return "<label for='$id-constant-value'>Constant Value</label><input id='$id-constant-value' name='$id"."[constant-value]' value='{$values['constant-value']}'/>";
+		return "<label for='$id-constant-value'>".__('Constant Value','wp-custom-fields-search')."</label><input id='$id-constant-value' name='$id"."[constant-value]' value='{$values['constant-value']}'/>";
 	}
 }
 
@@ -491,7 +508,7 @@ class EqualComparison extends Comparison {
 		return "$field = '$value'";
 	}
 	function describeSearch($value){
-		return " is \"$value\"";
+		return sprintf(__(' is "%1$s"','wp-custom-fields-search'),$value);
 	}
 }
 class LikeComparison extends Comparison{
@@ -502,7 +519,7 @@ class LikeComparison extends Comparison{
 		return "$field LIKE '%$value%'";
 	}
 	function describeSearch($value){
-		return " contains \"$value\"";
+		return sprintf(__(' contains "%1$s"','wp-custom-fields-search'),$value);
 	}
 }
 
@@ -516,7 +533,7 @@ class WordsLikeComparison extends LikeComparison {
 		return "(".join(" AND ",$like).")";
 	}
 	function describeSearch($value){
-		return " contains \"".join('" and "',explode(" ",$value))."\"";
+		return sprintf(__(' contains "%1$s"','wp-custom-fields-search'),join('"'.__(" and ",'wp-custom-fields-search').'"',explode(" ",$value)));
 	}
 }
 class LessThanComparison extends Comparison{
@@ -524,7 +541,7 @@ class LessThanComparison extends Comparison{
 		return "$field < '$value'";
 	}
 	function describeSearch($value){
-		return " less than \"$value\"";
+		return sprintf(__(' less than "%1$s"','wp-custom-fields-search'),$value);
 	}
 }
 class MoreThanComparison extends Comparison{
@@ -532,7 +549,7 @@ class MoreThanComparison extends Comparison{
 		return "$feld > '$value'";
 	}
 	function describeSearch($value){
-		return " more than \"$value\"";
+		return sprintf(__(' more than "%1$s"','wp-custom-fields-search'),$value);
 	}
 }
 class RangeComparison extends Comparison{
@@ -545,9 +562,9 @@ class RangeComparison extends Comparison{
 	}
 	function describeSearch($value){
 		list($min,$max) = explode("-",$value);
-		if(strlen($min)==0) return " less than $max";
-		if(strlen($max)==0) return " more than $min";
-		return " between $min and $max";
+		if(strlen($min)==0) return sprintf(__(' less than "%1$s"','wp-custom-fields-search'),$max);
+		if(strlen($max)==0) return sprintf(__(' more than "%1$s"','wp-custom-fields-search'),$min);
+		return sprintf(__(' between "%1$s" and "%2$s"','wp-custom-fields-search'),$min,$max);
 	}
 }
 
@@ -672,7 +689,13 @@ class PostDataJoiner extends BaseJoiner {
 		return $options;
 	}
 	function getSuggestedFields(){
-		return array('all'=>'All Fields','post_content'=>'Body Text','post_title'=>'Title','post_author'=>'Author','post_date'=>'Date');
+		return array(
+			'all'=>__('All Fields','wp-custom-fields-search'),
+			'post_content'=>__('Body Text','wp-custom-fields-search'),
+			'post_title'=>__('Title','wp-custom-fields-search'),
+			'post_author'=>__('Author','wp-custom-fields-search'),
+			'post_date'=>__('Date','wp-custom-fields-search'),
+		);
 	}
 }
 
