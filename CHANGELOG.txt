@@ -1,3 +1,5 @@
+14/04/2009	Release 0.3.6
+	Added hidden constants field type.
 10/04/2009
 	Sorts drop down options 
 	Allows use of multiple category inputs

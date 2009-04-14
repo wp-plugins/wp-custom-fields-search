@@ -3,7 +3,7 @@ Contributors: don@don-benjamin.co.uk
 Tags: search,custom fields,widget,sidebar
 Requires at least: 2.5
 Tested up to: 2.7.1
-Stable tag: 0.3.5
+Stable tag: 0.3.6
 
 This plugin allows multiple form inputs to be configured to search different aspects of a post including custom fields.
 
@@ -55,9 +55,11 @@ Each field has a number of settings which control the way the input appears to t
 
 **Data Field** makes a more specific selection from the data available. The drop down list should give some sensible options, or if you know the name of the database field you want to query you can type this in manually.
 
-**Widget** controls what type of HTML input is created for the front end of the site.  It should be fairly obvious what these do.
+**Widget** controls what type of HTML input is created for the front end of the site.  It should be fairly obvious what these do.  
 
 Some widgets will require extra options in the **Widget Options** field. At the moment this is just the drop down and radio button widgets which allow you to specify a list of values for the user to choose from. If you leave the options blank then they will be automatically populated with a list of all values currently in the database, this can be useful for fields like categories and tags, but is less useful for fields like title which would just generate an entry for every post in the blog. If you want to specify the values manually you can specify this as a comma separated list of values, "a,b,c" for three options with values "a", "b" and "c" respectively, or if you want to give "friendly" labels to the user you can separate the value from the label using a colon as follows "a:Group A,b:Group B,c:Group C".
+
+Hidden constant fields allow you to add a fixed search parameter to the form which the user cannot edit.  The extra options allow you to specify what the value of this fixed parameter is.
 
 The **Compare** field controls the way that the user input is compared to the data in the database. I would expect the most commonly used of these to be "equals" which requires an exact match between the user data and the database field (useful for category searches) and the "Words in" or "Phrase In" types which will search to see if the user input is a part of the data, rather than a full match, this is useful for things like searching the text of a post. The difference between "words" and "phrase" is that "words" splits the input into a series of words and searches for these individually whereas "Phrase" searches for all the words in sequence.
 
