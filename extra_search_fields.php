@@ -395,7 +395,8 @@ class DropDownField extends Field {
 }
 class HiddenField extends Field {
 	function HiddenField(){
-		call_user_func_array(array($this,'__construct'),func_get_args());
+		$func_args = func_get_args();
+		call_user_func_array(array($this,'__construct'),$func_args);
 	}
 	function __construct($params = array()){
 		$params['hidden']=true;
