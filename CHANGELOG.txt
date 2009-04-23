@@ -1,3 +1,5 @@
+23/04/2009	Release 0.3.8
+	Fixed IE config issue (Thanks to www.smesa.co.za for help in tracking this one down)
 17/04/2009	Release 0.3.7
 	Fixes a couple of show stopping bugs reporting by sheme
 14/04/2009	Release 0.3.6
