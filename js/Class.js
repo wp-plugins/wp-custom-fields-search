@@ -181,6 +181,13 @@ Class = {
         
         //static: extend the Object, dynamic: extend the prototype
         var extendee = s ? c : c.prototype;
+
+	indexOf = function(array,value){
+		for(var a = 0 ; a<array.length ; a++){
+			if(array[a]==value) return a;
+		}
+		return -1;
+	}
         
         //loop through arguments. if they're the right type, tack them on
         $.each(arguments, function() {
@@ -192,7 +199,7 @@ Class = {
                 for(i in this) {
                     /* if a property is a function (other than our built-in helpers) and it already exists
                     in the class, save it as a super. note that this only saves the last occurrence */
-                    if(extendee[i] && extendee[i].constructor == Function && ['namespace','create','sup'].indexOf(i) == -1) {
+                    if(extendee[i] && extendee[i].constructor == Function && indexOf(['namespace','create','sup'],i) == -1) {
                         //since Function.name is almost never set for us, do it manually
                         this[i].name = extendee[i].name = i;
                         
