@@ -253,8 +253,8 @@ Text Domain: wp-custom-fields-search
 			return WP_CONTENT_URL .'/plugins/' .  dirname(plugin_basename(__FILE__) ) . '/';
 		}
 		function print_admin_scripts($params){
-			$jsRoot = $this->getRootURL().'js/';
-			$cssRoot = $this->getRootURL().'css/';
+			$jsRoot = $this->getRootURL().'js';
+			$cssRoot = $this->getRootURL().'css';
 			$scripts = array('Class.js','CustomSearch.js','flexbox/jquery.flexbox.js');
 			foreach($scripts as $file){
 				echo "<script src='$jsRoot/$file' ></script>";
