@@ -3,7 +3,7 @@ Contributors: don@don-benjamin.co.uk
 Tags: search,custom fields,widget,sidebar
 Requires at least: 2.5
 Tested up to: 2.7.1
-Stable tag: 0.3.9
+Stable tag: 0.3.10
 
 This plugin allows multiple form inputs to be configured to search different aspects of a post including custom fields.
 
