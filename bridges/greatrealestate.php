@@ -56,7 +56,7 @@ class GreatRealEstateJoiner extends BaseJoiner {
 	}
 	function process_where($where){
 		global $wpdb;
-		$cleared = preg_replace("/AND $wpdb->posts.post_type = '(post|page)'/","",$where);
+		$cleared = preg_replace("/AND ?\(?$wpdb->posts.post_type ?= ?'(post|page)' ?\)?/","",$where);
 		$cleared = preg_replace("/$wpdb->posts.ID = '\d+'/","1",$cleared);
 		return $cleared;
 	}
