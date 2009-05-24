@@ -12,5 +12,5 @@
 
 <input type='submit' name='search' value='<?php _e('Search','wp-custom-fields-search')?>'/>
 </div>
-<div class='searchform-spoiler'><a href='http://www.don-benjamin.co.uk/wordpress-plugins/custom-search/'>Powered By DB</a></div>
+<div class='searchform-spoiler'><a href='http://www.don-benjamin.co.uk/'>DB Wordpress Plugins</a></div>
 </form>
