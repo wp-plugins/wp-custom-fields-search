@@ -112,7 +112,7 @@ class DB_WP_Widget extends ParameterisedObject {
 	function getConfig($id=null,$key=null){
 		$options = get_option($this->id);
 		if(is_null($id)) return $options;
-		if(!array_key_exists($id,$options))
+		if(!@array_key_exists($id,$options))
 			$id = preg_replace('/^.*-(\d+)$/','\\1',$id);
 		if(is_null($key))
 			return $options[$id];
@@ -547,7 +547,7 @@ class LessThanComparison extends Comparison{
 }
 class MoreThanComparison extends Comparison{
 	function addSQLWhere($field,$value){
-		return "$feld > '$value'";
+		return "$field > '$value'";
 	}
 	function describeSearch($value){
 		return sprintf(__(' more than "%1$s"','wp-custom-fields-search'),$value);
