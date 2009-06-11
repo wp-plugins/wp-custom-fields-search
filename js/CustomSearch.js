@@ -83,7 +83,7 @@ CustomSearch = Class.create( {
 	updateOptions: function(id,changed) {
 		switch(changed){
 		case 'input':
-		type = this.getForm(id).find('[@name="db_customsearch_widget['+this.id+']['+id+'][input]"]').val();
+		type = this.getForm(id).find('.wpcfs-input').val();
 		template = jQuery('#config-input-templates-'+type+'-'+this.id);
 		div = jQuery(hid = '#db_customsearch_widget-'+this.id+'-'+id+'-widget-config');
 		html = template.html();
