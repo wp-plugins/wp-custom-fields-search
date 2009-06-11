@@ -78,7 +78,7 @@ CustomSearch = Class.create( {
 		}
 	},
 	getJoinerFor: function(id){
-		return this.getForm(id).find('[@name="db_customsearch_widget['+this.id+']['+id+'][joiner]"]').val();
+		return this.getForm(id).find('.wpcfs-joiner').val();
 	},
 	updateOptions: function(id,changed) {
 		switch(changed){

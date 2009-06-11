@@ -3,7 +3,7 @@
 Plugin Name: WP Custom Search
 Plugin URI: http://www.don-benjamin.co.uk/wordpress-plugins/wp-custom-search
 Description: Allows admin to build custom search form.  Allows the site admin to configure multiple html inputs for different fields including custom fields.  Also provides an extensible mechanism for integrating with other plugins data structures.
-Version: 0.3.11
+Version: 0.3.12
 Author: Don Benjamin
 Author URI: http://www.don-benjamin.co.uk/
 Text Domain: wp-custom-fields-search
@@ -48,7 +48,7 @@ Text Domain: wp-custom-fields-search
 		}
 
 		function currentVersion(){
-			return "0.3.10";
+			return "0.3.12";
 		}
 
 		function ensureUpToDate(){
@@ -219,7 +219,7 @@ Text Domain: wp-custom-fields-search
 			$inputs="<td><div id='form-field-dbname-$prefId-$id' class='form-field-title-div'><input type='text' name='$pref"."[name]' value='$values[name]' class='form-field-title'/></div></td>";
 			$count=1;
 			foreach(array('joiner'=>__('Data Type','wp-custom-fields-search'),'comparison'=>__('Compare','wp-custom-fields-search'),'input'=>__('Widget','wp-custom-fields-search')) as $k=>$v){
-				$dd = new AdminDropDown($pref."[$k]",$values[$k],$this->getClasses($k),array('onChange'=>'CustomSearch.get("'.$prefId.'").updateOptions("'.$id.'","'.$k.'")'));
+				$dd = new AdminDropDown($pref."[$k]",$values[$k],$this->getClasses($k),array('onChange'=>'CustomSearch.get("'.$prefId.'").updateOptions("'.$id.'","'.$k.'")','css_class'=>"wpcfs-$k"));
 				$titles="<th>".$v."</th>".$titles;
 				$inputs="<td>".$dd->getInput()."</td>".$inputs;
 				if(++$count==2){

@@ -1,3 +1,5 @@
+24/05/2009	Release 0.3.12
+	Fixed flexbox integration for compatibility with newer version of jquery.
 24/05/2009	Release 0.3.11
 	Fixed typo in variable name which was preventing more than fields from working.
 29/04/2009	Release 0.3.10
