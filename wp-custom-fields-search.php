@@ -457,7 +457,8 @@ if (!function_exists('json_encode'))
 }
 function wp_custom_fields_search($presetName='default'){
 	global $CustomSearchFieldStatic;
-	$CustomSearchFieldStatic['Object']->renderWidget(array('widget_id'=>'preset-'.$presetName,'noTitle'=>true),array('number'=>'preset-'.$presetName));
+	if(strpos($presetName,'preset-')!==0) $presetName="preset-$presetName";
+	$CustomSearchFieldStatic['Object']->renderWidget(array('widget_id'=>$presetName,'noTitle'=>true),array('number'=>$presetName));
 }
 function compat_method_exists($class,$method){
 	return method_exists($class,$method) || in_array(strtolower($method),get_class_methods($class));
