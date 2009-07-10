@@ -1,3 +1,9 @@
+10/07/2009	Release 0.3.13
+	Added in post type joiner field
+	Added in paypal donate link
+	Added in Pierre's french translation
+	Corrected James' bug with preset names
+	Merged in alternative category joining
 24/05/2009	Release 0.3.12
 	Fixed flexbox integration for compatibility with newer version of jquery.
 24/05/2009	Release 0.3.11
