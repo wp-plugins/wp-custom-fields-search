@@ -646,11 +646,13 @@ class CategoryJoiner extends BaseJoiner {
 		$table = 'meta'.$index;
 		$rel = 'rel'.$index;
 		$tax = 'tax'.$index;
-		return $join." JOIN $wpdb->term_relationships $rel ON $rel.object_id=$wpdb->posts.id JOIN  $wpdb->terms $table ON $table.term_id=$rel.term_taxonomy_id JOIN $wpdb->term_taxonomy $tax ON $table.term_id=$tax.term_id AND ".$this->getTaxonomyWhere($tax);
+		return $join." JOIN $wpdb->term_relationships $rel ON $rel.object_id=$wpdb->posts.id JOIN  $wpdb->term_taxonomy $tax ON $tax.term_taxonomy_id=$rel.term_taxonomy_id JOIN $wpdb->terms $table ON $table.term_id=$tax.term_id AND ".$this->getTaxonomyWhere($tax);
 	}
 	function getAllOptions($fieldName){
 		global $wpdb;
-		$q = mysql_query($sql = "SELECT distinct t.name FROM $wpdb->terms t JOIN $wpdb->term_relationships r ON r.term_taxonomy_id = t.term_id JOIN $wpdb->posts p ON r.object_id=p.id JOIN $wpdb->term_taxonomy x ON t.term_id=x.term_id WHERE post_status='publish' AND ".$this->getTaxonomyWhere('x'));
+		$sql = "SELECT distinct t.name FROM $wpdb->terms AS t INNER JOIN $wpdb->term_taxonomy AS tt ON tt.term_id = t.term_id INNER JOIN $wpdb->term_relationships AS tr ON tr.term_taxonomy_id = tt.term_taxonomy_id JOIN $wpdb->posts p ON tr.object_id=p.id AND p.post_status='publish' WHERE ".$this->getTaxonomyWhere('tt');
+		$q = mysql_query($sql);
+		if($e = mysql_error()) echo "<h1>SQL: $sql</h1>".mysql_error();
 		$options = array();
 		while($r = mysql_fetch_row($q))
 			$options[$r[0]] = $r[0];
