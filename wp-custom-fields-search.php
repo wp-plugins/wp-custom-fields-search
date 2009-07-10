@@ -281,6 +281,7 @@ Text Domain: wp-custom-fields-search
 						"CustomFieldJoiner" =>__( "Custom Field",'wp-custom-fields-search'),
 						"CategoryJoiner" =>__( "Category",'wp-custom-fields-search'),
 						"TagJoiner" =>__( "Tag",'wp-custom-fields-search'),
+						"PostTypeJoiner" =>__( "Post Type",'wp-custom-fields-search'),
 					),
 					"input"=>array(
 						"TextField" =>__( "Text Input",'wp-custom-fields-search'),

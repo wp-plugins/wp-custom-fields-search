@@ -578,6 +578,9 @@ class BaseJoiner extends ParameterisedObject {
 		parent::__construct($params);
 		$this->name=$name;
 	}
+	function sql_join($join,$name,$index,$value){
+		return $join;
+	}
 	function process_where($where){
 		return $where;
 	}
@@ -660,6 +663,30 @@ class CategoryJoiner extends BaseJoiner {
 class TagJoiner extends CategoryJoiner {
 	function getTaxonomy(){
 		return $this->param('taxonomy','post_tag');
+	}
+}
+
+class PostTypeJoiner extends BaseJoiner {
+	function process_where($where){
+		global $wpdb;
+		$where = preg_replace("/AND \($wpdb->posts.post_type *= *'(post|page)'\)/","",$where);
+		return $where;
+	}
+	function sql_restrict($name,$index,$value,$comparison){
+		global $wpdb;
+		if(!($value || $this->params['required'])) return $join;
+		return " AND ( ".$comparison->addSQLWhere("$wpdb->posts.post_type",$value).")";
+	}
+	function getAllOptions($fieldName){
+		global $wpdb;
+		$q = mysql_query($sql = "SELECT distinct post_type FROM $wpdb->posts p WHERE post_status='publish' ");
+		$options = array();
+		while($r = mysql_fetch_row($q))
+			$options[$r[0]] = $r[0];
+		return $options;
+	}
+	function needsField(){
+		return false;
 	}
 }
 
