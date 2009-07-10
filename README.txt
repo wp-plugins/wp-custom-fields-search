@@ -1,5 +1,6 @@
 === WP Custom Fields Search ===
 Contributors: don@don-benjamin.co.uk
+Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=don@don-benjamin.co.uk&item_name=Custom Search Donation&currency_code=GBP
 Tags: search,custom fields,widget,sidebar
 Requires at least: 2.5
 Tested up to: 2.8
