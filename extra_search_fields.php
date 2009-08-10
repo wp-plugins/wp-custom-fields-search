@@ -602,7 +602,10 @@ class CustomFieldJoiner extends BaseJoiner{
 	function sql_restrict($name,$index,$value,$comparison){
 		$table = 'meta'.$index;
 		$field = "$table.meta_value".($this->param('numeric',false)?'*1':'');
-		return " AND ( $table.meta_key='$name' AND ".$comparison->addSQLWhere($field,$value).") ";
+		$comp = " AND ".$comparison->addSQLWhere($field,$value);
+		if($name!='all')
+			$comp = " AND ( $table.meta_key='$name' AND ".$comp.") ";
+		return $comp;
 
 	}
 	function sql_join($join,$name,$index,$value){
@@ -613,7 +616,10 @@ class CustomFieldJoiner extends BaseJoiner{
 	}
 	function getAllOptions($fieldName){
 		global $wpdb;
-		$q = mysql_query($sql = "SELECT DISTINCT meta_value FROM $wpdb->postmeta m JOIN $wpdb->posts p ON m.post_id=p.id AND p.post_status='publish' WHERE meta_key='$fieldName'");
+		$where='';
+		if($fieldName!='all')
+			$where = " WHERE meta_key='$fieldName'";
+		$q = mysql_query($sql = "SELECT DISTINCT meta_value FROM $wpdb->postmeta m JOIN $wpdb->posts p ON m.post_id=p.id AND p.post_status='publish' $where");
 		$options = array();
 		while($r = mysql_fetch_row($q))
 			$options[$r[0]] = $r[0];
@@ -622,7 +628,7 @@ class CustomFieldJoiner extends BaseJoiner{
 	function getSuggestedFields(){
 		global $wpdb;
 		$q = mysql_query($sql = "SELECT DISTINCT meta_key FROM $wpdb->postmeta WHERE meta_key NOT LIKE '\\_%'");
-		$options = array();
+		$options = array('all'=>'All Fields');
 		while($r = mysql_fetch_row($q))
 			$options[$r[0]] = $r[0];
 		return $options;
