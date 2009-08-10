@@ -379,7 +379,7 @@ Text Domain: wp-custom-fields-search
 			if(!$preset) $preset = 'default';
 			wp_custom_fields_search($preset);
 
-			$form = ob_get_contents();
+			$form = str_replace("\n","",ob_get_contents());
 			ob_end_clean();
 			return $form;
 		}
