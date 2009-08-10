@@ -194,6 +194,7 @@ class DB_Search_Widget extends DB_WP_Widget {
 		parent::__construct(sprintf(__('%1$s Search','wp-custom-fields-search'),$name),$params);
 		add_filter('posts_join',array(&$this,'join_meta'));
 		add_filter('posts_where',array(&$this,'sql_restrict'));
+		add_filter('posts_groupby', array(&$this,'sql_group'));
 		add_filter('home_template',array(&$this,'rewriteHome'));
 		add_filter('page_template',array(&$this,'rewriteHome'));
 		add_filter( 'get_search_query', array(&$this,'getSearchDescription'));
@@ -294,6 +295,13 @@ class DB_Search_Widget extends DB_WP_Widget {
 			}
 		}
 		return $where;
+	}
+	function sql_group($group){
+		if($this->isPosted()){
+			global $wpdb;
+			$group = "$wpdb->posts.ID";
+		}
+		return $group;
 	}
 
 	function toSearchString(){
