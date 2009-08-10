@@ -21,7 +21,7 @@
 	<?php } else { 
 		$presetLabel = substr($preset,7);
 	?>
-		<pre><code><?php echo htmlspecialchars("[wp-custom-fields-search $presetLabel]");?></pre></code>
+		<pre><code><?php echo htmlspecialchars("[wp-custom-fields-search preset=\"$presetLabel\" ]");?></pre></code>
 	<?php } ?>
 </div>
 

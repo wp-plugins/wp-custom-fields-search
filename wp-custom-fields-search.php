@@ -38,6 +38,7 @@ Text Domain: wp-custom-fields-search
 			add_action('admin_print_scripts', array(&$this,'print_admin_scripts'), 90);
 			add_action('admin_menu', array(&$this,'plugin_menu'), 90);
 			add_filter('the_content', array(&$this,'process_tag'),9);
+			add_shortcode( 'wp-custom-fields-search', array(&$this,'process_shortcode') );
 			wp_enqueue_script('jquery');
 			if(version_compare("2.7",$GLOBALS['wp_version'])>0) wp_enqueue_script('dimensions');
 		}
@@ -368,8 +369,11 @@ Text Domain: wp-custom-fields-search
 			include(dirname(__FILE__).'/templates/options.php');
 		}
 		function process_tag($content){
-			$regex = '/\[\s*wp-custom-fields-search(?:\s+([^\]]+(?:\s+.*)?))?\]/';
+			$regex = '/\[\s*wp-custom-fields-search\s+(?:([^\]=]+(?:\s+.*)?))?\]/';
 			return preg_replace_callback($regex, array(&$this, 'generate_from_tag'), $content);
+		}
+		function process_shortcode($atts,$content){
+			return $this->generate_from_tag("",$atts['preset']);
 		}
 		function generate_from_tag($reMatches){
 			global $CustomSearchFieldStatic;
