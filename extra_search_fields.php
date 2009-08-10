@@ -546,7 +546,7 @@ class LessThanComparison extends Comparison{
 		return sprintf(__(' less than "%1$s"','wp-custom-fields-search'),$value);
 	}
 }
-class LessThanOrEqualComparison extends Comparison{
+class AtMostComparison extends Comparison{
 	function addSQLWhere($field,$value){
 		return "$field <= '$value'";
 	}
@@ -554,7 +554,7 @@ class LessThanOrEqualComparison extends Comparison{
 		return sprintf(__(' at most "%1$s"','wp-custom-fields-search'),$value);
 	}
 }
-class MoreThanOrEqualComparison extends Comparison{
+class AtLeastComparison extends Comparison{
 	function addSQLWhere($field,$value){
 		return "$field >= '$value'";
 	}
