@@ -34,13 +34,13 @@
         width: 100%;
 }
 .searchform-param {
-        clear: both;
+        clear: left;
 }
 .searchform-params {
-        clear: both;
+        clear: left;
 }
 .searchform-controls {
-        clear: both;
+        clear: left;
         text-align: right;
 }
 .searchform-spoiler {
