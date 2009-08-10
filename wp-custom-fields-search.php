@@ -376,7 +376,7 @@ Text Domain: wp-custom-fields-search
 			return preg_replace_callback($regex, array(&$this, 'generate_from_tag'), $content);
 		}
 		function process_shortcode($atts,$content){
-			return $this->generate_from_tag("",$atts['preset']);
+			return $this->generate_from_tag(array("",$atts['preset']));
 		}
 		function generate_from_tag($reMatches){
 			global $CustomSearchFieldStatic;
