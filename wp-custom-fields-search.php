@@ -299,7 +299,8 @@ Text Domain: wp-custom-fields-search
 						"AtMostComparison" =>__( "At Most",'wp-custom-fields-search'),
 						"AtLeastComparison" =>__( "At Least",'wp-custom-fields-search'),
 						"RangeComparison" =>__( "Range",'wp-custom-fields-search'),
-						"NotEqualComparison" =>__( "Not Equal To",'wp-custom-fields-search'),
+//TODO: Make this work...
+//						"NotEqualComparison" =>__( "Not Equal To",'wp-custom-fields-search'),
 					)
 				);
 				$CustomSearchFieldStatic['Types'] = apply_filters('custom_search_get_classes',$CustomSearchFieldStatic['Types']);
