@@ -546,6 +546,22 @@ class LessThanComparison extends Comparison{
 		return sprintf(__(' less than "%1$s"','wp-custom-fields-search'),$value);
 	}
 }
+class LessThanOrEqualComparison extends Comparison{
+	function addSQLWhere($field,$value){
+		return "$field <= '$value'";
+	}
+	function describeSearch($value){
+		return sprintf(__(' at most "%1$s"','wp-custom-fields-search'),$value);
+	}
+}
+class MoreThanOrEqualComparison extends Comparison{
+	function addSQLWhere($field,$value){
+		return "$field >= '$value'";
+	}
+	function describeSearch($value){
+		return sprintf(__(' at least "%1$s"','wp-custom-fields-search'),$value);
+	}
+}
 class MoreThanComparison extends Comparison{
 	function addSQLWhere($field,$value){
 		return "$field > '$value'";
@@ -567,6 +583,14 @@ class RangeComparison extends Comparison{
 		if(strlen($min)==0) return sprintf(__(' less than "%1$s"','wp-custom-fields-search'),$max);
 		if(strlen($max)==0) return sprintf(__(' more than "%1$s"','wp-custom-fields-search'),$min);
 		return sprintf(__(' between "%1$s" and "%2$s"','wp-custom-fields-search'),$min,$max);
+	}
+}
+class NotEqualComparison extends Comparison {
+	function addSQLWhere($field,$value){
+		return "$field != '$value'";
+	}
+	function describeSearch($value){
+		return sprintf(__(' is not "%1$s"','wp-custom-fields-search'),$value);
 	}
 }
 
