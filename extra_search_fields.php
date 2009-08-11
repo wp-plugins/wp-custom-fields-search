@@ -636,7 +636,7 @@ class CustomFieldJoiner extends BaseJoiner{
 		$field = "$table.meta_value".($this->param('numeric',false)?'*1':'');
 		$comp = " AND ".$comparison->addSQLWhere($field,$value);
 		if($name!='all')
-			$comp = " AND ( $table.meta_key='$name' AND ".$comp.") ";
+			$comp = " AND ( $table.meta_key='$name' ".$comp.") ";
 		return $comp;
 
 	}
