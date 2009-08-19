@@ -448,7 +448,7 @@ class RadioButtonField extends Field {
 	function RadioButtonField($options=array(),$params=array()){
 		RadioButtonField::__construct($options,$params);
 	}
-	function __construct($options=array(),$params=array()){
+	function __construct($params=array()){
 		parent::__construct($params);
 		if($params['radiobuttonoptions']){
 			$options=array();
