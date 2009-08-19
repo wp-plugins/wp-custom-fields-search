@@ -28,6 +28,9 @@
 	text-align: right;
         width: 60%;
 }
+.searchform-input-wrapper .radio-button-wrapper input {
+	float: left;
+}
 #sidebar .searchform-input-wrapper input,
 .searchform-input-wrapper input,
 .searchform-input-wrapper select{
