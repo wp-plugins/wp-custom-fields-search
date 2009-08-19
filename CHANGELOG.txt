@@ -1,3 +1,6 @@
+19/08/2009	Release 0.3.16
+	Fixed bug with radio buttons showing their config instead of options.
+	Added some FAQs to the readme file.
 11/08/2009	Release 0.3.15
 	Fixed bug with custom fields joining.  Sorry everyone.
 10/08/2009	Release 0.3.14
