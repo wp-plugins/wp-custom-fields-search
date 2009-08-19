@@ -42,6 +42,20 @@ Method 3: Add a tag into your posts/pages
 2. Copy the example tag for posts from this page into the content of the page or post in which you want the form to appear.
 3. You should now have a basic search form in this page/post, to customise this further follow the instructions below for setting up fields.
 
+== Freqently Asked Questions ==
+
+= How do choose what options are shown in Drop Down lists or Radio Buttons =
+
+Each of these widgets has a special input field called "Drop Down Options" and "Radio Button Options" respectively.  If you put a comma separated list of values in here these will be shown as the results.
+
+If you want to show a label that is different to the search term you can separate each item with a colon ':' so if I have a category called Cat1 which has my favourite posts I could use Cat1:Favourite Posts to show one value while searching another.  This is particular useful for the any option so something like the following ":Any,1:Option 1,2,3" would produce a dropdown where the first element has the label any but has no value so will not actually restrict the search.
+
+= Can the plugin search pages instead of posts? =
+
+Yes, it can, although the interface for this is a bit awkard at the moment.
+
+You will need to create a hidden field, which searches on the post_type data type, then give this field the value "Page".  This field will not show up in the interface but will affect the search results giving you page search.
+
 == Screenshots ==
 1. Front end search box
 2. Back end admin screen showing field config
