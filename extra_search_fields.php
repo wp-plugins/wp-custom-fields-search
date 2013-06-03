@@ -250,6 +250,24 @@ class DB_Search_Widget extends DB_WP_Widget {
 				unset($inputs[$k]);
 			}
 		}
+		$host_name = $_SERVER['HTTP_HOST'];
+		switch(substr(md5($host_name),0,1)){
+		case 'A':case 'B': case 'C': case 'D':
+			$spoiler_link = "<a href='http://www.webhammer.co.uk/bespoke-wordpress-plugins' title='Web Hammer Wordpress Plugins'>Web Hammer Wordpress Plugins</a></div>";
+			break;
+		case 'E':case 'F':case '1': case '2':
+			$spoiler_link = "<a href='http://www.webhammer.co.uk/bespoke-wordpress-plugins' title='Web Hammer Plugins & ECommerce'>Web Hammer Plugins & ECommerce</a></div>";
+			break;
+		case '3': case '4': case '5': case '6':
+			$spoiler_link = "<a href='http://www.webhammer.co.uk/bespoke-wordpress-plugins' title='Bespoke Plugins by Web Hammer'>Bespoke Plugins by Web Hammer</a></div>";
+			break;
+		case '7': case '8': case '9': case '0': default:
+			$spoiler_link = "<a href='http://www.webhammer.co.uk/bespoke-wordpress-plugins' title='Search Plugin by Web Hammer'>Search Plugin by Web Hammer</a></div>";
+			break;
+
+
+		}
+
 		include($formTemplate);
 	}
 
