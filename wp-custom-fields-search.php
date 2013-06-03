@@ -1,15 +1,15 @@
 <?php
 /*
 Plugin Name: WP Custom Search
-Plugin URI: http://www.don-benjamin.co.uk/wordpress-plugins/wp-custom-search
+Plugin URI: http://www.webhammer.co.uk/bespoke-wordpress-plugins/wp-custom-search
 Description: Allows admin to build custom search form.  Allows the site admin to configure multiple html inputs for different fields including custom fields.  Also provides an extensible mechanism for integrating with other plugins data structures.
-Version: 0.3.17
+Version: 0.3.18
 Author: Don Benjamin
-Author URI: http://www.don-benjamin.co.uk/
+Author URI: http://www.webhammer.co.uk/
 Text Domain: wp-custom-fields-search
 */
 /*
- * Copyright 2009 Don Benjamin
+ * Copyright 2009-2013 Don Benjamin
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
  * You may obtain a copy of the License at 
@@ -49,7 +49,7 @@ Text Domain: wp-custom-fields-search
 		}
 
 		function currentVersion(){
-			return "0.3.17";
+			return "0.3.18";
 		}
 
 		function ensureUpToDate(){

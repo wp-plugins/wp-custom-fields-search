@@ -1,3 +1,6 @@
+2013-06-03	Release 0.3.18
+	Removed a warning in the sort functionality
+	Changed branding
 2013-06-03	Release 0.3.17
 	Fixed bug with widgets and newer versions of jquery
 	Added simple checkbox inputs
