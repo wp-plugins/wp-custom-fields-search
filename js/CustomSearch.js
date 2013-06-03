@@ -32,6 +32,7 @@ CustomSearch = Class.create( {
 		});
 	},
 	fieldExists: function(id){
+		if(this.id=='%i%') return false;
 		newId = 'config-form-'+this.id+'-'+id;
 		return jQuery("#"+newId).attr('id');
 	},
@@ -95,11 +96,24 @@ CustomSearch = Class.create( {
 		div.html(html);
 		break;
 			case 'joiner':
+				
+				var html_id = 'form-field-dbname-'+this.id+'-'+id,
+					html_name = 'db_customsearch_widget['+this.id+']['+id+'][name]';
+				$el = jQuery('#'+html_id);
+				var val;
+				val = $el.find('input').val();
+				$el.find("*").remove();
+
 				type=this.getJoinerFor(id);		
 				if(this.namesFor[type]){
 					this.flexboxData[id].results = this.namesFor[type];
+					if(this.namesFor[type]=='any'){
+						$el.html("<input type='text' name='"+html_name+"'/>");
+						$el.find('input').val(val);
+					} else {
+						$el.flexbox(this.flexboxData[id],{width:100,name:html_name,maxCacheBytes:0,paging:false,initialValue:val})
+					}
 					jQuery('#form-field-dbname-'+this.id+'-'+id).show();
-					jQuery('#form-field-dbname-'+this.id+'-'+id);
 				} else {
 					jQuery('#form-field-dbname-'+this.id+'-'+id).hide();
 				}
@@ -112,8 +126,6 @@ CustomSearch = Class.create( {
 		initVal = jQuery('#form-field-dbname-'+this.id+'-'+id).find("input")[0].value;
 
 
-		jQuery('#form-field-dbname-'+this.id+'-'+id).find("*").each(function(){jQuery(this).remove()})
-		jQuery('#form-field-dbname-'+this.id+'-'+id).flexbox(this.flexboxData[id],{width:100,name:'db_customsearch_widget['+this.id+']['+id+'][name]',maxCacheBytes:0,paging:false,initialValue:initVal})
 		this.updateOptions(id,'joiner');
        },
 	toggleOptions: function(id){

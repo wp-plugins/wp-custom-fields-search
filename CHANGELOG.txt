@@ -1,3 +1,5 @@
+29/12/2010	Bespoke Custom Version
+	Added result ordering and is_search compatibility.
 19/08/2009	Release 0.3.16
 	Fixed bug with radio buttons showing their config instead of options.
 	Added some FAQs to the readme file.

@@ -195,10 +195,12 @@ class DB_Search_Widget extends DB_WP_Widget {
 		add_filter('posts_join',array(&$this,'join_meta'));
 		add_filter('posts_where',array(&$this,'sql_restrict'));
 		add_filter('posts_groupby', array(&$this,'sql_group'));
+		add_filter('posts_orderby', array(&$this,'sql_order'));
 		add_filter('home_template',array(&$this,'rewriteHome'));
 		add_filter('page_template',array(&$this,'rewriteHome'));
 		add_filter( 'get_search_query', array(&$this,'getSearchDescription'));
 		add_action('wp_head', array(&$this,'outputStylesheets'), 1);
+		add_action('pre_get_posts',array(&$this,'setSearchVar'));
 	}
 	function loadTranslations(){
 		static $loaded;
@@ -217,6 +219,11 @@ class DB_Search_Widget extends DB_WP_Widget {
 	function outputStylesheets(){
 		$dir = WP_CONTENT_URL .'/plugins/' .  dirname(plugin_basename(__FILE__) ) . '/';
 		echo "\n".'<style type="text/css" media="screen">@import "'. $dir .'templates/searchforms.css";</style>'."\n";
+	}
+	function setSearchVar($wpdb){
+		if($this->isPosted()){
+			$wpdb->is_search=true;
+		}
 	}
 
 	function getInputs($params){
@@ -303,6 +310,14 @@ class DB_Search_Widget extends DB_WP_Widget {
 		}
 		return $group;
 	}
+	function sql_order($order){
+		if($this->isPosted()){
+			foreach($this->getInputs($_REQUEST['widget_number']) as $input){
+				$order = $input->sql_order($order);
+			}
+		}
+		return $order;
+	}
 
 	function toSearchString(){
 	}
@@ -317,19 +332,25 @@ class SearchFieldBase {
 		add_filter('search_params',array(&$this,'form_inputs'));
 		static $index;
 		$this->index = ++$index;
-	}
+	 }
 	function form_inputs($form){
-		die("Unimplemented function ".__CLASS__.".".__FUNCTION__);
+		die("Unimplemented function ".get_class($this).".".__FUNCTION__);
 	}
 	function sql_restrict($where){
-		die("Unimplemented function ".__CLASS__.".".__FUNCTION__);
+		die("Unimplemented function ".get_class($this).".".__FUNCTION__);
 	}
 }
 
 class Field extends ParameterisedObject {
+	function splitMultiValues($value){
+		return array($value);
+	}
+	function valueToDisplay($value,$name,$joiner){
+		return $value;
+	}
 	function getValue($name){
 		$v =  $_REQUEST[$this->getHTMLName($name)];
-		if(get_magic_quotes_gpc()) $v= stripslashes($v);
+		if(get_magic_quotes_gpc() || function_exists('wp_magic_quotes')) $v= stripslashes_deep($v);
 		return $v;
 	}
 
@@ -380,6 +401,10 @@ class DropDownField extends Field {
 			return $this->options;
 		}
 	}
+	function valueToDisplay($value,$name,$joiner){
+		$options = $this->getOptions($joiner,$name);
+		return $options[$value];
+	}
 	function getInput($name,$joiner,$fieldName=null){
 		if(!$fieldName) $fieldName=$name;
 		$v = $this->getValue($name);
@@ -387,7 +412,7 @@ class DropDownField extends Field {
 
 		$options = '';
 		foreach($this->getOptions($joiner,$fieldName) as $option=>$label){
-			$checked = ($option==$v)?" selected='true'":"";
+			$checked = ($option==$v)?" selected='selected'":"";
 			$option = htmlspecialchars($option,ENT_QUOTES);
 			$label = htmlspecialchars($label,ENT_QUOTES);
 			$options.="<option value='$option'$checked>$label</option>";
@@ -396,7 +421,7 @@ class DropDownField extends Field {
 		if($this->params['onChange']) $atts = ' onChange="'.htmlspecialchars($this->params['onChange']).'"';
 		if($this->params['id']) $atts .= ' id="'.htmlspecialchars($this->params['id']).'"';
 		if($this->params['css_class']) $atts .= ' class="'.htmlspecialchars($this->params['css_class']).'"';
-		return "<select name='$id'$atts>$options</select>";
+		return "<select name='$id' $atts>$options</select>";
 	}
 	function getConfigForm($id,$values){
 		return "<label for='$id-dropdown-options'>".__('Drop Down Options','wp-custom-fields-search')."</label><input id='$id-dropdown-options' name='$id"."[dropdownoptions]' value='$values[dropdownoptions]'/>";
@@ -422,6 +447,9 @@ class HiddenField extends Field {
 	}
 	function getConfigForm($id,$values){
 		return "<label for='$id-constant-value'>".__('Constant Value','wp-custom-fields-search')."</label><input id='$id-constant-value' name='$id"."[constant-value]' value='{$values['constant-value']}'/>";
+	}
+	function valueToDisplay($value,$name,$joiner){
+		return null;
 	}
 }
 
@@ -507,10 +535,16 @@ class RadioButtonFromValues extends RadioButtonField {
 
 class Comparison {
 	function addSQLWhere($field,$value){
-		die("Unimplemented function ".__CLASS__.".".__FUNCTION__);
+		die("Unimplemented function ".get_class($this).".".__FUNCTION__);
 	}
 	function describeSearch($value){
-		die("Unimplemented function ".__CLASS__.".".__FUNCTION__);
+		die("Unimplemented function ".get_class($this).".".__FUNCTION__);
+	}
+	function sql_order($order){
+		return $order;
+	}
+	function shouldJoin($value){
+		return $value;
 	}
 }
 class EqualComparison extends Comparison {
@@ -610,14 +644,31 @@ class BaseJoiner extends ParameterisedObject {
 		parent::__construct($params);
 		$this->name=$name;
 	}
-	function sql_join($join,$name,$index,$value){
+	function sql_join($join,$name,$index,$value,$comparison){
 		return $join;
+	}
+	function shouldJoin($value,$comparison){
+		return $this->param('required',false) || $comparison->shouldJoin($value);
 	}
 	function process_where($where){
 		return $where;
 	}
 	function needsField(){
 		return true;
+	}
+
+	function getField($name,$index){
+		throw new Exception(get_class($this).".getField not implemented");
+	}
+	function sql_order($order,$name,$index,$value,$comparison){
+		$field = $this->getField($name,$index);
+		return $comparison->sql_order($order,$field,$value);
+	}
+
+	function getHeirarchyOfOptions($name){
+		return array(
+			'root'=>$this->getAllOptions($name)
+		);
 	}
 }
 class CustomFieldJoiner extends BaseJoiner{
@@ -635,13 +686,19 @@ class CustomFieldJoiner extends BaseJoiner{
 		$table = 'meta'.$index;
 		$field = "$table.meta_value".($this->param('numeric',false)?'*1':'');
 		$comp = " AND ".$comparison->addSQLWhere($field,$value);
-		if($name!='all')
-			$comp = " AND ( $table.meta_key='$name' ".$comp.") ";
 		return $comp;
-
 	}
-	function sql_join($join,$name,$index,$value){
-		if(!$value && !$this->param('required',false)) return $join;
+	function sql_join_restrict($name,$index,$value,$comparison){
+		$table = 'meta'.$index;
+		if($name!='all')
+			return " AND ( $table.meta_key='$name' ) ";
+		return "";
+	}
+	function getField($name,$index){
+		return "meta$index.meta_value";
+	}
+	function sql_join($join,$name,$index,$value,$comparison){
+		if(!$this->shouldJoin($value,$comparison)) return $join;
 		global $wpdb;
 		$table = 'meta'.$index;
 		return "$join JOIN $wpdb->postmeta $table ON $table.post_id=$wpdb->posts.id";
@@ -667,19 +724,22 @@ class CustomFieldJoiner extends BaseJoiner{
 	}
 }
 class CategoryJoiner extends BaseJoiner {
+	var $default_taxonomy = 'category';
+	function getField($name,$index){
+		return "meta$index.term_id";
+	}
 	function sql_restrict($name,$index,$value,$comparison){
 		if(!($value || $this->params['required'])) return $join;
-		$table = 'meta'.$index;
-		return " AND ( ".$comparison->addSQLWhere("$table.name",$value).")";
+		return " AND ( ".$comparison->addSQLWhere($this->getField($name,$index),$value).")";
 	}
 	function getTaxonomy(){
-		return $this->param('taxonomy','category');
+		return $this->param('taxonomy',$this->default_taxonomy);
 	}
 	function getTaxonomyWhere($table){
 		return "`$table`.taxonomy='".$this->getTaxonomy()."'";
 	}
-	function sql_join($join,$name,$index,$value){
-		if(!($value || $this->params['required'])) return $join;
+	function sql_join($join,$name,$index,$value,$comparison){
+		if(!$this->shouldJoin($value,$comparison)) return $join;
 		global $wpdb;
 		$table = 'meta'.$index;
 		$rel = 'rel'.$index;
@@ -688,16 +748,28 @@ class CategoryJoiner extends BaseJoiner {
 	}
 	function getAllOptions($fieldName){
 		global $wpdb;
-		$sql = "SELECT distinct t.name FROM $wpdb->terms AS t INNER JOIN $wpdb->term_taxonomy AS tt ON tt.term_id = t.term_id INNER JOIN $wpdb->term_relationships AS tr ON tr.term_taxonomy_id = tt.term_taxonomy_id JOIN $wpdb->posts p ON tr.object_id=p.id AND p.post_status='publish' WHERE ".$this->getTaxonomyWhere('tt');
+		$sql = "SELECT distinct t.term_id,t.name FROM $wpdb->terms AS t INNER JOIN $wpdb->term_taxonomy AS tt ON tt.term_id = t.term_id INNER JOIN $wpdb->term_relationships AS tr ON tr.term_taxonomy_id = tt.term_taxonomy_id JOIN $wpdb->posts p ON tr.object_id=p.id AND p.post_status='publish' WHERE ".$this->getTaxonomyWhere('tt');
 		$q = mysql_query($sql);
 		if($e = mysql_error()) echo "<h1>SQL: $sql</h1>".mysql_error();
 		$options = array();
 		while($r = mysql_fetch_row($q))
-			$options[$r[0]] = $r[0];
+			$options[$r[0]] = $r[1];
 		return $options;
 	}
 	function needsField(){
 		return false;
+	}
+	function getHeirarchyOfOptions($name){
+		global $wpdb;
+		$sql = "SELECT distinct tt.parent,t.term_id,t.name FROM $wpdb->terms AS t INNER JOIN $wpdb->term_taxonomy AS tt ON tt.term_id = t.term_id INNER JOIN $wpdb->term_relationships AS tr ON tr.term_taxonomy_id = tt.term_taxonomy_id JOIN $wpdb->posts p ON tr.object_id=p.id AND p.post_status='publish' WHERE ".$this->getTaxonomyWhere('tt');
+		$q = mysql_query($sql);
+		if($e = mysql_error()) echo "<h1>SQL: $sql</h1>".mysql_error();
+		$options = array();
+		while($r = mysql_fetch_row($q)){
+			if(!$r[0]) $r[0]='root';
+			$options[$r[0]][$r[1]] = $r[2];
+		}
+		return $options;
 	}
 }
 class TagJoiner extends CategoryJoiner {
@@ -712,10 +784,13 @@ class PostTypeJoiner extends BaseJoiner {
 		$where = preg_replace("/AND \($wpdb->posts.post_type *= *'(post|page)'\)/","",$where);
 		return $where;
 	}
-	function sql_restrict($name,$index,$value,$comparison){
+	function getField($name,$index){
 		global $wpdb;
+		return "$wpdb->posts.post_type";
+	}
+	function sql_restrict($name,$index,$value,$comparison){
 		if(!($value || $this->params['required'])) return $join;
-		return " AND ( ".$comparison->addSQLWhere("$wpdb->posts.post_type",$value).")";
+		return " AND ( ".$comparison->addSQLWhere($this->getField($name,$index),$value).")";
 	}
 	function getAllOptions($fieldName){
 		global $wpdb;
@@ -731,10 +806,14 @@ class PostTypeJoiner extends BaseJoiner {
 }
 
 class PostDataJoiner extends BaseJoiner {
-	function sql_restrict($name,$index,$value,$comparison){
+	function getField($name,$index){
 		global $wpdb;
-		$table = $wpdb->posts;
+		return "$wpdb->posts.$name";
+	}
+	function sql_restrict($name,$index,$value,$comparison){
 		if($name=='all'){
+			global $wpdb;
+			$table = $wpdb->posts;
 			$logic = array();
 			foreach($this->getSuggestedFields() as $name=>$desc){
 				if($name=='all') continue;
@@ -743,7 +822,8 @@ class PostDataJoiner extends BaseJoiner {
 			$logic = " AND (".join(" OR ",$logic).")";
 			return $logic;
 		} else {
-			return " AND ( ".$comparison->addSQLWhere("$table.$name",$value).") ";
+			$field = $this->getField($name,$index);
+			return " AND ( ".$comparison->addSQLWhere($field,$value).") ";
 		}
 	}
 	function sql_join($join,$name,$index,$value){
@@ -825,26 +905,58 @@ class CustomSearchField extends SearchFieldBase {
 	function hasValue(){
 		return $this->getValue();
 	}
+
 	function sql_restrict($where){
+		$value = $this->getValue();
 		if($this->hasValue()){
 			$value = $this->getValue();
-			$value = $GLOBALS['wpdb']->escape($value);
-			$where.=$this->joiner->sql_restrict($this->name,$this->index,$value,$this->comparison);
+			$my_where = array();
+			$index = 0;
+			foreach($this->input->splitMultiValues($value) as $value){
+				$index++;
+				$value = $GLOBALS['wpdb']->escape($value);
+				$my_where[]=$this->joiner->sql_restrict($this->name,$index*100+$this->index,$value,$this->comparison);
+			}
+			// TODO: Extend this to support or etc. ??
+			$where .= " AND ( 1 ".join("",$my_where)." )";
+		}
+		if(method_exists($this->joiner,'sql_join_restrict') && $this->comparison->shouldJoin($value)){
+			$where.=$this->joiner->sql_join_restrict($this->name,$this->index,$value,$this->comparison);
 		}
 		if(method_exists($this->joiner,'process_where'))
 			$where = $this->joiner->process_where($where);
 		return $where;
 	}
+
+	function sql_order($order){
+		$value = $this->getValue();
+		$value = $GLOBALS['wpdb']->escape($value);
+		$order=$this->joiner->sql_order($order,$this->name,$this->index,$value,$this->comparison);
+		return $order;
+	}
 	function describeSearch($current){
 		if($this->hasValue()){
-			$current[] = $this->getLabel()." ".$this->comparison->describeSearch($this->getValue());
+			$parts = array();
+			foreach($this->input->splitMultiValues($this->getValue()) as $value){
+				$value = $this->input->valueToDisplay($value,$this->name,$this->joiner);
+				if($value)
+				{
+					$parts[] = $this->comparison->describeSearch($value);
+				}
+			}
+			if($parts)
+				$current[] = $this->getLabel()." ".join(" AND ",$parts);
 		}
 		return $current;
 
 	}
 	function join_meta($join){
 		global $wpdb;
-		$join=$this->joiner->sql_join($join,$this->name,$this->index,$this->getValue(),$this->comparison);
+		$index = 0;
+		foreach($this->input->splitMultiValues($this->getValue()) as $value){
+			$index++;
+			$join=$this->joiner->sql_join($join,$this->name,$index*100+$this->index,$value,$this->comparison);
+		}
 		return $join;
 	}
 
@@ -893,4 +1005,9 @@ if($debugMode){
 		return $query;
 	}
 }
+function wp_custom_fields_search_mark_search($query){
+	if(array_key_exists('search-class',$_REQUEST))
+		$query->is_search = true;
+}
+add_action('parse_query','wp_custom_fields_search_mark_search');
 ?>

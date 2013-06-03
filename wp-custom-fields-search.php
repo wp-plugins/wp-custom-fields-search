@@ -80,6 +80,7 @@ Text Domain: wp-custom-fields-search
 			
 			global $CustomSearchFieldStatic;
 			if(!$CustomSearchFieldStatic['Inputs'][$id]){
+				$classes = $this->getClasses('joiner');
 			
 				$config = $this->getConfig($id);
 				$inputs = array();
@@ -112,7 +113,8 @@ Text Domain: wp-custom-fields-search
 			return $post;
 		}
 		function getDefaultConfig(){
-			return array('name'=>'Site Search', 
+			return apply_filters('custom_search_default_config',
+			array('name'=>'Site Search', 
 				1=>array(
 					'label'=>__('Key Words','wp-custom-fields-search'),
 					'input'=>'TextField',
@@ -126,7 +128,7 @@ Text Domain: wp-custom-fields-search
 					'comparison'=>'EqualComparison',
 					'joiner'=>'CategoryJoiner'
 				),
-			);
+			));
 		}
 		function form_outputForm($values,$pref){
 			$defaults=$this->getDefaultConfig();
@@ -187,15 +189,19 @@ Text Domain: wp-custom-fields-search
 		if(compat_method_exists($joinerClass,'getSuggestedFields')){
 			$options = eval("return $joinerClass::getSuggestedFields();");
 			$str = '';
-			foreach($options as $i=>$v){
-				$k=$i;
-				if(is_numeric($k)) $k=$v;
-				$options[$i] = json_encode(array('id'=>$k,'name'=>$v));
+			if(is_array($options)){
+				foreach($options as $i=>$v){
+					$k=$i;
+					if(is_numeric($k)) $k=$v;
+					$options[$i] = json_encode(array('id'=>$k,'name'=>$v));
+				}
+				$str = '['.join(',',$options).']';
+			} elseif(is_string($options)) {
+				$str = json_encode($options);
 			}
-			$str = '['.join(',',$options).']';
 			echo "CustomSearch.setOptionsFor('$joinerClass',".$str.");\n";
 		}elseif(eval("return $joinerClass::needsField();")){
-			echo "CustomSearch.setOptionsFor('$joinerClass',[]);\n";
+			echo "CustomSearch.setOptionsFor('$joinerClass','any');\n";
 		}
 	}
 ?>
@@ -204,7 +210,7 @@ Text Domain: wp-custom-fields-search
 		}
 
 		function getNonInputFields(){
-			return array('exists','name','preset','version');
+			return array('exists','name','preset','version','order','template');
 		}
 		function singleFieldHTML($pref,$id,$values){
 			$prefId = preg_replace('/^.*\[([^]]*)\]$/','\\1',$pref);
