@@ -19,13 +19,6 @@
 require_once(dirname(__FILE__).'/../extra_search_fields.php');
 
 class SortingComparison extends Comparison {
-	function SortingComparison($name=null){
-		SortingComparison::__construct($name);
-	}
-	function __construct($name){
-		$this->name = $name;
-	}
-
 	function addSQLWhere($key,$value){
 		$this->key = $key;
 		$this->value = $value;
