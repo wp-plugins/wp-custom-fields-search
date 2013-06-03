@@ -58,6 +58,10 @@ Yes, it can, although the interface for this is a bit awkard at the moment.
 
 You will need to create a hidden field, which searches on the post_type data type, then give this field the value "Page".  This field will not show up in the interface but will affect the search results giving you page search.
 
+= How to sort results = 
+
+The sorting functionality is not 100% complete yet.  At present you can set the sort order of results, but it's a little counter intuitive.  Create a new field on your search form, set the data type and data field to the field you want to sort by, set the compare function to "Sort Order", and set the widget to "Hidden Constant".  To sort in reverse order set the constant value to "descending".
+
 == Screenshots ==
 1. Front end search box
 2. Back end admin screen showing field config
@@ -95,6 +99,7 @@ Firstly, by copying and pasting the php code from the preset config page into a 
 Secondly, by using a preset as the basis for another search form.  When setting up a search form you have the option of selecting one of the presets from a dropdown list.  Selecting one will include all of the fields from this preset in your form.
 
 Presets are configured in exactly the same way as the sidebar widget, you can find the presets in the "Settings " WP Custom Fields Search" section of your admin site.
+
 
 == Extending Custom Search == 
 
