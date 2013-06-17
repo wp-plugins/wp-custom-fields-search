@@ -72,7 +72,7 @@ CustomSearch = Class.create( {
 
 	updateAllOptionsFor: function(joiner){
 		var i=0;
-		for(;i<this.maxInput;i++){
+		for(;i<=this.maxInput;i++){
 			if(this.fieldExists(i) && (this.getJoinerFor(i)==joiner)){
 				this.updateOptions(i,'joiner');
 			}
@@ -96,20 +96,19 @@ CustomSearch = Class.create( {
 		div.html(html);
 		break;
 			case 'joiner':
-				
 				var html_id = 'form-field-dbname-'+this.id+'-'+id,
 					html_name = 'db_customsearch_widget['+this.id+']['+id+'][name]';
 				$el = jQuery('#'+html_id);
 				var val;
 				val = $el.find('input').val();
-				$el.find("*").remove();
 
 				type=this.getJoinerFor(id);		
 				if(this.namesFor[type]){
+					$el.find("*").remove();
 					this.flexboxData[id].results = this.namesFor[type];
 					if(this.namesFor[type]=='any'){
 						$el.html("<input type='text' name='"+html_name+"'/>");
-						$el.find('input').val(val);
+							$el.find('input').val(val);
 					} else {
 						$el.flexbox(this.flexboxData[id],{width:100,name:html_name,maxCacheBytes:0,paging:false,initialValue:val})
 					}
