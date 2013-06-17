@@ -1,3 +1,5 @@
+2013-06-17	Release 0.3.19
+	There was a problem with the switch to using IDs for categories, this fix is not perfect but search was entirely broken for those affected before.  The problems are that there are now slightly blurred lines between keys and values in dropdown fields and category searches.
 2013-06-03	Release 0.3.18
 	Removed a warning in the sort functionality
 	Changed branding

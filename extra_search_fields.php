@@ -430,7 +430,7 @@ class DropDownField extends Field {
 
 		$options = '';
 		foreach($this->getOptions($joiner,$fieldName) as $option=>$label){
-			$checked = ($option==$v)?" selected='selected'":"";
+			$checked = (($option==$v)||($label==$v))?" selected='selected'":"";
 			$option = htmlspecialchars($option,ENT_QUOTES);
 			$label = htmlspecialchars($label,ENT_QUOTES);
 			$options.="<option value='$option'$checked>$label</option>";
@@ -748,7 +748,8 @@ class CategoryJoiner extends BaseJoiner {
 	}
 	function sql_restrict($name,$index,$value,$comparison){
 		if(!($value || $this->params['required'])) return $join;
-		return " AND ( ".$comparison->addSQLWhere($this->getField($name,$index),$value).")";
+//		return " AND ( ".$comparison->addSQLWhere($this->getField($name,$index),$value).")";
+		return " AND ( (".$comparison->addSQLWhere($this->getField($name,$index),$value).") OR ( ".$comparison->addSQLWhere("meta$index.name",$value).") )";
 	}
 	function getTaxonomy(){
 		return $this->param('taxonomy',$this->default_taxonomy);
@@ -1028,4 +1029,6 @@ function wp_custom_fields_search_mark_search($query){
 		$query->is_search = true;
 }
 add_action('parse_query','wp_custom_fields_search_mark_search');
+function dump_query($query){ var_dumP($query); return $query;}
+//add_filter('posts_request','dump_query');
 ?>
