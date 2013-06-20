@@ -934,13 +934,14 @@ class CustomSearchField extends SearchFieldBase {
 			foreach($this->input->splitMultiValues($value) as $value){
 				$index++;
 				$value = $GLOBALS['wpdb']->escape($value);
-				$my_where[]=$this->joiner->sql_restrict($this->name,$index*100+$this->index,$value,$this->comparison);
+				$local_where=$this->joiner->sql_restrict($this->name,$index*100+$this->index,$value,$this->comparison);
+				if(method_exists($this->joiner,'sql_join_restrict') && $this->comparison->shouldJoin($value)){
+					$local_where.=$this->joiner->sql_join_restrict($this->name,$index*100+$this->index,$value,$this->comparison);
+				}
+				$my_where[] = $local_where;
 			}
 			// TODO: Extend this to support or etc. ??
 			$where .= " AND ( 1 ".join("",$my_where)." )";
-		}
-		if(method_exists($this->joiner,'sql_join_restrict') && $this->comparison->shouldJoin($value)){
-			$where.=$this->joiner->sql_join_restrict($this->name,$this->index,$value,$this->comparison);
 		}
 		if(method_exists($this->joiner,'process_where'))
 			$where = $this->joiner->process_where($where);
