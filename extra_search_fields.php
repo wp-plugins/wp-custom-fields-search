@@ -23,7 +23,6 @@
  * Author URI: http://don-benjamin.co.uk
  * */
 
-$debugMode =false;
 
 if ( !defined('WP_CONTENT_URL') )
 	define( 'WP_CONTENT_URL', get_option('siteurl') . '/wp-content');
@@ -115,9 +114,9 @@ class DB_WP_Widget extends ParameterisedObject {
 		if(!@array_key_exists($id,$options))
 			$id = preg_replace('/^.*-(\d+)$/','\\1',$id);
 		if(is_null($key))
-			return $options[$id];
+			return @$options[$id];
 		else 
-			return $options[$id][$key];
+			return @$options[$id][$key];
 	}
 	function configForm($args,$force=false){
 		static $first;
@@ -131,7 +130,7 @@ class DB_WP_Widget extends ParameterisedObject {
 
 		$options = get_option($this->id);
 
-		if(!$updated[$this->id] && ($_POST['sidebar'] || $force)){
+		if(!@$updated[$this->id] && (@$_POST['sidebar'] || $force)){
 			$updated[$this->id]=true;
 			$sidebar = (string) $_POST['sidebar'];
 			$default_options=$this->defaultWidgetConfig();
@@ -259,16 +258,16 @@ class DB_Search_Widget extends DB_WP_Widget {
 		$host_name = $_SERVER['HTTP_HOST'];
 		switch(substr(md5($host_name),0,1)){
 		case 'A':case 'B': case 'C': case 'D':
-			$spoiler_link = "<a href='http://www.webhammer.co.uk/bespoke-wordpress-plugins' title='Web Hammer Wordpress Plugins'>Web Hammer Wordpress Plugins</a></div>";
+			$spoiler_link = "<a href='http://www.webhammer.co.uk/bespoke-wordpress-plugins' title='Web Hammer Wordpress Plugins'>Web Hammer Wordpress Plugins</a>";
 			break;
 		case 'E':case 'F':case '1': case '2':
-			$spoiler_link = "<a href='http://www.webhammer.co.uk/bespoke-wordpress-plugins' title='Web Hammer Plugins & ECommerce'>Web Hammer Plugins & ECommerce</a></div>";
+			$spoiler_link = "<a href='http://www.webhammer.co.uk/bespoke-wordpress-plugins' title='Web Hammer Plugins & ECommerce'>Web Hammer Plugins & ECommerce</a>";
 			break;
 		case '3': case '4': case '5': case '6':
-			$spoiler_link = "<a href='http://www.webhammer.co.uk/bespoke-wordpress-plugins' title='Bespoke Plugins by Web Hammer'>Bespoke Plugins by Web Hammer</a></div>";
+			$spoiler_link = "<a href='http://www.webhammer.co.uk/bespoke-wordpress-plugins' title='Bespoke Plugins by Web Hammer'>Bespoke Plugins by Web Hammer</a>";
 			break;
 		case '7': case '8': case '9': case '0': default:
-			$spoiler_link = "<a href='http://www.webhammer.co.uk/bespoke-wordpress-plugins' title='Search Plugin by Web Hammer'>Search Plugin by Web Hammer</a></div>";
+			$spoiler_link = "<a href='http://www.webhammer.co.uk/bespoke-wordpress-plugins' title='Search Plugin by Web Hammer'>Search Plugin by Web Hammer</a>";
 			break;
 
 
@@ -278,7 +277,7 @@ class DB_Search_Widget extends DB_WP_Widget {
 	}
 
 	function isPosted(){
-		return $_GET['search-class'] == $this->getPostIdentifier();
+		return @$_GET['search-class'] == $this->getPostIdentifier();
 	}
 	function getPostIdentifier(){
 		return get_class($this).'-'.$this->id;
@@ -383,7 +382,7 @@ class Field extends ParameterisedObject {
 		return $value;
 	}
 	function getValue($name){
-		$v =  $_REQUEST[$this->getHTMLName($name)];
+		$v =  @$_REQUEST[$this->getHTMLName($name)];
 		if(get_magic_quotes_gpc() || function_exists('wp_magic_quotes')) $v= stripslashes_deep($v);
 		return $v;
 	}
@@ -452,13 +451,13 @@ class DropDownField extends Field {
 			$options.="<option value='$option'$checked>$label</option>";
 		}
 		$atts = '';
-		if($this->params['onChange']) $atts = ' onChange="'.htmlspecialchars($this->params['onChange']).'"';
-		if($this->params['id']) $atts .= ' id="'.htmlspecialchars($this->params['id']).'"';
-		if($this->params['css_class']) $atts .= ' class="'.htmlspecialchars($this->params['css_class']).'"';
+		if(@$this->params['onChange']) $atts = ' onChange="'.htmlspecialchars($this->params['onChange']).'"';
+		if(@$this->params['id']) $atts .= ' id="'.htmlspecialchars($this->params['id']).'"';
+		if(@$this->params['css_class']) $atts .= ' class="'.htmlspecialchars($this->params['css_class']).'"';
 		return "<select name='$id' $atts>$options</select>";
 	}
 	function getConfigForm($id,$values){
-		return "<label for='$id-dropdown-options'>".__('Drop Down Options','wp-custom-fields-search')."</label><input id='$id-dropdown-options' name='$id"."[dropdownoptions]' value='$values[dropdownoptions]'/>";
+		return "<label for='$id-dropdown-options'>".__('Drop Down Options','wp-custom-fields-search')."</label><input id='$id-dropdown-options' name='$id"."[dropdownoptions]' value='".@$values["dropdownoptions"]."'/>";
 	}
 }
 class HiddenField extends Field {
@@ -480,7 +479,7 @@ class HiddenField extends Field {
 		return "<input type='hidden' name='".htmlspecialchars($name)."' value='".htmlspecialchars($v)."'/>";
 	}
 	function getConfigForm($id,$values){
-		return "<label for='$id-constant-value'>".__('Constant Value','wp-custom-fields-search')."</label><input id='$id-constant-value' name='$id"."[constant-value]' value='{$values['constant-value']}'/>";
+		return "<label for='$id-constant-value'>".__('Constant Value','wp-custom-fields-search')."</label><input id='$id-constant-value' name='$id"."[constant-value]' value='".@$values['constant-value']."'/>";
 	}
 	function valueToDisplay($value,$name,$joiner){
 		return null;
@@ -512,9 +511,10 @@ class RadioButtonField extends Field {
 	}
 	function __construct($params=array()){
 		parent::__construct($params);
-		if($params['radiobuttonoptions']){
+		$options = null;
+		if(@$params['radiobuttonoptions']){
 			$options=array();
-			$optionPairs = explode(',',$params['radiobuttonoptions']);
+			$optionPairs = explode(',',@$params['radiobuttonoptions']);
 			foreach($optionPairs as $option){
 				list($k,$v) = explode(':',$option);
 				if(!$v) $v=$k;
@@ -550,7 +550,7 @@ class RadioButtonField extends Field {
 		return "RadioButton";
 	}
 	function getConfigForm($id,$values){
-		return "<label for='$id-radiobutton-options'>Radio Button Options</label><input id='$id-radiobutton-options' name='$id"."[radiobuttonoptions]' value='$values[radiobuttonoptions]'/>";
+		return "<label for='$id-radiobutton-options'>Radio Button Options</label><input id='$id-radiobutton-options' name='$id"."[radiobuttonoptions]' value='".@$values["radiobuttonoptions"]."'/>";
 	}
 }
 class RadioButtonFromValues extends RadioButtonField {
@@ -1034,13 +1034,6 @@ function wp_custom_search_fields_include_bridges(){
 }
 wp_custom_search_fields_include_bridges();
 
-if($debugMode){
-	add_filter('posts_request','debug_dump_query');
-	function debug_dump_query($query){
-		echo "<h1>$query</h1>";
-		return $query;
-	}
-}
 function wp_custom_fields_search_mark_search($query){
 	if(array_key_exists('search-class',$_REQUEST))
 		$query->is_search = true;
@@ -1048,4 +1041,6 @@ function wp_custom_fields_search_mark_search($query){
 add_action('parse_query','wp_custom_fields_search_mark_search');
 function dump_query($query){ echo "<pre>$query</pre>"; return $query;}
 //add_filter('posts_request','dump_query',1000);
+
+
 ?>

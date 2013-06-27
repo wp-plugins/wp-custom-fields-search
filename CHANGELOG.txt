@@ -1,3 +1,6 @@
+2013-06-27	Release 0.3.22
+	Suppressed a bunch of warnings
+	Removed a loose closing div
 2013-06-27	Release 0.3.21
 	Fixed bug causing incompatibility with relevanssi
 2013-06-20	Release 0.3.20

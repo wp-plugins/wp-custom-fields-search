@@ -3,7 +3,7 @@
 Plugin Name: WP Custom Search
 Plugin URI: http://www.webhammer.co.uk/bespoke-wordpress-plugins/wp-custom-search
 Description: Allows admin to build custom search form.  Allows the site admin to configure multiple html inputs for different fields including custom fields.  Also provides an extensible mechanism for integrating with other plugins data structures.
-Version: 0.3.21
+Version: 0.3.22
 Author: Don Benjamin
 Author URI: http://www.webhammer.co.uk/
 Text Domain: wp-custom-fields-search
@@ -49,7 +49,7 @@ Text Domain: wp-custom-fields-search
 		}
 
 		function currentVersion(){
-			return "0.3.21";
+			return "0.3.22";
 		}
 
 		function ensureUpToDate(){
@@ -75,11 +75,11 @@ Text Domain: wp-custom-fields-search
 			} else {
 				$id = $params;
 			}
-			if($visitedPresets[$id]) return array();
+			if(@$visitedPresets[$id]) return array();
 			$visitedPresets[$id]=true;
 			
 			global $CustomSearchFieldStatic;
-			if(!$CustomSearchFieldStatic['Inputs'][$id]){
+			if(!@$CustomSearchFieldStatic['Inputs'][$id]){
 				$classes = $this->getClasses('joiner');
 			
 				$config = $this->getConfig($id);
@@ -170,7 +170,7 @@ Text Domain: wp-custom-fields-search
 		<div class='searchform-name-wrapper'><label for='<?php echo $prefId?>[name]'><?php echo __('Search Title','wp-custom-fields-search')?></label><input type='text' class='form-title-input' id='<?php echo $prefId?>[name]' name='<?php echo $pref?>[name]' value='<?php echo $values['name']?>'/></div>
 		<div class='searchform-preset-wrapper'><label for='<?php echo $prefId?>[preset]'><?php echo __('Use Preset','wp-custom-fields-search')?></label>
 <?php
-			$dd = new AdminDropDown($pref."[preset]",$values['preset'],$presets);
+			$dd = new AdminDropDown($pref."[preset]",@$values['preset'],$presets);
 			echo $dd->getInput()."</div>";
 			$nonFields = $this->getNonInputFields();
 			foreach($values as $id => $val){
@@ -223,7 +223,7 @@ Text Domain: wp-custom-fields-search
 			$output.="<div id='form-field-advancedoptions-$prefId-$id' style='display: none'>";
 			$inputs='';$titles='';
 			$titles="<th>".__('Data Field','wp-custom-fields-search')."</th>";
-			$inputs="<td><div id='form-field-dbname-$prefId-$id' class='form-field-title-div'><input type='text' name='$pref"."[name]' value='$values[name]' class='form-field-title'/></div></td>";
+			$inputs="<td><div id='form-field-dbname-$prefId-$id' class='form-field-title-div'><input type='text' name='$pref"."[name]' value='".@$values["name"]."' class='form-field-title'/></div></td>";
 			$count=1;
 			foreach(array('joiner'=>__('Data Type','wp-custom-fields-search'),'comparison'=>__('Compare','wp-custom-fields-search'),'input'=>__('Widget','wp-custom-fields-search')) as $k=>$v){
 				$dd = new AdminDropDown($pref."[$k]",$values[$k],$this->getClasses($k),array('onChange'=>'CustomSearch.get("'.$prefId.'").updateOptions("'.$id.'","'.$k.'")','css_class'=>"wpcfs-$k"));
@@ -240,8 +240,9 @@ Text Domain: wp-custom-fields-search
 				$inputs = $titles='';
 			}
 			$titles.="<th>".__('Numeric','wp-custom-fields-search')."</th><th>".__('Widget Config','wp-custom-fields-search')."</th>";
-			$inputs.="<td><input type='checkbox' ".($values['numeric']?"checked='true'":"")." name='$pref"."[numeric]'/></td>";
+			$inputs.="<td><input type='checkbox' ".(@$values['numeric']?"checked='true'":"")." name='$pref"."[numeric]'/></td>";
 
+			$widgetConfig='';
 			if(class_exists($widgetClass = $values['input'])){
 				$widget = new $widgetClass();
 				if(compat_method_exists($widget,'getConfigForm'))
@@ -329,7 +330,7 @@ Text Domain: wp-custom-fields-search
 		}
 		function presets_form(){
 			$presets=$this->getPresets();
-			if(!$preset = $_REQUEST['selected-preset']){
+			if(!$preset = @$_REQUEST['selected-preset']){
 				$preset = 'preset-default';
 			}
 			if(!$presets[$preset]){
@@ -347,7 +348,7 @@ Text Domain: wp-custom-fields-search
 				update_option($this->id,$options);
 				$presets[$preset] = $options[$preset]['name'];
 			}
-			if($_POST['delete']){
+			if(@$_POST['delete']){
 				check_admin_referer($this->id.'-editpreset-'.$preset);
 				$options = $this->getConfig();
 				unset($options[$preset]);
@@ -357,7 +358,7 @@ Text Domain: wp-custom-fields-search
 			}
 
 			$index = 1;
-			while($presets["preset-$index"]) $index++;
+			while(@$presets["preset-$index"]) $index++;
 			$presets["preset-$index"] = __('New Preset','wp-custom-fields-search');
 
 			$linkBase = $_SERVER['REQUEST_URI'];
@@ -365,7 +366,7 @@ Text Domain: wp-custom-fields-search
 			foreach($presets as $key=>$name){
 				$config = $this->getConfig($key);
 				if($config && $config['name']) $name=$config['name'];
-				if(($n = $_POST[$this->id][$key]['name'])&&(!$_POST['delete']))
+				if(($n = @$_POST[$this->id][$key]['name'])&&(!@$_POST['delete']))
 					$name = $n;
 				$presets[$key]=$name;
 			}
@@ -408,7 +409,7 @@ Text Domain: wp-custom-fields-search
 		}
 		function __construct($name,$value,$options,$params=array()){
 			$params['options'] = $options;
-			$params['id'] = $params['name'];
+			$params['id'] = @$params['name'];
 			parent::__construct($params);
 			$this->name = $name;
 			$this->value = $value;
