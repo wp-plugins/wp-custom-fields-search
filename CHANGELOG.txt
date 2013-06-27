@@ -1,3 +1,5 @@
+2013-06-27	Release 0.3.23
+	Added widget wrapper
 2013-06-27	Release 0.3.22
 	Suppressed a bunch of warnings
 	Removed a loose closing div

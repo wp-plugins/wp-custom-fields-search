@@ -273,7 +273,9 @@ class DB_Search_Widget extends DB_WP_Widget {
 
 		}
 
+		echo $params['before_widget'];
 		include($formTemplate);
+		echo $params['after_widget'];
 	}
 
 	function isPosted(){
