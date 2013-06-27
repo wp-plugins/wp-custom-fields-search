@@ -201,6 +201,12 @@ class DB_Search_Widget extends DB_WP_Widget {
 		add_filter( 'get_search_query', array(&$this,'getSearchDescription'));
 		add_action('wp_head', array(&$this,'outputStylesheets'), 1);
 		add_action('pre_get_posts',array(&$this,'setSearchVar'));
+
+		/** These are for relevanssi compatibility */
+		add_filter('posts_request',array(&$this,'store_search'),9);
+		add_filter('posts_request',array(&$this,'restore_search'),11);
+		add_filter('the_posts',array(&$this,'store_search'),9);
+		add_filter('the_posts',array(&$this,'restore_search'),11);
 	}
 	function loadTranslations(){
 		static $loaded;
@@ -338,6 +344,16 @@ class DB_Search_Widget extends DB_WP_Widget {
 	}
 
 	function toSearchString(){
+	}
+	function store_search($sql){
+		$this->sql = $sql;
+		return $sql;
+	}
+	function restore_search($sql){
+		if($this->isPosted()){
+			$sql = $this->sql;
+		}
+		return $sql;
 	}
 }
 
@@ -1030,6 +1046,6 @@ function wp_custom_fields_search_mark_search($query){
 		$query->is_search = true;
 }
 add_action('parse_query','wp_custom_fields_search_mark_search');
-function dump_query($query){ var_dumP($query); return $query;}
-//add_filter('posts_request','dump_query');
+function dump_query($query){ echo "<pre>$query</pre>"; return $query;}
+//add_filter('posts_request','dump_query',1000);
 ?>
