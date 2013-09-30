@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=don@w
 Tags: search,custom fields,widget,sidebar
 Requires at least: 2.5
 Tested up to: 3.5.1
-Stable tag: 0.3.23
+Stable tag: 0.3.24
 
 This plugin allows multiple form inputs to be configured to search different aspects of a post including custom fields.
 

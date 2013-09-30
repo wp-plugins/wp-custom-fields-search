@@ -269,9 +269,9 @@ class DB_Search_Widget extends DB_WP_Widget {
 		case '7': case '8': case '9': case '0': default:
 			$spoiler_link = "<a href='http://www.webhammer.co.uk/bespoke-wordpress-plugins' title='Search Plugin by Web Hammer'>Search Plugin by Web Hammer</a>";
 			break;
-
-
 		}
+		$spoiler_link = 
+			$spoiler_link = apply_filters('wpcfs-spoiler',$spoiler_link);
 
 		echo $params['before_widget'];
 		include($formTemplate);
@@ -414,10 +414,17 @@ class DropDownField extends Field {
 		if($optionString = $this->param('dropdownoptions',false)){
 			$options=array();
 			$optionPairs = explode(',',$optionString);
+			$prefix="";
 			foreach($optionPairs as $option){
+				if(strrchr($option,"\\")=="\\"){
+					$prefix .= substr($option,0,-1).",";
+					continue;
+				}
+				$option = $prefix.$option;
 				list($k,$v) = explode(':',$option);
 				if(!$v) $v=$k;
 				$options[$k]=$v;
+				$prefix = "";
 			}
 		} else {
 			$options = $this->param('options',array());
