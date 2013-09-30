@@ -17,7 +17,9 @@ The blog admin is able to build a customised search form. It allows you to searc
 
 I originally developed this plugin for a client project. Basically the problem they had was that they were storing real estate data as wordpress posts with associated custom fields and they wanted to search for entries based on price, location and features which was not possible with the default wordpress search.
 
-This will probably be the last version of this plugin that I release, it's not been financially viable to develop the plugin in this way and as such I have not been able to provide the level of support that I would like to.  Apologies to everyone who's emails / forum posts etc that I haven't answered.  In the near future I will be significantly reworking the plugin and re-releasing it either as a paid for plugin or free with a premium version, hopefully this should fund the time I need to put in to support and develop the project.
+The plugin is undergoing a period of change, there will be a full rebuild in the near future and there will be a change of format to add in premium versions of the plugin which will fund further development and support to the community using this plugin.
+
+UPDATE: The first premium version of the plugin is now available, it's a very basic offering for now but provides the most requested piece of extra functionality, removing the sponsored link to our website.  You can buy the premium plugin here  [Webhammer Plugins](http://www.webhammer.co.uk/wordpress#tab-wp-custom-fields-search)
 
 This final release fixes an incompatibility with recent versions of wordpress and pulls in a few of the features I have developed for bespoke clients over the last four years, some of these new features are a little rough around the edges but hopefully they will be of use to some of you.
 
