@@ -3,7 +3,7 @@
 Plugin Name: WP Custom Search
 Plugin URI: http://www.webhammer.co.uk/bespoke-wordpress-plugins/wp-custom-search
 Description: Allows admin to build custom search form.  Allows the site admin to configure multiple html inputs for different fields including custom fields.  Also provides an extensible mechanism for integrating with other plugins data structures.
-Version: 0.3.25
+Version: 0.3.26
 Author: Don Benjamin
 Author URI: http://www.webhammer.co.uk/
 Text Domain: wp-custom-fields-search
@@ -42,6 +42,7 @@ Text Domain: wp-custom-fields-search
 			wp_enqueue_script('jquery');
 			wp_enqueue_script('jquery-ui');
 			wp_enqueue_script('jquery-ui-autocomplete');
+			wp_enqueue_script('jquery-ui-sortable');
 			if(version_compare("2.7",$GLOBALS['wp_version'])>0) wp_enqueue_script('dimensions');
 		}
 		function init(){
@@ -51,7 +52,7 @@ Text Domain: wp-custom-fields-search
 		}
 
 		function currentVersion(){
-			return "0.3.25";
+			return "0.3.26";
 		}
 
 		function ensureUpToDate(){
@@ -181,14 +182,16 @@ Text Domain: wp-custom-fields-search
 		 name='<?php echo $pref?>[showlink]' <?php if(@$values['showlink']) { ?>checked='checked'<?php } ?> />
 		<label for='<?php echo $pref?>[showlink]'><?php echo __('Support plugin by including link to author\'s site','wp-custom-fields-search')?></label>
 	</div>
+	<div class='searchform-fields-wrapper sort-wrapper'>
 <?php
 			$nonFields = $this->getNonInputFields();
 			foreach($values as $id => $val){
 				$maxId = max($id,$maxId);
 				if(in_array($id,$nonFields)) continue;
-				echo "<div id='config-form-$prefId-$id'>".$this->singleFieldHTML($pref,$id,$val)."</div>";
+				echo "<div id='config-form-$prefId-$id' class='sort-element'>".$this->singleFieldHTML($pref,$id,$val)."</div>";
 			}
 ?>
+	</div>
 	</div>
 
 	<br/><a href='#' onClick="return CustomSearch.get('<?php echo $prefId?>').add();"><?php echo __('Add Field','wp-custom-fields-search')?></a>

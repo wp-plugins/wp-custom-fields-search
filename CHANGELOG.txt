@@ -1,3 +1,5 @@
+2013-10-07	Release 0.3.26
+	Added drag and drop ordering of search fields.
 2013-10-07	Release 0.3.25
 	Removed Flexbox depency and replaced with jquery autocomplete
 	Promotional link is now opt-in

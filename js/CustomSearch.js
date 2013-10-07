@@ -19,6 +19,8 @@ CustomSearch = Class.create( {
 		me = this;
 		this.namesFor = CustomSearch.sharedOptions;
 		if(id!='%i%') this.createFlexboxes();
+
+		jQuery('div.sort-wrapper').sortable();
 	},
 	createFlexboxes: function(){
 		if(this.getForm().length<1){
