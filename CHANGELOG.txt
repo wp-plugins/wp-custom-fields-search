@@ -1,3 +1,6 @@
+2013-10-07	Release 0.3.25
+	Removed Flexbox depency and replaced with jquery autocomplete
+	Promotional link is now opt-in
 2013-09-30	Release 0.3.24
 	Now allows commas in dropdown options.
 2013-06-27	Release 0.3.23

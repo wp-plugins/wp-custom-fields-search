@@ -104,14 +104,19 @@ CustomSearch = Class.create( {
 
 				type=this.getJoinerFor(id);		
 				if(this.namesFor[type]){
-					$el.find("*").remove();
+					$el.html("<input type='text' name='"+html_name+"'/>");
+					$input = $el.find('input');
 					this.flexboxData[id].results = this.namesFor[type];
 					if(this.namesFor[type]=='any'){
-						$el.html("<input type='text' name='"+html_name+"'/>");
-							$el.find('input').val(val);
+						console.log(type+" no suggestions");
+						$input.autocomplete('destroy');
+						//$el.find('input').val(val);
 					} else {
-						$el.flexbox(this.flexboxData[id],{width:100,name:html_name,maxCacheBytes:0,paging:false,initialValue:val})
+						console.log(type+" suggestions",this.namesFor[type]);
+						$input.autocomplete({source:this.namesFor[type]});
+						//$el.flexbox(this.flexboxData[id],{width:100,name:html_name,maxCacheBytes:0,paging:false,initialValue:val})
 					}
+					$el.find('input').val(val);
 					jQuery('#form-field-dbname-'+this.id+'-'+id).show();
 				} else {
 					jQuery('#form-field-dbname-'+this.id+'-'+id).hide();
@@ -135,15 +140,23 @@ CustomSearch = Class.create( {
 });
 if(!CustomSearch.sharedOptions) CustomSearch.sharedOptions={};
 CustomSearch.setOptionsFor = function(joiner,options){
-	CustomSearch.sharedOptions[joiner] = options;
+	var converted_options = [];
+	for(var option in options){
+		var value = options[option];
+		converted_options.push({label:value['name'],value:value['id']});
+	}
+	console.log(converted_options);
+	CustomSearch.sharedOptions[joiner] = converted_options;
 	var i;
 	for(i=0;i<CustomSearch.list.length;i++)
 		CustomSearch[CustomSearch.list[i]].updateAllOptionsFor(joiner);
 };
 CustomSearch.list = [];
 CustomSearch.create = function(id,maxInput){
-	CustomSearch.list[CustomSearch.list.length]=id;
-	CustomSearch[id] = new CustomSearch(id,maxInput);
+//	jQuery(function(){
+		CustomSearch.list[CustomSearch.list.length]=id;
+		CustomSearch[id] = new CustomSearch(id,maxInput);
+//	});
 };
 CustomSearch.get = function(id){
 	if(!CustomSearch[id]) CustomSearch.create(id);

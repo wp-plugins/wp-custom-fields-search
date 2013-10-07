@@ -3,7 +3,7 @@
 Plugin Name: WP Custom Search
 Plugin URI: http://www.webhammer.co.uk/bespoke-wordpress-plugins/wp-custom-search
 Description: Allows admin to build custom search form.  Allows the site admin to configure multiple html inputs for different fields including custom fields.  Also provides an extensible mechanism for integrating with other plugins data structures.
-Version: 0.3.24
+Version: 0.3.25
 Author: Don Benjamin
 Author URI: http://www.webhammer.co.uk/
 Text Domain: wp-custom-fields-search
@@ -40,6 +40,8 @@ Text Domain: wp-custom-fields-search
 			add_filter('the_content', array(&$this,'process_tag'),9);
 			add_shortcode( 'wp-custom-fields-search', array(&$this,'process_shortcode') );
 			wp_enqueue_script('jquery');
+			wp_enqueue_script('jquery-ui');
+			wp_enqueue_script('jquery-ui-autocomplete');
 			if(version_compare("2.7",$GLOBALS['wp_version'])>0) wp_enqueue_script('dimensions');
 		}
 		function init(){
@@ -49,7 +51,7 @@ Text Domain: wp-custom-fields-search
 		}
 
 		function currentVersion(){
-			return "0.3.24";
+			return "0.3.25";
 		}
 
 		function ensureUpToDate(){
@@ -168,11 +170,18 @@ Text Domain: wp-custom-fields-search
 			$presets = $this->getPresets();
 			array_unshift($presets,__('NONE','wp-custom-fields-search'));
 ?>
-		<div class='searchform-name-wrapper'><label for='<?php echo $prefId?>[name]'><?php echo __('Search Title','wp-custom-fields-search')?></label><input type='text' class='form-title-input' id='<?php echo $prefId?>[name]' name='<?php echo $pref?>[name]' value='<?php echo $values['name']?>'/></div>
+		<div class='searchform-name-wrapper'><label for='<?php echo $prefId?>[name]'><?php echo __('Search Title','wp-custom-fields-search')?></label><input type='text' class='form-title-input' id='<?php echo $prefId?>[name]' name='<?php echo $pref?>[name]' value='<?php echo @$values['name']?>'/></div>
 		<div class='searchform-preset-wrapper'><label for='<?php echo $prefId?>[preset]'><?php echo __('Use Preset','wp-custom-fields-search')?></label>
 <?php
 			$dd = new AdminDropDown($pref."[preset]",@$values['preset'],$presets);
 			echo $dd->getInput()."</div>";
+?>
+	<div class='searchform-link-wrapper'>
+		<input type='checkbox' id='<?php echo $pref?>[showlink]'
+		 name='<?php echo $pref?>[showlink]' <?php if(@$values['showlink']) { ?>checked='checked'<?php } ?> />
+		<label for='<?php echo $pref?>[showlink]'><?php echo __('Support plugin by including link to author\'s site','wp-custom-fields-search')?></label>
+	</div>
+<?php
 			$nonFields = $this->getNonInputFields();
 			foreach($values as $id => $val){
 				$maxId = max($id,$maxId);
@@ -184,6 +193,7 @@ Text Domain: wp-custom-fields-search
 
 	<br/><a href='#' onClick="return CustomSearch.get('<?php echo $prefId?>').add();"><?php echo __('Add Field','wp-custom-fields-search')?></a>
 	<script type='text/javascript'>
+		jQuery(function(){
 			CustomSearch.create('<?php echo $prefId?>','<?php echo $maxId?>');
 <?php
 	foreach($this->getClasses('joiner') as $joinerClass=>$desc){
@@ -206,12 +216,13 @@ Text Domain: wp-custom-fields-search
 		}
 	}
 ?>
+	});
 	</script>
 <?php
 		}
 
 		function getNonInputFields(){
-			return array('exists','name','preset','version','order','template');
+			return array('exists','name','preset','version','order','template','showlink');
 		}
 		function singleFieldHTML($pref,$id,$values){
 			$prefId = preg_replace('/^.*\[([^]]*)\]$/','\\1',$pref);
@@ -264,12 +275,11 @@ Text Domain: wp-custom-fields-search
 		function print_admin_scripts($params){
 			$jsRoot = $this->getRootURL().'js';
 			$cssRoot = $this->getRootURL().'css';
-			$scripts = array('Class.js','CustomSearch.js','flexbox/jquery.flexbox.js');
+			$scripts = array('Class.js','CustomSearch.js');
 			foreach($scripts as $file){
 				echo "<script src='$jsRoot/$file' ></script>";
 			}
 			echo "<link rel='stylesheet' href='$cssRoot/admin.css' >";
-			echo "<link rel='stylesheet' href='$jsRoot/flexbox/jquery.flexbox.css' >";
 		}
 
 		function getJoiners(){

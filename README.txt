@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=don@w
 Tags: search,custom fields,widget,sidebar
 Requires at least: 2.5
 Tested up to: 3.5.1
-Stable tag: 0.3.24
+Stable tag: 0.3.25
 
 This plugin allows multiple form inputs to be configured to search different aspects of a post including custom fields.
 
@@ -18,8 +18,6 @@ The blog admin is able to build a customised search form. It allows you to searc
 I originally developed this plugin for a client project. Basically the problem they had was that they were storing real estate data as wordpress posts with associated custom fields and they wanted to search for entries based on price, location and features which was not possible with the default wordpress search.
 
 The plugin is undergoing a period of change, there will be a full rebuild in the near future and there will be a change of format to add in premium versions of the plugin which will fund further development and support to the community using this plugin.
-
-UPDATE: The first premium version of the plugin is now available, it's a very basic offering for now but provides the most requested piece of extra functionality, removing the sponsored link to our website.  You can buy the premium plugin here  [Webhammer Plugins](http://www.webhammer.co.uk/wordpress#tab-wp-custom-fields-search)
 
 This final release fixes an incompatibility with recent versions of wordpress and pulls in a few of the features I have developed for bespoke clients over the last four years, some of these new features are a little rough around the edges but hopefully they will be of use to some of you.
 

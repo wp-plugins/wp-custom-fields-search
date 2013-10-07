@@ -161,7 +161,7 @@ class DB_WP_Widget extends ParameterisedObject {
 		global $mycount;
 		if(-1==$args['number']){
 			$args['number']='%i%';
-			$values = $default_options;
+			$values = @$default_options;
 		} else {
 			$values = $options[$args['number']];
 		}
@@ -273,6 +273,7 @@ class DB_Search_Widget extends DB_WP_Widget {
 		$spoiler_link = 
 			$spoiler_link = apply_filters('wpcfs-spoiler',$spoiler_link);
 
+		$config = $this->getConfig($p2['number']);
 		echo $params['before_widget'];
 		include($formTemplate);
 		echo $params['after_widget'];
@@ -906,7 +907,7 @@ class CustomSearchField extends SearchFieldBase {
 		} else {
 			$params = $nameOrParams;
 		}
-		$this->name = $params['name'];
+		$this->name = @$params['name'];
 		$this->params = $params;
 
 		$this->joiner = $joiner;

@@ -12,5 +12,7 @@
 
 <input type='submit' name='search' value='<?php _e('Search','wp-custom-fields-search')?>'/>
 </div>
+<?php if(array_key_exists('showlink',$config) && $config['showlink']) { ?>
 <div class='searchform-spoiler'><?php echo $spoiler_link; ?></div>
+<?php } ?>
 </form>
