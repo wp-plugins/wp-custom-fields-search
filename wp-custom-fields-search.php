@@ -3,7 +3,7 @@
 Plugin Name: WP Custom Search
 Plugin URI: http://www.webhammer.co.uk/bespoke-wordpress-plugins/wp-custom-search
 Description: Allows admin to build custom search form.  Allows the site admin to configure multiple html inputs for different fields including custom fields.  Also provides an extensible mechanism for integrating with other plugins data structures.
-Version: 0.3.26
+Version: 0.3.27
 Author: Don Benjamin
 Author URI: http://www.webhammer.co.uk/
 Text Domain: wp-custom-fields-search
@@ -52,7 +52,7 @@ Text Domain: wp-custom-fields-search
 		}
 
 		function currentVersion(){
-			return "0.3.26";
+			return "0.3.27";
 		}
 
 		function ensureUpToDate(){
