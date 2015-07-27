@@ -228,6 +228,7 @@ class DB_Search_Widget extends DB_WP_Widget {
 	function setSearchVar($wpdb){
 		if($this->isPosted()){
 			$wpdb->is_search=true;
+			$wpdb->is_home=false;
 		}
 	}
 
@@ -752,17 +753,17 @@ class CustomFieldJoiner extends BaseJoiner{
 		$where='';
 		if($fieldName!='all')
 			$where = " WHERE meta_key='$fieldName'";
-		$q = mysql_query($sql = "SELECT DISTINCT meta_value FROM $wpdb->postmeta m JOIN $wpdb->posts p ON m.post_id=p.id AND p.post_status='publish' $where");
+		$sql = "SELECT DISTINCT meta_value FROM $wpdb->postmeta m JOIN $wpdb->posts p ON m.post_id=p.id AND p.post_status='publish' $where";
 		$options = array();
-		while($r = mysql_fetch_row($q))
+		foreach($wpdb->get_results($sql,ARRAY_N) as $r)
 			$options[$r[0]] = $r[0];
 		return $options;
 	}
 	function getSuggestedFields(){
 		global $wpdb;
-		$q = mysql_query($sql = "SELECT DISTINCT meta_key FROM $wpdb->postmeta WHERE meta_key NOT LIKE '\\_%'");
+		$sql = "SELECT DISTINCT meta_key FROM $wpdb->postmeta WHERE meta_key NOT LIKE '\\_%'";
 		$options = array('all'=>'All Fields');
-		while($r = mysql_fetch_row($q))
+		foreach($wpdb->get_results($sql,ARRAY_N) as $r)
 			$options[$r[0]] = $r[0];
 		return $options;
 	}
@@ -794,10 +795,8 @@ class CategoryJoiner extends BaseJoiner {
 	function getAllOptions($fieldName){
 		global $wpdb;
 		$sql = "SELECT distinct t.term_id,t.name FROM $wpdb->terms AS t INNER JOIN $wpdb->term_taxonomy AS tt ON tt.term_id = t.term_id INNER JOIN $wpdb->term_relationships AS tr ON tr.term_taxonomy_id = tt.term_taxonomy_id JOIN $wpdb->posts p ON tr.object_id=p.id AND p.post_status='publish' WHERE ".$this->getTaxonomyWhere('tt');
-		$q = mysql_query($sql);
-		if($e = mysql_error()) echo "<h1>SQL: $sql</h1>".mysql_error();
 		$options = array();
-		while($r = mysql_fetch_row($q))
+		foreach($wpdb->get_results($sql,ARRAY_N) as $r)
 			$options[$r[0]] = $r[1];
 		return $options;
 	}
@@ -807,10 +806,8 @@ class CategoryJoiner extends BaseJoiner {
 	function getHeirarchyOfOptions($name){
 		global $wpdb;
 		$sql = "SELECT distinct tt.parent,t.term_id,t.name FROM $wpdb->terms AS t INNER JOIN $wpdb->term_taxonomy AS tt ON tt.term_id = t.term_id INNER JOIN $wpdb->term_relationships AS tr ON tr.term_taxonomy_id = tt.term_taxonomy_id JOIN $wpdb->posts p ON tr.object_id=p.id AND p.post_status='publish' WHERE ".$this->getTaxonomyWhere('tt');
-		$q = mysql_query($sql);
-		if($e = mysql_error()) echo "<h1>SQL: $sql</h1>".mysql_error();
 		$options = array();
-		while($r = mysql_fetch_row($q)){
+		foreach($wpdb->get_results($sql,ARRAY_N) as $r){
 			if(!$r[0]) $r[0]='root';
 			$options[$r[0]][$r[1]] = $r[2];
 		}
@@ -839,9 +836,9 @@ class PostTypeJoiner extends BaseJoiner {
 	}
 	function getAllOptions($fieldName){
 		global $wpdb;
-		$q = mysql_query($sql = "SELECT distinct post_type FROM $wpdb->posts p WHERE post_status='publish' ");
+		$sql = "SELECT distinct post_type FROM $wpdb->posts p WHERE post_status='publish' ";
 		$options = array();
-		while($r = mysql_fetch_row($q))
+		foreach($wpdb->get_results($sql,ARRAY_N) as $r)
 			$options[$r[0]] = $r[0];
 		return $options;
 	}
@@ -876,9 +873,9 @@ class PostDataJoiner extends BaseJoiner {
 	}
 	function getAllOptions($fieldName){
 		global $wpdb;
-		$q = mysql_query($sql = "SELECT $fieldName FROM $wpdb->posts");
+		$sql = "SELECT $fieldName FROM $wpdb->posts";
 		$options = array();
-		while($r = mysql_fetch_row($q))
+		foreach($wpdb->get_results($sql,ARRAY_N) as $r)
 			$options[$r[0]] = $r[0];
 		return $options;
 	}

@@ -3,8 +3,8 @@ Contributors: don@webhammer.co.uk
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=don@webhammer.co.uk&item_name=Custom Search Donation&currency_code=GBP
 Tags: search,custom fields,widget,sidebar
 Requires at least: 2.5
-Tested up to: 3.5.1
-Stable tag: 0.3.26
+Tested up to: 4.2.3
+Stable tag: 0.3.27
 
 This plugin allows multiple form inputs to be configured to search different aspects of a post including custom fields.
 

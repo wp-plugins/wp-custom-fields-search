@@ -1,3 +1,6 @@
+2015-07-27	Release 0.3.27
+	Removed dependence on mysql_query as this was failing in setups using mysqli
+	Sets the is_home variable correctly
 2013-10-07	Release 0.3.26
 	Added drag and drop ordering of search fields.
 2013-10-07	Release 0.3.25
